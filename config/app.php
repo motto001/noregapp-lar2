@@ -177,6 +177,13 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
  Collective\Html\HtmlServiceProvider::class,
+
+Appzcoder\LaravelAdmin\LaravelAdminServiceProvider::class,
+    // For crud generator & html
+ Appzcoder\CrudGenerator\CrudGeneratorServiceProvider::class,
+   // Collective\Html\HtmlServiceProvider::class, crud generátorhoz már fel lett téve
+
+
     ],
 
     /*
