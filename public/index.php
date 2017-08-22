@@ -1,4 +1,7 @@
 <?php
+//header('Content-type: application/json');
+//header('Access-Control-Allow-Origin: *');
+
 
 /**
  * Laravel - A PHP Framework For Web Artisans
@@ -6,7 +9,7 @@
  * @package  Laravel
  * @author   Taylor Otwell <taylor@laravel.com>
  */
-
+ //echo json_encode(array('user' =>['name' => 'word']  ));
 /*
 |--------------------------------------------------------------------------
 | Register The Auto Loader
@@ -46,6 +49,11 @@ $app = require_once __DIR__.'/../bootstrap/app.php';
 | and wonderful application we have prepared for them.
 |
 */
+
+
+
+
+
 
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 

@@ -1,0 +1,75 @@
+{
+    "fields": [
+          {
+            "name": "user_id",
+            "type": "integer"
+        },
+
+        {
+            "name": "name",
+            "type": "string"
+        },
+        {
+            "name": "cim",
+            "type": "string"
+        },
+      
+        {
+            "name": "tel",
+            "type": "string"
+        },
+        {
+            "name": "birth",
+            "type": "date"
+        },
+        {
+            "name": "statusz",
+            "type": "select",
+            "options": ["Állandó", "alkalmi", "diák"]
+        }
+    ],
+    "foreign_keys": [
+        {
+            "column": "user_id",
+            "references": "id",
+            "on": "users",
+            "onDelete": "cascade"
+        }
+    ],
+    "relationships": [
+        {
+            "name": "user",
+            "type": "belongsTo",
+            "class": "App\\User"
+        }
+    ],
+
+    "validations": [
+        {
+            "field": "name",
+            "rules": "required|max:100 "
+        },  
+        {
+            "field": "cim",
+            "rules": "required|max:200"
+        },
+        {
+            "field": "email",
+            "rules": "email"
+        },
+        {
+            "field": "tel",
+            "rules": "max:50"
+        },
+        {
+            "field": "birth",
+            "rules": "required|date"
+        },
+        {
+            "field": "statusz",
+            "rules": "max:50"
+            
+        }
+
+    ]
+}

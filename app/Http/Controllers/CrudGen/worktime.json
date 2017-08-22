@@ -1,0 +1,49 @@
+{
+    "fields": [
+        {
+            "name": "worker_id",
+            "type": "integer"
+        },
+        {
+            "name": "year",
+            "type": "string"
+        },
+        {
+            "name": "mounth",
+            "type": "integer"
+        },
+        {
+            "name": "day",
+            "type": "integer"
+        },
+        {
+            "name": "hour",
+            "type": "integer"
+        },
+        {
+            "name": "type",
+            "type": "select",
+            "options": ["work", "free", "celeb"]
+        }
+    ],
+
+    "validations": [
+        {
+            "field": "year",
+            "rules": "required|min:2000|max:2100 "
+        },  
+        {
+            "field": "mounth",
+            "rules": "required|max:12"
+        },
+        {
+            "field": "day",
+            "rules": "required|max:31"
+        },
+        {
+            "field": "hour",
+            "rules": "max:24"
+        }
+
+    ]
+}

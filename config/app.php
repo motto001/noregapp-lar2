@@ -183,8 +183,10 @@ Appzcoder\LaravelAdmin\LaravelAdminServiceProvider::class,
  Appzcoder\CrudGenerator\CrudGeneratorServiceProvider::class,
    // Collective\Html\HtmlServiceProvider::class, crud generátorhoz már fel lett téve
 
-
-    ],
+  // Jadjoubran\LaravelAngular\Provider\LaravelServiceProvider::class,
+  // Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+  // Irazasyed\JwtAuthGuard\JwtAuthGuardServiceProvider::class,
+],
 
     /*
     |--------------------------------------------------------------------------
@@ -234,6 +236,7 @@ Appzcoder\LaravelAdmin\LaravelAdminServiceProvider::class,
         'View' => Illuminate\Support\Facades\View::class,
  'Form' => Collective\Html\FormFacade::class,
  'HTML' => Collective\Html\HtmlFacade::class,
+ 'MoViewF' => App\Facades\MoView::class
     ],
 
 ];

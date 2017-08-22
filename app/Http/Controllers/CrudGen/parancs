@@ -1,0 +1,23 @@
+https://github.com/appzcoder/crud-generator
+
+php artisan crud:generate Workers --fields_from_file="app/Http/Controllers/CrudGen/workers.json" --view-path=manager --controller-namespace=Manager --route-group=manager
+php artisan crud:generate Users --fields_from_file="app/Http/Controllers/CrudGen/users.json" --view-path=manager --controller-namespace=Manager --route-group=manager
+
+php artisan crud:generate Workers --fields_from_file="app/Http/Controllers/CrudGen/workers.json" --view-path=workadmin --controller-namespace=Workadmin --route-group=workadmin 
+php artisan crud:generate Worktimes --fields_from_file="app/Http/Controllers/CrudGen/worktime.json" --view-path=workadmin --controller-namespace=Workadmin  --route-group=workadmin 
+
+php artisan crud:generate Workers --fields_from_file="app/Http/Controllers/CrudGen/workers.json" --view-path=worker --controller-namespace=Worker --route-group=worker 
+php artisan crud:generate Worktimes --fields_from_file="app/Http/Controllers/CrudGen/worktime.json" --view-path=worker  --controller-namespace=Worker   --route-group=worker 
+
+php artisan crud:generate Chpassword --fields_from_file="app/Http/Controllers/CrudGen/chpassword.json" --view-path=user --controller-namespace=User --route-group=user
+php artisan crud:generate Chemail --fields_from_file="app/Http/Controllers/CrudGen/chemail.json" --view-path=user --controller-namespace=User --route-group=user
+
+
+
+Form Field Types:
+text ,textarea ,password ,email ,number ,date ,datetime ,time ,radio ,select ,file 
+
+Migration Field Types:  
+string ,char ,varchar ,date ,datetime ,time ,timestamp ,text ,mediumtext ,longtext
+ ,json ,jsonb ,binary ,integer ,bigint ,mediumint ,tinyint ,smallint ,boolean 
+ ,decimal ,double ,float ,enum
