@@ -1,10 +1,19 @@
-<div class="form-group {{ $errors->has('user_id') ? 'has-error' : ''}}">
-    {!! Form::label('user_id', 'User Id', ['class' => 'col-md-4 control-label']) !!}
+<div class="form-group {{ $errors->has('email') ? 'has-error' : ''}}">
+    {!! Form::label('email', 'Email', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::number('user_id', null, ['class' => 'form-control']) !!}
-        {!! $errors->first('user_id', '<p class="help-block">:message</p>') !!}
+        {!! Form::email('email', null, ['class' => 'form-control', 'required' => 'required']) !!}
+        {!! $errors->first('email', '<p class="help-block">:message</p>') !!}
     </div>
-</div><div class="form-group {{ $errors->has('name') ? 'has-error' : ''}}">
+</div>
+<div class="form-group {{ $errors->has('password') ? 'has-error' : ''}}">
+    {!! Form::label('password', 'Jelszó', ['class' => 'col-md-4 control-label']) !!}
+    <div class="col-md-6">
+        {!! Form::text('password', null, ['class' => 'form-control']) !!}
+        {!! $errors->first('password', '<p class="help-block">:message</p>') !!}
+    </div>
+</div>
+
+<div class="form-group {{ $errors->has('name') ? 'has-error' : ''}}">
     {!! Form::label('name', 'Name', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
         {!! Form::text('name', null, ['class' => 'form-control', 'required' => 'required']) !!}
@@ -57,6 +66,7 @@
     <div class="col-md-6">
         {!! Form::select('statusz', ['Állandó', 'alkalmi', 'diák'], null, ['class' => 'form-control', 'required' => 'required']) !!}
         {!! $errors->first('statusz', '<p class="help-block">:message</p>') !!}
+  
     </div>
 </div>
 

@@ -7,20 +7,20 @@
 
             <div class="col-md-9">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Worktime {{ $worktime->id }}</div>
+                    <div class="panel-heading">Workeruser {{ $workeruser->id }}</div>
                     <div class="panel-body">
 
-                        <a href="{{ url('/workadmin/worktimes') }}" title="Back"><button class="btn btn-warning btn-xs"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button></a>
-                        <a href="{{ url('/workadmin/worktimes/' . $worktime->id . '/edit') }}" title="Edit Worktime"><button class="btn btn-primary btn-xs"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button></a>
+                        <a href="{{ url('/manager/workerusers') }}" title="Back"><button class="btn btn-warning btn-xs"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button></a>
+                        <a href="{{ url('/manager/workerusers/' . $workeruser->id . '/edit') }}" title="Edit Workeruser"><button class="btn btn-primary btn-xs"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button></a>
                         {!! Form::open([
                             'method'=>'DELETE',
-                            'url' => ['workadmin/worktimes', $worktime->id],
+                            'url' => ['manager/workerusers', $workeruser->id],
                             'style' => 'display:inline'
                         ]) !!}
                             {!! Form::button('<i class="fa fa-trash-o" aria-hidden="true"></i> Delete', array(
                                     'type' => 'submit',
                                     'class' => 'btn btn-danger btn-xs',
-                                    'title' => 'Delete Worktime',
+                                    'title' => 'Delete Workeruser',
                                     'onclick'=>'return confirm("Confirm delete?")'
                             ))!!}
                         {!! Form::close() !!}
@@ -31,9 +31,9 @@
                             <table class="table table-borderless">
                                 <tbody>
                                     <tr>
-                                        <th>ID</th><td>{{ $worktime->id }}</td>
+                                        <th>ID</th><td>{{ $workeruser->id }}</td>
                                     </tr>
-                                    <tr><th> Worker Id </th><td> {{ $worktime->worker_id }} </td></tr><tr><th> Date </th><td> {{ $worktime->date }} </td></tr><tr><th> Start </th><td> {{ $worktime->start }} </td></tr>
+                                    <tr><th> User Id </th><td> {{ $workeruser->user_id }} </td></tr><tr><th> Name </th><td> {{ $workeruser->name }} </td></tr><tr><th> Cim </th><td> {{ $workeruser->cim }} </td></tr>
                                 </tbody>
                             </table>
                         </div>

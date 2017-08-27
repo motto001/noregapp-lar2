@@ -28,6 +28,30 @@
         {!! Form::date('birth', null, ['class' => 'form-control', 'required' => 'required']) !!}
         {!! $errors->first('birth', '<p class="help-block">:message</p>') !!}
     </div>
+</div><div class="form-group {{ $errors->has('ado') ? 'has-error' : ''}}">
+    {!! Form::label('ado', 'Ado', ['class' => 'col-md-4 control-label']) !!}
+    <div class="col-md-6">
+        {!! Form::text('ado', null, ['class' => 'form-control', 'required' => 'required']) !!}
+        {!! $errors->first('ado', '<p class="help-block">:message</p>') !!}
+    </div>
+</div><div class="form-group {{ $errors->has('tb') ? 'has-error' : ''}}">
+    {!! Form::label('tb', 'Tb', ['class' => 'col-md-4 control-label']) !!}
+    <div class="col-md-6">
+        {!! Form::text('tb', null, ['class' => 'form-control', 'required' => 'required']) !!}
+        {!! $errors->first('tb', '<p class="help-block">:message</p>') !!}
+    </div>
+</div><div class="form-group {{ $errors->has('start') ? 'has-error' : ''}}">
+    {!! Form::label('start', 'Start', ['class' => 'col-md-4 control-label']) !!}
+    <div class="col-md-6">
+        {!! Form::date('start', null, ['class' => 'form-control', 'required' => 'required']) !!}
+        {!! $errors->first('start', '<p class="help-block">:message</p>') !!}
+    </div>
+</div><div class="form-group {{ $errors->has('end') ? 'has-error' : ''}}">
+    {!! Form::label('end', 'End', ['class' => 'col-md-4 control-label']) !!}
+    <div class="col-md-6">
+        {!! Form::date('end', null, ['class' => 'form-control', 'required' => 'required']) !!}
+        {!! $errors->first('end', '<p class="help-block">:message</p>') !!}
+    </div>
 </div><div class="form-group {{ $errors->has('statusz') ? 'has-error' : ''}}">
     {!! Form::label('statusz', 'Statusz', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">

@@ -22,10 +22,10 @@ class WorktimesController extends Controller
         $perPage = 25;
 
         if (!empty($keyword)) {
-            $worktimes = Worktime::where('user_id', 'LIKE', "%$keyword%")
-				->orWhere('year', 'LIKE', "%$keyword%")
-				->orWhere('mounth', 'LIKE', "%$keyword%")
-				->orWhere('day', 'LIKE', "%$keyword%")
+            $worktimes = Worktime::where('worker_id', 'LIKE', "%$keyword%")
+				->orWhere('date', 'LIKE', "%$keyword%")
+				->orWhere('start', 'LIKE', "%$keyword%")
+				->orWhere('end', 'LIKE', "%$keyword%")
 				->orWhere('hour', 'LIKE', "%$keyword%")
 				->orWhere('type', 'LIKE', "%$keyword%")
 				->paginate($perPage);
@@ -56,10 +56,12 @@ class WorktimesController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-			'year' => 'required|min:2000|max:2100',
-			'mounth' => 'required|max:12',
-			'day' => 'required|max:31',
-			'hour' => 'max:24'
+			'worker_id' => 'required|integer',
+			'date' => 'required|date',
+			'start' => 'date_format:H:i',
+			'end' => 'date_format:H:i',
+			'hour' => 'required|date_format:H',
+			'type' => 'required'
 		]);
         $requestData = $request->all();
         
@@ -109,10 +111,12 @@ class WorktimesController extends Controller
     public function update($id, Request $request)
     {
         $this->validate($request, [
-			'year' => 'required|min:2000|max:2100',
-			'mounth' => 'required|max:12',
-			'day' => 'required|max:31',
-			'hour' => 'max:24'
+			'worker_id' => 'required|integer',
+			'date' => 'required|date',
+			'start' => 'date_format:H:i',
+			'end' => 'date_format:H:i',
+			'hour' => 'required|date_format:H',
+			'type' => 'required'
 		]);
         $requestData = $request->all();
         

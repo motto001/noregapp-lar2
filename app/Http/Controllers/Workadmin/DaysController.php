@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Workadmin;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-use App\Worker;
+use App\Day;
 use Illuminate\Http\Request;
 use Session;
 
-class WorkersController extends Controller
+class DaysController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -22,22 +22,17 @@ class WorkersController extends Controller
         $perPage = 25;
 
         if (!empty($keyword)) {
-            $workers = Worker::where('user_id', 'LIKE', "%$keyword%")
-				->orWhere('name', 'LIKE', "%$keyword%")
-				->orWhere('cim', 'LIKE', "%$keyword%")
-				->orWhere('tel', 'LIKE', "%$keyword%")
-				->orWhere('birth', 'LIKE', "%$keyword%")
-				->orWhere('ado', 'LIKE', "%$keyword%")
-				->orWhere('tb', 'LIKE', "%$keyword%")
-				->orWhere('start', 'LIKE', "%$keyword%")
-				->orWhere('end', 'LIKE', "%$keyword%")
-				->orWhere('statusz', 'LIKE', "%$keyword%")
+            $days = Day::where('worker_id', 'LIKE', "%$keyword%")
+				->orWhere('year', 'LIKE', "%$keyword%")
+				->orWhere('mounth', 'LIKE', "%$keyword%")
+				->orWhere('day', 'LIKE', "%$keyword%")
+				->orWhere('type', 'LIKE', "%$keyword%")
 				->paginate($perPage);
         } else {
-            $workers = Worker::paginate($perPage);
+            $days = Day::paginate($perPage);
         }
 
-        return view('workadmin.workers.index', compact('workers'));
+        return view('workadmin.days.index', compact('days'));
     }
 
     /**
@@ -47,7 +42,7 @@ class WorkersController extends Controller
      */
     public function create()
     {
-        return view('workadmin.workers.create');
+        return view('workadmin.days.create');
     }
 
     /**
@@ -60,23 +55,19 @@ class WorkersController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-			//'name' => 'required|max:200',
-			'cim' => 'required|max:200',
-			'tel' => 'max:50',
-			'birth' => 'date',
-			'ado' => 'string',
-			'tb' => 'string',
-			'start' => 'required|date',
-			'end' => 'date',
-			'statusz' => 'max:50'
+			'worker_id' => 'integer',
+			'year' => 'integer',
+			'mounth' => 'required|integer',
+			'day' => 'required|integer',
+			'type' => 'required'
 		]);
         $requestData = $request->all();
         
-        Worker::create($requestData);
+        Day::create($requestData);
 
-        Session::flash('flash_message', 'Worker added!');
+        Session::flash('flash_message', 'Day added!');
 
-        return redirect('workadmin/workers');
+        return redirect('workadmin/days');
     }
 
     /**
@@ -88,9 +79,9 @@ class WorkersController extends Controller
      */
     public function show($id)
     {
-        $worker = Worker::findOrFail($id);
+        $day = Day::findOrFail($id);
 
-        return view('workadmin.workers.show', compact('worker'));
+        return view('workadmin.days.show', compact('day'));
     }
 
     /**
@@ -102,9 +93,9 @@ class WorkersController extends Controller
      */
     public function edit($id)
     {
-        $worker = Worker::findOrFail($id);
+        $day = Day::findOrFail($id);
 
-        return view('workadmin.workers.edit', compact('worker'));
+        return view('workadmin.days.edit', compact('day'));
     }
 
     /**
@@ -118,24 +109,20 @@ class WorkersController extends Controller
     public function update($id, Request $request)
     {
         $this->validate($request, [
-			'name' => 'required|max:200',
-			'cim' => 'required|max:200',
-			'tel' => 'max:50',
-			'birth' => 'date',
-			'ado' => 'string',
-			'tb' => 'string',
-			'start' => 'required|date',
-			'end' => 'date',
-			'statusz' => 'max:50'
+			'worker_id' => 'integer',
+			'year' => 'integer',
+			'mounth' => 'required|integer',
+			'day' => 'required|integer',
+			'type' => 'required'
 		]);
         $requestData = $request->all();
         
-        $worker = Worker::findOrFail($id);
-        $worker->update($requestData);
+        $day = Day::findOrFail($id);
+        $day->update($requestData);
 
-        Session::flash('flash_message', 'Worker updated!');
+        Session::flash('flash_message', 'Day updated!');
 
-        return redirect('workadmin/workers');
+        return redirect('workadmin/days');
     }
 
     /**
@@ -147,10 +134,10 @@ class WorkersController extends Controller
      */
     public function destroy($id)
     {
-        Worker::destroy($id);
+        Day::destroy($id);
 
-        Session::flash('flash_message', 'Worker deleted!');
+        Session::flash('flash_message', 'Day deleted!');
 
-        return redirect('workadmin/workers');
+        return redirect('workadmin/days');
     }
 }

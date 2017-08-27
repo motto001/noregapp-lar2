@@ -4,14 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Worker extends Model
+class Day extends Model
 {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'workers';
+    protected $table = 'days';
 
     /**
     * The database primary key value.
@@ -25,10 +25,11 @@ class Worker extends Model
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'cim', 'tel', 'birth', 'ado', 'tb', 'start', 'end', 'statusz'];
+    protected $fillable = ['worker_id', 'year', 'mounth', 'day', 'type'];
 
-    public function workeruser()
-    {
-      return $this->belongsTo('App\Workeruser','id');
-    }
+    public function worker()
+	{
+		return $this->belongsTo('App\Worker');
+	}
+	
 }

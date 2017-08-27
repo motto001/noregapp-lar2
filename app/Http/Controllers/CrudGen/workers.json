@@ -23,6 +23,23 @@
             "type": "date"
         },
         {
+            "name": "ado",
+            "type": "string"
+        },
+      
+        {
+            "name": "tb",
+            "type": "string"
+        },
+        {
+            "name": "start",
+            "type": "date"
+        },
+        {
+            "name": "end",
+            "type": "date"
+        },
+        {
             "name": "statusz",
             "type": "select",
             "options": ["Állandó", "alkalmi", "diák"]
@@ -41,29 +58,54 @@
             "name": "user",
             "type": "belongsTo",
             "class": "App\\User"
+        },
+        {
+            "name": "worktime",
+            "type": "hasMany",
+            "class": "App\\Worktime"
+        }
+        ,
+        {
+            "name": "day",
+            "type": "hasMany",
+            "class": "App\\Day"
         }
     ],
 
     "validations": [
         {
             "field": "name",
-            "rules": "required|max:100 "
+            "rules": "required|max:200 "
         },  
         {
             "field": "cim",
             "rules": "required|max:200"
         },
-        {
-            "field": "email",
-            "rules": "email"
-        },
+    
         {
             "field": "tel",
             "rules": "max:50"
         },
         {
             "field": "birth",
+            "rules": "date"
+        },
+        {
+            "field": "ado",
+            "rules": "string"
+        },
+      
+        {
+            "field": "tb",
+            "rules": "string"
+        },
+        {
+            "field": "start",
             "rules": "required|date"
+        },
+        {
+            "field": "end",
+            "rules": "date"
         },
         {
             "field": "statusz",

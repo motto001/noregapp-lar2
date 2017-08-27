@@ -36,7 +36,7 @@
  @endif
  @if (Auth::user()->hasRole('manager'))  
                             <li role="manager">
-                                <a href="{{ url('/manager/workers') }}">
+                                <a href="{{ url('/manager/workerusers') }}">
                                     Dolgozok
                                 </a>
                             </li>
@@ -58,6 +58,11 @@
                             <li role="manager">
                                 <a href="{{ url('/workadmin/worktimes') }}">
                                     Munkaidő
+                                </a>
+                            </li>
+                            <li role="manager">
+                                <a href="{{ url('/workadmin/days') }}">
+                                    Napok
                                 </a>
                             </li>
                          

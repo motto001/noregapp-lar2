@@ -23,10 +23,14 @@ class WorkersController extends Controller
 
         if (!empty($keyword)) {
             $workers = Worker::where('user_id', 'LIKE', "%$keyword%")
-				->orWhere('name', 'LIKE', "%$keyword%")
+			//	->orWhere('name', 'LIKE', "%$keyword%")
 				->orWhere('cim', 'LIKE', "%$keyword%")
 				->orWhere('tel', 'LIKE', "%$keyword%")
 				->orWhere('birth', 'LIKE', "%$keyword%")
+				->orWhere('ado', 'LIKE', "%$keyword%")
+				->orWhere('tb', 'LIKE', "%$keyword%")
+				->orWhere('start', 'LIKE', "%$keyword%")
+				->orWhere('end', 'LIKE', "%$keyword%")
 				->orWhere('statusz', 'LIKE', "%$keyword%")
 				->paginate($perPage);
         } else {
@@ -56,11 +60,14 @@ class WorkersController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-			'name' => 'required|max:100',
+		//	'name' => 'required|max:200',
 			'cim' => 'required|max:200',
-			'email' => 'email',
 			'tel' => 'max:50',
-			'birth' => 'required|date',
+			'birth' => 'date',
+			'ado' => 'string',
+			'tb' => 'string',
+			'start' => 'required|date',
+			'end' => 'date',
 			'statusz' => 'max:50'
 		]);
         $requestData = $request->all();
@@ -111,11 +118,14 @@ class WorkersController extends Controller
     public function update($id, Request $request)
     {
         $this->validate($request, [
-			'name' => 'required|max:100',
+		//	'name' => 'required|max:200',
 			'cim' => 'required|max:200',
-			'email' => 'email',
 			'tel' => 'max:50',
-			'birth' => 'required|date',
+			'birth' => 'date',
+			'ado' => 'string',
+			'tb' => 'string',
+			'start' => 'required|date',
+			'end' => 'date',
 			'statusz' => 'max:50'
 		]);
         $requestData = $request->all();

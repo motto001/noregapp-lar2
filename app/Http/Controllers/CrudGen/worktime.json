@@ -5,45 +5,62 @@
             "type": "integer"
         },
         {
-            "name": "year",
-            "type": "string"
+            "name": "date",
+            "type": "date"
         },
         {
-            "name": "mounth",
-            "type": "integer"
+            "name": "start",
+            "type": "time"
         },
         {
-            "name": "day",
-            "type": "integer"
+            "name": "end",
+            "type": "time"
         },
         {
             "name": "hour",
-            "type": "integer"
+            "type": "number"
         },
         {
             "name": "type",
             "type": "select",
-            "options": ["work", "free", "celeb"]
+            "options": ["normal", "plusz", "ledolg"]
+        }
+    ],   
+    
+    "foreign_keys": [
+        {
+            "column": "worker_id",
+            "references": "id",
+            "on": "workers"
+        }
+    ],
+    
+    "relationships": [
+        {
+            "name": "worker",
+            "type": "belongsTo",
+            "class": "App\\Worker"
         }
     ],
 
     "validations": [
         {
-            "field": "year",
-            "rules": "required|min:2000|max:2100 "
-        },  
-        {
-            "field": "mounth",
-            "rules": "required|max:12"
+            "field": "worker_id",  "rules": "required|integer"
         },
         {
-            "field": "day",
-            "rules": "required|max:31"
+            "field": "date",       "rules": "required|date"
         },
         {
-            "field": "hour",
-            "rules": "max:24"
+            "field": "start",      "rules": "date_format:H:i"
+        },
+        {
+            "field": "end",        "rules": "date_format:H:i"
+        },
+        {
+            "field": "hour",       "rules": "required|date_format:H"
+        },
+        {
+            "field": "type",       "rules": "required"
         }
-
     ]
 }

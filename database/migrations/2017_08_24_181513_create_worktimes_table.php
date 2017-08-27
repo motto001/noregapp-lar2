@@ -15,11 +15,12 @@ class CreateWorktimesTable extends Migration
         Schema::create('worktimes', function(Blueprint $table) {
             $table->increments('id');
             $table->integer('worker_id');
-            $table->string('year');
-            $table->integer('mounth');
-            $table->integer('day');
+            $table->date('date');
+            $table->time('start');
+            $table->time('end');
             $table->integer('hour');
             $table->string('type');
+            $table->foreign('worker_id')->references('id')->on('workers');
             $table->timestamps();
         });
     }

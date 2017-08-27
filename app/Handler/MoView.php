@@ -1,5 +1,5 @@
 <?php
-namespace App\Lib;
+namespace App\Handler;
 use Illuminate\Http\Request;
 
 class MoView
@@ -18,8 +18,8 @@ function __construct(Request $request) {
     
     $$dataname=$data;
 
-      $cors=$this->request->is('cors/*');
-      if ($cors) {
+     // $cors=$this->request->is('cors/*');
+      if (false) {
 
          $json= $data->toArray();
          $json['err']=self::$GOB;

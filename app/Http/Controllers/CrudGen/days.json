@@ -1,0 +1,52 @@
+{
+    "fields": [
+        {
+            "name": "worker_id",
+            "type": "integer"
+        },
+        {
+            "name": "year",
+            "type": "integer"
+        },
+        {
+            "name": "mounth",
+            "type": "integer"
+        },
+        {
+            "name": "day",
+            "type": "integer"
+        },
+        {
+            "name": "type",
+            "type": "select",
+            "options": ["normal", "ünnep", "szabadság", "igazolt", "beteg"]
+        }
+    ],  
+    
+    "relationships": [
+        {
+            "name": "worker",
+            "type": "belongsTo",
+            "class": "App\\Worker"
+        }
+    ],
+
+    "validations": [
+        {
+            "field": "worker_id",  "rules": "integer"
+        },
+        {
+            "field": "year",       "rules": "integer"
+        },
+        {
+            "field": "mounth",      "rules": "required|integer"
+        },
+        {
+            "field": "day",        "rules": "required|integer"
+        },
+     
+        {
+            "field": "type",       "rules": "required"
+        }
+    ]
+}

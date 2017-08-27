@@ -4,13 +4,16 @@ namespace App\Http\Controllers\Workadmin;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
-use App\Worker;
+use App\Workeruser;
+//use App\Worker;
 use Illuminate\Http\Request;
 use Session;
+use App\Facades\MoView;
+use App\Facades\WorkerusersH;
 
-class WorkersController extends Controller
+class WorkerdaysController extends Controller
 {
+    
     /**
      * Display a listing of the resource.
      *
@@ -18,26 +21,12 @@ class WorkersController extends Controller
      */
     public function index(Request $request)
     {
-        $keyword = $request->get('search');
-        $perPage = 25;
+    $data['workerusers']=WorkerusersH::getList($request,2); 
+    $data['mounth']='0';
+    $data['user']='0';
+    $data['year']='0';
+     return MoView::view( 'workadmin.workerdays.index',$data,'data',$request->is('cors/*'));
 
-        if (!empty($keyword)) {
-            $workers = Worker::where('user_id', 'LIKE', "%$keyword%")
-				->orWhere('name', 'LIKE', "%$keyword%")
-				->orWhere('cim', 'LIKE', "%$keyword%")
-				->orWhere('tel', 'LIKE', "%$keyword%")
-				->orWhere('birth', 'LIKE', "%$keyword%")
-				->orWhere('ado', 'LIKE', "%$keyword%")
-				->orWhere('tb', 'LIKE', "%$keyword%")
-				->orWhere('start', 'LIKE', "%$keyword%")
-				->orWhere('end', 'LIKE', "%$keyword%")
-				->orWhere('statusz', 'LIKE', "%$keyword%")
-				->paginate($perPage);
-        } else {
-            $workers = Worker::paginate($perPage);
-        }
-
-        return view('workadmin.workers.index', compact('workers'));
     }
 
     /**
@@ -59,17 +48,7 @@ class WorkersController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-			//'name' => 'required|max:200',
-			'cim' => 'required|max:200',
-			'tel' => 'max:50',
-			'birth' => 'date',
-			'ado' => 'string',
-			'tb' => 'string',
-			'start' => 'required|date',
-			'end' => 'date',
-			'statusz' => 'max:50'
-		]);
+        $this->validate($request, $this->$valid);
         $requestData = $request->all();
         
         Worker::create($requestData);
@@ -117,17 +96,7 @@ class WorkersController extends Controller
      */
     public function update($id, Request $request)
     {
-        $this->validate($request, [
-			'name' => 'required|max:200',
-			'cim' => 'required|max:200',
-			'tel' => 'max:50',
-			'birth' => 'date',
-			'ado' => 'string',
-			'tb' => 'string',
-			'start' => 'required|date',
-			'end' => 'date',
-			'statusz' => 'max:50'
-		]);
+        $this->validate($request, $this->$valid);
         $requestData = $request->all();
         
         $worker = Worker::findOrFail($id);

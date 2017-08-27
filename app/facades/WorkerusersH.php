@@ -1,10 +1,10 @@
 <?php
 namespace App\Facades; 
 use Illuminate\Support\Facades\Facade; 
-class Moview extends Facade 
+class WorkerusersH  extends Facade 
 { 
     protected static function getFacadeAccessor() 
     { 
-        return \App\handler\MoView::class;
+        return \App\Handler\WorkerusersH ::class;
     } 
 }
