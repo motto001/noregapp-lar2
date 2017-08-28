@@ -1,41 +1,80 @@
 <?php
-
 namespace App\Handler;
-
 use App\Http\Requests;
-//use App\Http\Controllers\Controller;
-
 use App\Workeruser;
 use App\Facades\MoView;
-
 use Session;
+use Carbon\Carbon;
 
-//class WorkerusersH extends Controller
 class WorkerusersH 
 {
+    public $days=['vasárnap','hétfő','kedd','szerda','csütörtök','péntek','szombat'];
 
-    public function getMounths($aktiv)
+    public function getMonths($aktiv='')
     {
-        $mounths=[       
-            1=>['name'=>'január','class'=>'','num'=>''],
-            2=>['name'=>'február','class'=>'','num'=>''],
-            3=>['name'=>'Március','class'=>'','num'=>''],
-            4=>['name'=>'Április','class'=>'','num'=>''],
-            5=>['name'=>'Május','class'=>'','num'=>''],
-            6=>['name'=>'Június','class'=>'','num'=>''],
-            7=>['name'=>'Július','class'=>'','num'=>''],
-            8=>['name'=>'Augusztus','class'=>'','num'=>''],
-            9=>['name'=>'Szeptember','class'=>'','num'=>''],
-            10=>['name'=>'Október','class'=>'','num'=>''],
-            11=>['name'=>'November','class'=>'','num'=>''],
-            12=>['name'=>'December','class'=>'','num'=>'']       
+        $class='btn btn-info btn-xs';
+        $aktivclass='btn btn-primary btn-xs';
+        $months=[       
+            1=>['name'=>'január','class'=>$class,'id'=>'1'],
+            2=>['name'=>'február','class'=>$class,'id'=>'2'],
+            3=>['name'=>'Március','class'=>$class,'id'=>'3'],
+            4=>['name'=>'Április','class'=>$class,'id'=>'4'],
+            5=>['name'=>'Május','class'=>$class,'id'=>'5'],
+            6=>['name'=>'Június','class'=>$class,'id'=>'6'],
+            7=>['name'=>'Július','class'=>$class,'id'=>'7'],
+            8=>['name'=>'Augusztus','class'=>$class,'id'=>'8'],
+            9=>['name'=>'Szeptember','class'=>$class,'id'=>'9'],
+            10=>['name'=>'Október','class'=>$class,'id'=>'10'],
+            11=>['name'=>'November','class'=>$class,'id'=>'11'],
+            12=>['name'=>'December','class'=>$class,'id'=>'12']       
         ];
-        $mounths[$aktiv]['class']='aktivmounth';
-        return $mounths;
+        if($aktiv!=''){ $months[$aktiv]['class']=$aktivclass;}
+       
+        return $months;
     }
-    public function getDays($dayT,$year='0',$mounth='0',$aktiv=0)
+
+    public function getDate($year='0',$month='0')
     {
-        
+        $current = new Carbon();
+        if($year=='0' && $month=='0'){$dt = Carbon::create($current->year,$current->month, 1, 0);}
+        elseif($year=='0'){           $dt = Carbon::create($current->year, $month , 1, 0); }
+        elseif($month=='0') {        $dt = Carbon::create($year, $current->month , 1, 0);}    
+        else{                         $dt = Carbon::create($year, $month , 1, 0);}
+        return $dt;
+    }
+    /*
+    public function pluszEmptyDay($dayT,$first=0)
+    {
+        if($first>0){
+            for ($i = 0; $i <= $first; $i++) {
+                $dayT[]=['class'=>'emptyday','weeknum'=>$i,'date'=>$i,'name'=>$i];
+            }
+        }                 
+        return $dayT;
+    }**/
+
+    public function getDays($dayT=[],$hourT=[],$year='0',$month='0')
+    {
+        $date=$this->getDate($year,$month);
+        $days=[    
+        ];
+      //  $days=$this->pluszEmptyDay( $days,$date->dayOfWeek);
+   
+        $aktMonth=$date->month;
+        while ($aktMonth == $date->month) { 
+            $days[$date->day]=[
+                'name'=>$this->days[$date->dayOfWeek],
+                'date'=>$date->day,
+                'weeknum'=>$date->dayOfWeek,
+                'class'=>'workday',
+
+
+            ];
+            if($date->dayOfWeek==6 || $date->dayOfWeek==0){$days[$date->day]['class']='weekness';}
+            $date->addDay();
+        }  
+
+
         return $days;
     }
     /**

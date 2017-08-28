@@ -13,7 +13,10 @@ use App\Facades\WorkerusersH;
 
 class WorkerdaysController extends Controller
 {
-    
+    protected $year=0;
+    protected $month=1;
+    protected $day=1;
+    protected $userid=0;
     /**
      * Display a listing of the resource.
      *
@@ -22,12 +25,26 @@ class WorkerdaysController extends Controller
     public function index(Request $request)
     {
     $data['workerusers']=WorkerusersH::getList($request,2); 
-    $data['mounth']='0';
-    $data['user']='0';
-    $data['year']='0';
+    $data['days']=WorkerusersH::getDays([],[],$this->year,$this->month);
+    $data['months']=WorkerusersH::getMonths($this->month);
+    $data['year']=$this->year;
+    $data['month']=$this->month;
+    $data['day']=$this->day;
+    $data['userid']=$this->userid;
      return MoView::view( 'workadmin.workerdays.index',$data,'data',$request->is('cors/*'));
 
     }
+    public function index2($year,$month,$day,$userid)
+    {
+        $this->year=$year;
+        $this->month=$month;
+        $this->day=$day;
+        $this->userid=$userid;
+        $request=new Request();
+        return  $this->index($request);
+    }
+
+
 
     /**
      * Show the form for creating a new resource.

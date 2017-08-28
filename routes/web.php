@@ -26,6 +26,7 @@ Route::group(['prefix' => '/manager'],function()
 //workadmin---------------------------------------------------------------
 Route::group(['prefix' => '/workadmin'],function()
 {
+    Route::get('/workerdays/{year}/{month}/{day}/{user}', 'Workadmin\\WorkerdaysController@index2');
     Route::resource('/workerdays', 'Workadmin\\WorkerdaysController');
     Route::resource('/worktimes', 'Workadmin\\WorktimesController');
     Route::resource('/days', 'Workadmin\\DaysController');
