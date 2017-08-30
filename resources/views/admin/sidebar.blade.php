@@ -3,35 +3,37 @@
  
             <div class="panel panel-default panel-flush">
                 <div class="panel-heading">
-                   User Manager
+                  Menü
                 </div>
 
                 <div class="panel-body">
                     <ul class="nav" role="tablist">
- @if (Auth::user()->hasRole('user'))                 
-                            <li role="admin">
-                                <a href="{{ url('/user/password') }}">
-                                    Jelszó változtatás
-                                </a>
-                            </li>
-                        <li role="admin">
-                                <a href="{{ url('/user/email') }}">
-                                    Email változtatás
+ @if (Auth::user()->hasRole('workadmin'))                 
+                    
+ <li role="manager">
+                                <a href="{{ url('/workadmin/workerdays') }}">
+                                    Munkaidő
                                 </a>
                             </li>
 
-                            <li role="admin">
+
+
+
+
+
+                            
+@elseif(Auth::user()->hasRole('worker'))
+<li role="admin">
                                 <a href="{{ url('/user/personal') }}">
-                                   Személyes adataok
+                                   Személyes adatok
                                 </a>
                             </li>
+
                              <li role="admin">
                                 <a href="{{ url('/user/worktime') }}">
-                                   Munkaidők 
+                                   Munkaidő
                                 </a>
                             </li>
-
-
 
  @endif
  @if (Auth::user()->hasRole('manager'))  
@@ -55,16 +57,13 @@
 
  @endif
  @if (Auth::user()->hasRole('workadmin'))  
-                            <li role="manager">
-                                <a href="{{ url('/workadmin/worktimes') }}">
-                                    Munkaidő
-                                </a>
-                            </li>
+                           
                             <li role="manager">
                                 <a href="{{ url('/workadmin/days') }}">
                                     Napok
                                 </a>
                             </li>
+                     
                          
  @endif
 
@@ -99,6 +98,8 @@
                     </ul>
                 </div>
             </div>
+
+
        @if (Auth::user()->hasRole('admin'))  
             <div class="panel panel-default panel-flush">
                 <div class="panel-heading">

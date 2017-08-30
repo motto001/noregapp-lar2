@@ -9,8 +9,8 @@ use App\Workeruser;
 use App\Worker;
 use App\User;
 use Illuminate\Http\Request;
-use App\Facades\MoView;
-use App\Facades\WorkerusersH;
+use App\facades\MoView;
+use App\facades\WorkerusersH;
 use Session;
 
 class WorkerusersController extends Controller
@@ -90,6 +90,9 @@ protected $valid=[
     public function show($id)
     {
         $workeruser = Workeruser::findOrFail($id);
+        $user=User::findOrFail($workeruser['user_id']);
+        $workeruser['name']=$user['name'];
+        $workeruser['email']=$user['email'];
 
         return view('manager.workerusers.show', compact('workeruser'));
     }

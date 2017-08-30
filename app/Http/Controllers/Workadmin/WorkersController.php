@@ -5,12 +5,31 @@ namespace App\Http\Controllers\Workadmin;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
+use App\Workeruser;
 use App\Worker;
+use App\User;
 use Illuminate\Http\Request;
+use App\Facades\MoView;
+use App\Facades\WorkerusersH;
 use Session;
 
 class WorkersController extends Controller
 {
+protected $valid=[
+    'name' => 'required|max:200',
+    'email' => 'required|email',
+    'password' => 'required|min:6|max:100',
+    'cim' => 'required|max:200',
+    'tel' => 'max:50',
+    'birth' => 'date',
+    'ado' => 'string',
+    'tb' => 'string',
+    'start' => 'required|date',
+    'end' => 'date',
+    'statusz' => 'max:50'
+];
+
+
     /**
      * Display a listing of the resource.
      *
@@ -18,67 +37,12 @@ class WorkersController extends Controller
      */
     public function index(Request $request)
     {
-        $keyword = $request->get('search');
-        $perPage = 25;
-
-        if (!empty($keyword)) {
-            $workers = Worker::where('user_id', 'LIKE', "%$keyword%")
-				->orWhere('name', 'LIKE', "%$keyword%")
-				->orWhere('cim', 'LIKE', "%$keyword%")
-				->orWhere('tel', 'LIKE', "%$keyword%")
-				->orWhere('birth', 'LIKE', "%$keyword%")
-				->orWhere('ado', 'LIKE', "%$keyword%")
-				->orWhere('tb', 'LIKE', "%$keyword%")
-				->orWhere('start', 'LIKE', "%$keyword%")
-				->orWhere('end', 'LIKE', "%$keyword%")
-				->orWhere('statusz', 'LIKE', "%$keyword%")
-				->paginate($perPage);
-        } else {
-            $workers = Worker::paginate($perPage);
-        }
-
-        return view('workadmin.workers.index', compact('workers'));
+       $workerusers=WorkerusersH::getList($request,2);
+        return view('workadmin.workers.index', compact('workerusers'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function create()
-    {
-        return view('workadmin.workers.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
-    public function store(Request $request)
-    {
-        $this->validate($request, [
-			//'name' => 'required|max:200',
-			'cim' => 'required|max:200',
-			'tel' => 'max:50',
-			'birth' => 'date',
-			'ado' => 'string',
-			'tb' => 'string',
-			'start' => 'required|date',
-			'end' => 'date',
-			'statusz' => 'max:50'
-		]);
-        $requestData = $request->all();
-        
-        Worker::create($requestData);
-
-        Session::flash('flash_message', 'Worker added!');
-
-        return redirect('workadmin/workers');
-    }
-
+    
+ 
     /**
      * Display the specified resource.
      *
@@ -88,69 +52,12 @@ class WorkersController extends Controller
      */
     public function show($id)
     {
-        $worker = Worker::findOrFail($id);
+        $workeruser = Workeruser::findOrFail($id);
+        $user=User::findOrFail($workeruser['user_id']);
+        $workeruser['name']=$user['name'];
+        $workeruser['email']=$user['email'];
 
-        return view('workadmin.workers.show', compact('worker'));
+        return view('workadmin.workers.show', compact('workeruser'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit($id)
-    {
-        $worker = Worker::findOrFail($id);
-
-        return view('workadmin.workers.edit', compact('worker'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
-    public function update($id, Request $request)
-    {
-        $this->validate($request, [
-			'name' => 'required|max:200',
-			'cim' => 'required|max:200',
-			'tel' => 'max:50',
-			'birth' => 'date',
-			'ado' => 'string',
-			'tb' => 'string',
-			'start' => 'required|date',
-			'end' => 'date',
-			'statusz' => 'max:50'
-		]);
-        $requestData = $request->all();
-        
-        $worker = Worker::findOrFail($id);
-        $worker->update($requestData);
-
-        Session::flash('flash_message', 'Worker updated!');
-
-        return redirect('workadmin/workers');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
-    public function destroy($id)
-    {
-        Worker::destroy($id);
-
-        Session::flash('flash_message', 'Worker deleted!');
-
-        return redirect('workadmin/workers');
-    }
 }

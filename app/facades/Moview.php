@@ -1,7 +1,7 @@
 <?php
-namespace App\Facades; 
+namespace App\facades; 
 use Illuminate\Support\Facades\Facade; 
-class Moview extends Facade 
+class MoView extends Facade 
 { 
     protected static function getFacadeAccessor() 
     { 

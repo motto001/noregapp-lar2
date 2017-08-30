@@ -2,7 +2,7 @@
 namespace App\Handler;
 use Illuminate\Http\Request;
 
-class MoView
+class Moview
 {
 static public $GOB;
   public  $request;

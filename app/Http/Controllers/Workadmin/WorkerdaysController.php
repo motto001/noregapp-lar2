@@ -5,11 +5,14 @@ namespace App\Http\Controllers\Workadmin;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Workeruser;
-//use App\Worker;
+use App\Worktime;
 use Illuminate\Http\Request;
 use Session;
-use App\Facades\MoView;
-use App\Facades\WorkerusersH;
+use App\facades\MoView;
+use App\facades\WorkerusersH;
+use Carbon\Carbon;
+//use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\User;
 
 class WorkerdaysController extends Controller
 {
@@ -17,21 +20,31 @@ class WorkerdaysController extends Controller
     protected $month=1;
     protected $day=1;
     protected $userid=0;
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+
+     public function baseData($request)
+     {
+        $data['workerusers']=WorkerusersH::getList($request,4); 
+        $data['days']=WorkerusersH::getDays([],[],$this->year,$this->month);
+        $data['months']=WorkerusersH::getMonths($this->month);
+        $data['year']=$this->year;
+        $data['month']=$this->month;
+        $data['day']=$this->day;
+        $data['userid']=$this->userid;
+        if($this->userid>0){$data['username']=User::find($this->userid)->name;}
+        else{$data['username']='noname';}
+        return $data;
+     }
+
     public function index(Request $request)
     {
-    $data['workerusers']=WorkerusersH::getList($request,2); 
-    $data['days']=WorkerusersH::getDays([],[],$this->year,$this->month);
-    $data['months']=WorkerusersH::getMonths($this->month);
-    $data['year']=$this->year;
-    $data['month']=$this->month;
-    $data['day']=$this->day;
-    $data['userid']=$this->userid;
-     return MoView::view( 'workadmin.workerdays.index',$data,'data',$request->is('cors/*'));
+     $current = new Carbon();    
+    $this->year= $current->year;
+    $this->month= $current->month; 
+    $this->day= $current->day; 
+
+    $data=$this->baseData($request);
+    // return MoView::view( 'workadmin.workerdays.days',$data,'data',$request->is('cors/*'));
+    return view('workadmin.workerdays.days', compact('data'));
 
     }
     public function index2($year,$month,$day,$userid)
@@ -41,7 +54,9 @@ class WorkerdaysController extends Controller
         $this->day=$day;
         $this->userid=$userid;
         $request=new Request();
-        return  $this->index($request);
+        $data=$this->baseData($request);
+     // return MoView::view( 'workadmin.workerdays.days',$data,'data',$request->is('cors/*'));
+    return view('workadmin.workerdays.days', compact('data'));
     }
 
 
@@ -51,9 +66,17 @@ class WorkerdaysController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function create()
+    public function create($year,$month,$day,$userid)
     {
-        return view('workadmin.workers.create');
+        $this->year=$year;
+        $this->month=$month;
+        $this->day=$day;
+        $this->userid=$userid;
+        $request=new Request();
+        $data=$this->baseData($request);
+        $data['worktimes']=  Worktime::where('worker_id', '=', $userid)->get();
+    // return MoView::view( 'workadmin.workerdays.days',$data,'data',$request->is('cors/*'));
+    return view('workadmin.workerdays.create', compact('data'));
     }
 
     /**
@@ -63,16 +86,52 @@ class WorkerdaysController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function store(Request $request)
+
+
+
+
+/*
+public function store($year,$month,$day,$userid)
     {
-        $this->validate($request, $this->$valid);
+        $this->validate($request, [
+			'worker_id' => 'required|integer',
+			'date' => 'required|date',
+			'start' => 'date_format:H:i',
+			'end' => 'date_format:H:i',
+			'hour' => 'required|date_format:H',
+			'type' => 'required'
+        ]);
+        $request=new Request();
         $requestData = $request->all();
+        print_r($requestData);
         
-        Worker::create($requestData);
+        Worktime::create($requestData);
 
-        Session::flash('flash_message', 'Worker added!');
+        Session::flash('flash_message', 'Worktime added!');
 
-        return redirect('workadmin/workers');
+        return redirect('/workadmin/workerdays/create/'.$year.'/'.$month.'/'.$day.'/'.$userid);
+    }*/
+
+     
+    public function store(Request $request)
+    {/*
+        $this->validate($request, [
+			'worker_id' => 'required|integer',
+			'date' => 'required|date',
+			'start' => 'date_format:H:i',
+			'end' => 'date_format:H:i',
+			'hour' => 'required|date_format:H',
+			'type' => 'required'
+        ]);*/
+      
+        $requestData = $request->all();
+        print_r($requestData);
+        
+        Worktime::create($requestData);
+
+        Session::flash('flash_message', 'Worktime added!');
+
+        return redirect($_SERVER['HTTP_REFERER']);
     }
 
     /**
@@ -133,10 +192,10 @@ class WorkerdaysController extends Controller
      */
     public function destroy($id)
     {
-        Worker::destroy($id);
+        Worktime::destroy($id);
+        
+         Session::flash('flash_message', 'Worktime deleted!');
 
-        Session::flash('flash_message', 'Worker deleted!');
-
-        return redirect('workadmin/workers');
+        return redirect($_SERVER['HTTP_REFERER']);
     }
 }

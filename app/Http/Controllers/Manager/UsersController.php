@@ -30,7 +30,7 @@ class UsersController extends Controller
         } else {
             $users = User::paginate($perPage);
         }
-\App\Lib\MoView::$GOB['err2']='gggggggggggggg';
+///MoView::$GOB['err2']='gggggggggggggg';
         //return view('manager.users.index', compact('users'));
   // return  \App\Lib\MoView::view( 'manager.users.index',$users,'users');
     return  MoView::view( 'manager.users.index',$users,'users');

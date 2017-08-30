@@ -4,139 +4,83 @@ namespace App\Http\Controllers\Worker;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
+use App\Workeruser;
 use App\Worktime;
 use Illuminate\Http\Request;
 use Session;
-
+use App\facades\MoView;
+use App\facades\WorkerusersH;
+use Carbon\Carbon;
+//use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\User;
+use Auth;
 class WorktimesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+    protected $year=0;
+    protected $month=1;
+    protected $day=1;
+    protected $userid=0;
+
+     public function baseData($request)
+     {
+        $data['workerusers']=WorkerusersH::getList($request,4); 
+        $data['days']=WorkerusersH::getDays([],[],$this->year,$this->month);
+        $data['months']=WorkerusersH::getMonths($this->month);
+        $data['year']=$this->year;
+        $data['month']=$this->month;
+        $data['day']=$this->day;
+        $data['userid']=$this->userid;
+        if($this->userid>0){$data['username']=User::find($this->userid)->name;}
+        else{$data['username']='noname';}
+        return $data;
+     }
+
     public function index(Request $request)
     {
-        $keyword = $request->get('search');
-        $perPage = 25;
+     $current = new Carbon();    
+    $this->year= $current->year;
+    $this->month= $current->month; 
+    $this->day= $current->day; 
 
-        if (!empty($keyword)) {
-            $worktimes = Worktime::where('user_id', 'LIKE', "%$keyword%")
-				->orWhere('year', 'LIKE', "%$keyword%")
-				->orWhere('mounth', 'LIKE', "%$keyword%")
-				->orWhere('day', 'LIKE', "%$keyword%")
-				->orWhere('hour', 'LIKE', "%$keyword%")
-				->orWhere('type', 'LIKE', "%$keyword%")
-				->paginate($perPage);
-        } else {
-            $worktimes = Worktime::paginate($perPage);
-        }
+    $data=$this->baseData($request);
+    // return MoView::view( 'worker.worktimes.days',$data,'data',$request->is('cors/*'));
+    return view('worker.worktimes.days', compact('data'));
 
-        return view('worker.worktimes.index', compact('worktimes'));
     }
+    public function index2($year,$month,$day,$userid)
+    {
+        $this->year=$year;
+        $this->month=$month;
+        $this->day=$day;
+        $this->userid=Auth::id();
+        $request=new Request();
+        $data=$this->baseData($request);
+       // return MoView::view( 'worker.worktimes.days',$data,'data',$request->is('cors/*'));
+        return view('worker.worktimes.days', compact('data'));
+       // return  $this->index($request);
+    }
+
+
 
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\View\View
      */
-    public function create()
+    public function create($year,$month,$day,$userid)
     {
-        return view('worker.worktimes.create');
+        $this->year=$year;
+        $this->month=$month;
+        $this->day=$day;
+        $this->userid=Auth::id();
+        $request=new Request();
+        $data=$this->baseData($request);
+        $data['worktimes']=  Worktime::where('worker_id', '=', $userid)->get();
+       // return view('workadmin.workerdays.create');
+      // return MoView::view( 'worker.worktimes.create',$data,'data',$request->is('cors/*'));
+      return view('worker.worktimes.create', compact('data'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
-    public function store(Request $request)
-    {
-        $this->validate($request, [
-			'year' => 'required|min:2000|max:2100',
-			'mounth' => 'required|max:12',
-			'day' => 'required|max:31',
-			'hour' => 'max:24'
-		]);
-        $requestData = $request->all();
-        
-        Worktime::create($requestData);
-
-        Session::flash('flash_message', 'Worktime added!');
-
-        return redirect('worker/worktimes');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     *
-     * @return \Illuminate\View\View
-     */
-    public function show($id)
-    {
-        $worktime = Worktime::findOrFail($id);
-
-        return view('worker.worktimes.show', compact('worktime'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit($id)
-    {
-        $worktime = Worktime::findOrFail($id);
-
-        return view('worker.worktimes.edit', compact('worktime'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
-    public function update($id, Request $request)
-    {
-        $this->validate($request, [
-			'year' => 'required|min:2000|max:2100',
-			'mounth' => 'required|max:12',
-			'day' => 'required|max:31',
-			'hour' => 'max:24'
-		]);
-        $requestData = $request->all();
-        
-        $worktime = Worktime::findOrFail($id);
-        $worktime->update($requestData);
-
-        Session::flash('flash_message', 'Worktime updated!');
-
-        return redirect('worker/worktimes');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
-    public function destroy($id)
-    {
-        Worktime::destroy($id);
-
-        Session::flash('flash_message', 'Worktime deleted!');
-
-        return redirect('worker/worktimes');
-    }
+   
+ 
 }

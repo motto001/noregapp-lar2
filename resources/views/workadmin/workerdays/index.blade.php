@@ -1,4 +1,5 @@
-@extends('layouts.backend') @section('content')
+@extends('layouts.backend') 
+@section('content')
 <style>
 .weekness{
 color:red;
@@ -49,7 +50,7 @@ border: 1px solid silver;
                 <div class="panel-body">
 
 
-                    {!! Form::open(['method' => 'GET', 'url' => '/manager/workerusers', 'class' => 'navbar-form navbar-right', 'role' => 'search']) !!}
+                    {!! Form::open(['method' => 'GET', 'url' => '/manager/workerusers/'.$data['year'].'/'.$data['month'].'/'.$data['day'].'/'.$data['userid'], 'class' => 'navbar-form navbar-right', 'role' => 'search']) !!}
                     <div class="input-group">
                         <input type="text" class="form-control" name="search" placeholder="Search...">
                         <span class="input-group-btn">
@@ -61,28 +62,35 @@ border: 1px solid silver;
                     {!! Form::close() !!}
 
             
-                    <div class="table-responsive">
+                    <ul class="flex-container nowrap"  style="justify-content:flex-start"> 
 
                         @foreach($data['workerusers'] as $item)
-                        <div style="float:left; border: 2px solid grey;padding:10px;margin:5px;">
+                           
+   
+                                <li class="flex-item " style="width:20%;border: 1px solid 
+                             @if($data['userid']==$item->user_id )
+                                red
+                                @else
+                                silver
+                                @endif
+                                 " >
 
-                            <span>{{ $item->user_id }}</span>
-                            <div>{{ $item->user->name}}</div>
-                            <div>{{ $item->user->email }}</div>
-
-
-                            <a href="{{ url('/manager/workerusers/' . $item->id) }}" 
-                            title="View Workeruser"><button class="btn btn-info btn-xs">
-                            <i class="fa fa-eye" aria-hidden="true"></i> View</button>
-                            </a>
-                            <a href="{{ url('/workadmin/workerdays/'.$data['year'].'/'.$data['month'].'/'.$data['day'].'/'.$item->user_id) }}"
-                             title="Edit Workeruser"><button class="btn btn-primary btn-xs">
-                             <i class="fa fa-pencil-square-o" aria-hidden="true"></i> kiválaszt</button>
-                             </a>
-
-                        </div>
+                                    <span>{{ $item->user_id }} </span>
+                                    <div> {{ $item->user->name}}</div>
+                                    <div style="display: flex;width:100%;justify-content:flex-end; ">            
+                                        <a href="{{ url('/manager/workerusers/' . $item->id) }}" 
+                                        title="View Workeruser"><button class="btn btn-info btn-xs">
+                                        <i class="fa fa-eye" aria-hidden="true"></i> </button>
+                                        </a>
+                                        <a href="{{ url('/workadmin/workerdays/'.$data['year'].'/'.$data['month'].'/'.$data['day'].'/'.$item->user_id) }}"
+                                        title="Edit Workeruser"><button class="btn btn-primary btn-xs">
+                                        <i class="fa fa-checked" aria-hidden="true">Kijelöl</i></button>
+                                        </a>
+                                    </div>            
+                                </li>       
+ 
                         @endforeach
-                    </div>    
+                     </ul>
 
                         <div style="clear: both;"></div>
                         <div class="pagination-wrapper"> {!! $data['workerusers']->appends(['search' => Request::get('search')])->render() !!}</div>
@@ -96,54 +104,10 @@ border: 1px solid silver;
                         </a>
                         @endforeach
 <hr>                        
-                        <div style="clear:both">
-
-                        </div>
-                        <ul class="flex-container nowrap">
-                            <li class="flex-item "  style="height:40px">Hétfő</li>
-                            <li class="flex-item "  style="height:40px">Kedd</li>
-                            <li class="flex-item "  style="height:40px">Szerda</li>
-                            <li class="flex-item "  style="height:40px">Csütörtök</li>
-                            <li class="flex-item "  style="height:40px">Péntek</li>
-                            <li class="flex-item "  style="height:40px; color:red;">Szombat</li>
-                            <li class="flex-item "  style="height:40px;color:red;">Vasárnap</li>
-
-                        </ul>
-                        @foreach($data['days'] as $dt) 
-                             @if($dt['weeknum']==1 || $dt['date']==1)
-                             <ul class="flex-container nowrap"
-                             @if($dt['date']>21)
-                             style="justify-content:flex-start"
-                              @endif
-                             >
-                             @endif
-                                
-                               
-                                    <li class="flex-item {{ $dt['class'] }}">
-                                     
-                                
-
-                                        <span>{{ $dt['date'] }}</span>
-                            <div style="display: flex;width:100%;justify-content:flex-end;border: 1px solid silver; ">            
-                            <a href="{{ url('/manager/workerusers/' . $item->id) }}" 
-                            title="View Workeruser"><button class="btn btn-info btn-xs">
-                            <i class="fa fa-eye" aria-hidden="true"></i> </button>
-                            </a>
-                            <a href="{{ url('/workadmin/workerdays/'.$data['year'].'/'.$data['month'].'/'.$data['day'].'/'.$item->user_id) }}"
-                             title="Edit Workeruser"><button class="btn btn-primary btn-xs">
-                             <i class="fa fa-pencil-square-o" aria-hidden="true">szerk</i></button>
-                             </a>
-                             </div> 
-                                        
-                                    </li>
-                                
-                            @if($dt['weeknum']==0 )
-                            </ul >
-                            @endif
-                                
-                         @endforeach
-                        
-                    
+                        <div style="clear:both"></div>
+                       @yield('subcontent')
+                     
+                     
 
                 </div>
             </div>
