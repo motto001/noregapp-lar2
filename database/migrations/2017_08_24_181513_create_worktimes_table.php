@@ -12,16 +12,24 @@ class CreateWorktimesTable extends Migration
      */
     public function up()
     {
+        /*
+        id,name(alap,túlóra,túlóra éjszakai,ledolg,csúsztatás),
+        szorzó(elszámoláshoz),fixplus,color,note 
+        */
         Schema::create('worktimes', function(Blueprint $table) {
            // $table->engine = 'InnoDB';
             $table->increments('id');
             $table->integer('day_id')->unsigned();
             $table->foreign('day_id')->references('id')->on('days');
+            $table->integer('type_id');//worktime type
+            $table->foreign('type_id')->references('id')->on('types');
+
             $table->time('start');
+            $table->time('end');
             $table->decimal('hour', 3, 1);
-            $table->string('type');
+            
             $table->integer('pub')->default(0); 
-            $table->timestamps();
+    
         });
     }
 

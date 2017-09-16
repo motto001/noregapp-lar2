@@ -13,15 +13,20 @@ class CreateDayTypesTable extends Migration
      */
     public function up()
     { 
+        /*
+        napok tipusának beállítása (szabadság ,ünnepnap,stb)
+        id,name,szorzo,fixplusz,color,note
+        */
+
         Schema::create('day_types', function(Blueprint $table) {
         // $table->engine = 'InnoDB';id,name,szorzo,fixplusz,color,note
         $table->increments('id');
       
          $table->string('name');
-         $table->decimal('szorzo', 4, 2);
-         $table->integer('fixplusz');
-         $table->string('color');
-         $table->string('note');
+         $table->decimal('szorzo', 4, 2)->default(1);
+         $table->integer('fixplusz')->nullable();
+         $table->string('color')->nullable();
+         $table->string('note')->nullable();
          $table->integer('pub')->default(0); 
          $table->timestamps();
      });

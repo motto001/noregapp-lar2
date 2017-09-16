@@ -3,7 +3,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateFreedaysTable extends Migration
+class CreateDayChTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,14 +12,16 @@ class CreateFreedaysTable extends Migration
      */
     public function up()
     {
-        Schema::create('freedays', function(Blueprint $table) {
+        Schema::create('day_ch', function(Blueprint $table) {
             $table->increments('id');
             $table->integer('worker_id')->unsigned();
             $table->foreign('worker_id')->references('id')->on('workers');
+            $table->integer('day_id')->unsigned();
+            $table->foreign('day_id')->references('id')->on('day_types');
             $table->date('datum');
-            $table->integer('pub');
-            $table->varchar('workernote');
-            $table->varchar('mangernote');
+            $table->integer('pub')->default(1);
+            $table->string('workernote')->nullable();
+            $table->string('mangernote')->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +33,6 @@ class CreateFreedaysTable extends Migration
      */
     public function down()
     {
-        Schema::drop('freedays');
+        Schema::drop('day_ch');
     }
 }
