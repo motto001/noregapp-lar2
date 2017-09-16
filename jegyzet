@@ -1,0 +1,52 @@
+
+workers:
+kapcsolatok:user_id, satus_id,workrole_id,timeframe_id,cassa_id(költséghely),workertype_id,
+mezők: őrabér,havibér,timframe_start,(személyes adatok)
+
+days:
+worker_id(nemkötelezö),datum,type_id
+
+
+days_ch:
+worker_id,tipus változás kérelmek(szabi) jóváhagyás után kerülnek át a days-be
+
+day_types:
+napok tipusának beállítása (szabadság ,ünnepnap,stb)
+id,name,szorzo,fixplusz,color,note
+
+statuses:
+Állandó,diák ,részmunkaidő stb
+
+time_units:
+egység(nap,hónap),hosz, óraszám,elszamtip(pernap,permunkanap,perframe)
+
+time_frames:
+egység(nap,hónap),hosz, óraszám,elszamtip(pernap,permunkanap,perframe)
+
+workrole:
+munkarend pl:id:1  name:kétmúszak, unit:hét unitlong:1 (hány unit egy ciklus)
+
+workrole_cycl
+a workrole munkarendjei. pl.: workrole_id:1,ciklus_num:1, start:06.00 end 14.30 hour:8,type_id:1
+                              workrole_id:1,ciklus_num:2, start:14.00 end 16.30 hour:2,type_id:5
+                              workrole_id:1,ciklus_num:2, start:77.00 end 22.30 hour:8,type_id:3
+ workrole_cycl_unit
+ cycl_id,                             
+
+config:
+zárás: 0:hónap utolsó napja,egyéb szám: dátum  
+
+years: 
+új év hozzáadásakor lekérdezi az ünnepnapokat és beirja a days táblába
+
+month
+új hónap hozzáadásakor beirja a dolgozók munkarendjét  
+
+
+worktime:
+day_id,type_id,start,end, hour ,note,pub
+
+worktime_type
+id,name(alap,túlóra,túlóra éjszakai,ledolg,csúsztatás),
+szorzó(elszámoláshoz),fixplus,color,note 
+                     

@@ -1,0 +1,7 @@
+{
+    "terminal.integrated.shell.windows": "C:\\Windows\\Sysnative\\cmd.exe",
+    "files.autoSave": "afterDelay",
+    "git.enableSmartCommit": true,
+    "php.executablePath": "C:\\wamp64\\bin\\php\\php7.0.10\\php.exe",
+    "php.validate.executablePath": "C:\\wamp64\\bin\\php\\php7.0.10\\php.exe"
+}

@@ -1,0 +1,4 @@
+php artisan crud:generate Status --fields="name#string; note#text" --view-path=manager --controller-namespace=manager --route-group=manager
+php artisan crud:generate Workertype --fields="name#string; note#text" --view-path=manager --controller-namespace=manager --route-group=manager
+php artisan crud:generate Freeday --fields="worker_id#integer; datum#date; pub#integer" --view-path=manager --controller-namespace=manager --route-group=manager
+php artisan crud:generate Timeunit --fields="name#string; note#text" --view-path=manager --controller-namespace=manager --route-group=manager

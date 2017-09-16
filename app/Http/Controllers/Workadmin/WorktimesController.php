@@ -25,7 +25,6 @@ class WorktimesController extends Controller
             $worktimes = Worktime::where('worker_id', 'LIKE', "%$keyword%")
 				->orWhere('date', 'LIKE', "%$keyword%")
 				->orWhere('start', 'LIKE', "%$keyword%")
-				->orWhere('end', 'LIKE', "%$keyword%")
 				->orWhere('hour', 'LIKE', "%$keyword%")
 				->orWhere('type', 'LIKE', "%$keyword%")
 				->paginate($perPage);

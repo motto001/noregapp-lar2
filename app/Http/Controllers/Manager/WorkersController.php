@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Worker;
 use Illuminate\Http\Request;
 use Session;
+use App\Facades\MoView;
 
 class WorkersController extends Controller
 {
@@ -37,7 +38,8 @@ class WorkersController extends Controller
             $workers = Worker::paginate($perPage);
         }
 
-        return view('manager.workers.index', compact('workers'));
+       // return view('manager.workers.index', compact('workers'));
+        return  MoView::view( 'manager.workers.index',$workers,'uworkers');
     }
 
     /**
@@ -90,7 +92,8 @@ class WorkersController extends Controller
     {
         $worker = Worker::findOrFail($id);
 
-        return view('manager.workers.show', compact('worker'));
+        //return view('manager.workers.show', compact('worker'));
+        return  MoView::view( 'manager.workers.show',$worker,'uworker');
     }
 
     /**

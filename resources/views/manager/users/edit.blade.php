@@ -16,7 +16,11 @@
                         @if ($errors->any())
                             <ul class="alert alert-danger">
                                 @foreach ($errors->all() as $error)
+                                    @if(isset($error[0]))
+                                    @php ($error="tomb")
+                                    @else
                                     <li>{{ $error }}</li>
+                                    @endif
                                 @endforeach
                             </ul>
                         @endif

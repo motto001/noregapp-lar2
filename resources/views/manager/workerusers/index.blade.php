@@ -10,7 +10,7 @@
                     <div class="panel-heading">Workerusers</div>
                     <div class="panel-body">
                         <a href="{{ url('/manager/workerusers/create') }}" class="btn btn-success btn-sm" title="Add New Workeruser">
-                            <i class="fa fa-plus" aria-hidden="true"></i> Add New
+                            <i class="fa fa-plus" aria-hidden="true"></i> Add New {{$baseUrl}}
                         </a>
 
                         {!! Form::open(['method' => 'GET', 'url' => '/manager/workerusers', 'class' => 'navbar-form navbar-right', 'role' => 'search'])  !!}

@@ -47,6 +47,26 @@
                                     Felhasználók
                                 </a>
                             </li>
+ </li>
+                              <li role="manager">
+                                <a href="{{ url('/manager/status') }}">
+                                    Dolgozói státusz
+                                </a>
+                            </li>
+
+ </li>
+                              <li role="manager">
+                                <a href="{{ url('/manager/workertype') }}">
+                                    Dolgozói csoportok
+                                </a>
+                            </li>
+ </li>
+                              <li role="manager">
+                                <a href="{{ url('/manager/users') }}">
+                                    Felhasználók
+                                </a>
+                            </li>
+                            
 
 @elseif (Auth::user()->hasRole('workadmin'))
                         <li role="manager">

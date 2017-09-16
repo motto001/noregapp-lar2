@@ -4,7 +4,8 @@ use Illuminate\Http\Request;
 
 class Moview
 {
-static public $GOB;
+static public $error='';
+static public $message='';
   public  $request;
 function __construct(Request $request) {
     $this->request=$request;
@@ -19,10 +20,11 @@ function __construct(Request $request) {
     $$dataname=$data;
 
      // $cors=$this->request->is('cors/*');
-      if (false) {
+      if ($this->request->is('json/*')) {
 
          $json= $data->toArray();
-         $json['err']=self::$GOB;
+         $json['error']=self::$error;
+         $json['message']=self::$message;
             return response()->json($json,200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
         }
         else{

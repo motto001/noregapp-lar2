@@ -4,20 +4,20 @@ namespace App\Http\Controllers\Manager;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
-use App\Workeruser;
 use App\Worker;
 use App\User;
 use Illuminate\Http\Request;
 use App\facades\MoView;
-use App\facades\WorkerusersH;
+//use App\facades\WorkerusersH;
+use Illuminate\Support\Facades\View;
 use Session;
-
 class WorkerusersController extends Controller
 {
+use SoftDeletes;   
 protected $valid=[
+    //'user_id'=>'required|integer',
     'name' => 'required|max:200',
-    'email' => 'required|email',
+    'email' => 'required|email|unique:users,email',
     'password' => 'required|min:6|max:100',
     'cim' => 'required|max:200',
     'tel' => 'max:50',
@@ -28,7 +28,19 @@ protected $valid=[
     'end' => 'date',
     'statusz' => 'max:50'
 ];
+protected $baseUrl='manager/workeruser/';
 
+public function __construct(){
+    $request=new Request();
+
+    if ($request->is('json/*')) {
+        $this->baseUrl='json/'. $this->baseUrl;
+    }
+  //  config('moapp.baseUrl', $this->baseUrl);
+    \Config::set('moapp.baseUrl', $this->baseUrl );
+    View::share('baseUrl', config('moapp.baseUrl'));
+
+}
 
     /**
      * Display a listing of the resource.
@@ -37,8 +49,29 @@ protected $valid=[
      */
     public function index(Request $request)
     {
-       $workerusers=WorkerusersH::getList($request,2);
+
+        $keyword = $request->get('search');
+        $perPage = 25;
+
+        if (!empty($keyword)) {
+            $workerusers = Worker::with('user')->where('user_id', 'LIKE', "%$keyword%")
+			//	->orWhere('name', 'LIKE', "%$keyword%")
+				->orWhere('cim', 'LIKE', "%$keyword%")
+				->orWhere('tel', 'LIKE', "%$keyword%")
+				->orWhere('birth', 'LIKE', "%$keyword%")
+				->orWhere('ado', 'LIKE', "%$keyword%")
+				->orWhere('tb', 'LIKE', "%$keyword%")
+				->orWhere('start', 'LIKE', "%$keyword%")
+				->orWhere('end', 'LIKE', "%$keyword%")
+				->orWhere('statusz', 'LIKE', "%$keyword%")
+				->paginate($perPage);
+        } else {
+            $workerusers = Worker::with('user')->paginate($perPage);
+        }
+
+  
         return view('manager.workerusers.index', compact('workerusers'));
+        //return  MoView::view( 'manager.workerusers.index',$workerusers,'workerusers');
     }
 
     /**
@@ -48,7 +81,8 @@ protected $valid=[
      */
     public function create()
     {
-        return view('manager.workerusers.create');
+        $workerusers['baseUrl']=$this->baseUrl;
+        return view('manager.workerusers.create', compact('workerusers'));
     }
 
     /**
@@ -61,23 +95,18 @@ protected $valid=[
     public function store(Request $request)
     {
         $this->validate($request, $this->valid);
-      
 
-       $userData = $request->only(['name', 'email']);
-       $userData['password'] = bcrypt($request->password);
-      
+        $userData = $request->only(['name', 'email']); 
         $user = new User($userData);
-       $user->save();
+        $user->save();
 
         $workerData = $request->except(['name', 'password','email']);    
-    
-       $workerData['user_id']=$user->id;
-      
+        $workerData['user_id']=$user->id;
         $user->Workeruser()->create($workerData);
 
         Session::flash('flash_message', 'Workeruser added!');
-
         return redirect('manager/workerusers');
+
     }
 
     /**
@@ -89,12 +118,12 @@ protected $valid=[
      */
     public function show($id)
     {
-        $workeruser = Workeruser::findOrFail($id);
-        $user=User::findOrFail($workeruser['user_id']);
-        $workeruser['name']=$user['name'];
-        $workeruser['email']=$user['email'];
-
-        return view('manager.workerusers.show', compact('workeruser'));
+        $workeruser = Worker::with('user')->findOrFail($id);
+      //  $user=User::findOrFail($workeruser['user_id']);
+      //  $workers['name']=$user['name'];
+      //  $workers['email']=$user['email'];
+       // return view('manager.workerusers.show', compact('workeruser'));
+       return  MoView::view( 'manager.workerusers.show',$workeruser,'workeruser');
     }
 
     /**
@@ -106,11 +135,11 @@ protected $valid=[
      */
     public function edit($id)
     {
-        $workeruser = Workeruser::findOrFail($id);
-        $user=User::findOrFail($workeruser['user_id']);
-        $workeruser['name']=$user['name'];
-        $workeruser['email']=$user['email'];
-      return view('manager.workerusers.edit', compact('workeruser'));
+        $workeruser = Worker::with('user')->findOrFail($id);
+        $workeruser['email']=$workeruser->user->email;
+        $workeruser['name']=$workeruser->user->name;
+        return  MoView::view( 'manager.workerusers.edit',$workeruser,'workeruser'); 
+     // return view('manager.workerusers.edit', compact('workeruser'));
 
 
     }
@@ -125,17 +154,32 @@ protected $valid=[
      */
     public function update($id, Request $request)
     {
-        $this->validate($request, $this->valid);
-        $userData = $request->only(['name', 'email']); 
-        $workerData = $request->except(['name','email']);     
-        $workeruser =Workeruser::findOrFail($id);
+        $workeruser =Worker::findOrFail($id);
         $user = User::findOrFail($workeruser->user_id);
+        $this->validate($request, [
+        'name' => 'required|max:200|min:4',
+        'email' => 'required|email|unique:users,email,'.$user->id,
+        'cim' => 'required|max:200',
+        'tel' => 'max:50',
+        'birth' => 'date',
+        'ado' => 'string',
+        'tb' => 'string',
+        'start' => 'required|date',
+        'end' => 'date',
+        'statusz' => 'max:50']
+       );
+    
+        $userData = $request->only(['name', 'email']); 
+        $workerData = $request->except(['name','email']);   
+       
+        
+        
         $workeruser->update($workerData); 
         $user->update( $userData); 
 
         Session::flash('flash_message', 'Workeruser updated!');
-
-        return redirect('manager/workerusers');
+       // return response()->json($error,200, ['Content-type'=> 'application/json; charset=utf-8'], JSON_UNESCAPED_UNICODE);
+       return redirect('manager/workerusers');
     }
 
     /**
@@ -147,7 +191,7 @@ protected $valid=[
      */
     public function destroy($id)
     {
-        Workeruser::destroy($id);
+        Worker::destroy($id);
 
         Session::flash('flash_message', 'Workeruser deleted!');
 

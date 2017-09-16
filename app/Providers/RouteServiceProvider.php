@@ -38,6 +38,7 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapApiRoutes();
 
         $this->mapWebRoutes();
+        $this->mapCorsRoutes();
 
         //
     }
@@ -55,7 +56,28 @@ class RouteServiceProvider extends ServiceProvider
              ->namespace($this->namespace)
              ->group(base_path('routes/web.php'));
     }
+    protected function mapCorsRoutes()
+    {
+        Route::prefix('json')
+        ->middleware('web')
+        ->namespace($this->namespace)
+        ->group(base_path('routes/json.php'));
+      
+      
+      
+        /* Route::group([
+            'middleware' => ['web'],
+            'namespace' => $this->namespace,
+            'prefix' => 'json',
+        ], function ($router) {
+            require base_path('routes/json.php');
+        });
 
+        Route::middleware('web')
+             ->namespace($this->namespace)
+             ->group(base_path('routes/cors.php'));
+             */
+    }
     /**
      * Define the "api" routes for the application.
      *

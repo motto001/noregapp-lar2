@@ -12,6 +12,7 @@ use App\Facades\MoView;
 
 class UsersController extends Controller
 {
+    use SoftDeletes;  
     /**
      * Display a listing of the resource.
      *
@@ -30,9 +31,7 @@ class UsersController extends Controller
         } else {
             $users = User::paginate($perPage);
         }
-///MoView::$GOB['err2']='gggggggggggggg';
-        //return view('manager.users.index', compact('users'));
-  // return  \App\Lib\MoView::view( 'manager.users.index',$users,'users');
+    //return view('manager.users.index', compact('users'));
     return  MoView::view( 'manager.users.index',$users,'users');
 
 

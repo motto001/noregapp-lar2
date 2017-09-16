@@ -1,0 +1,23 @@
+Illuminate\Support\ViewErrorBag Object 
+( 
+    [bags:protected] => Array 
+    (
+         [default] => Illuminate\Support\MessageBag Object 
+         (
+               [messages:protected] => Array 
+                (
+                   [message] => Array 
+                   ( 
+                       [0] => 422 error 
+                   ) 
+                   [errors] => Array 
+                   ( 
+                        [message] => The email has already been taken. 
+                        [info] => Array ( [0] => email ) 
+                   ) 
+                   [status_code] => Array ( [0] => 422 ) 
+                ) 
+                [format:protected] => :message 
+        )                
+    ) 
+)

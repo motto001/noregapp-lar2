@@ -1,3 +1,5 @@
+
+
 <div class="form-group {{ $errors->has('email') ? 'has-error' : ''}}">
     {!! Form::label('email', 'Email', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">

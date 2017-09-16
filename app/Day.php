@@ -25,7 +25,7 @@ class Day extends Model
      *
      * @var array
      */
-    protected $fillable = ['worker_id', 'year', 'mounth', 'day', 'type'];
+    protected $fillable = ['worker_id', 'datum', 'type'];
 
     public function worker()
 	{
