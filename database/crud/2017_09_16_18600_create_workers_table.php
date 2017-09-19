@@ -34,7 +34,7 @@ class CreateWorkersTable extends Migration
             $table->integer('worker_type_id')->unsigned()->nullable(); //fizikai szeelemi
         //$table-foreign('worker_type_id')->references('id')->on('worker_types');
         $table->integer('salary');
-        $table->string('beosztás');
+        $table->string('position')->nullable();
             $table->string('foto')->nullable();
             $table->string('fullname');
             $table->string('cim');
@@ -44,7 +44,7 @@ class CreateWorkersTable extends Migration
             $table->string('tb')->nullable();
             $table->date('start');
             $table->date('end')->nullable();  
-            $table->string('position')->nullable();       
+                  
             $table->integer('pub')->default(0); 
             $table->timestamps();
         });

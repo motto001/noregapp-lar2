@@ -2,13 +2,57 @@
     "fields": [
           {
             "name": "user_id",
+            "type": "integer#unsigned"
+        },
+        {
+            "name": "workrole_id",
+            "type": "integer#unsigned"
+        },
+          {
+            "name": "timeunit_id",
+            "type": "integer#unsigned"
+        },  
+        
+        {
+            "name": "'workertype_id",
+            "type": "integer#unsigned"
+        },   
+        
+        {
+            "name": "status_id",
+            "type": "integer#unsigned"
+        },
+        {
+            "name": "frameunit_id",
+            "type": "integer#unsigned"
+        }, 
+        {
+            "name": "frame_start",
+            "type": "date"
+        }, 
+        {
+            "name": "salary",
             "type": "integer"
+        }, 
+         {
+            "name": "salary_type",
+            "type": "select",
+            "options": ["órabér", "hetibér", "havibér"]
         },
 
         {
-            "name": "name",
+            "name": "position",
             "type": "string"
-        },
+        }, 
+        {
+            "name": "foto",
+            "type": "string"
+        }, 
+
+         {
+            "name": "fullname",
+            "type": "string"
+        }, 
         {
             "name": "cim",
             "type": "string"
@@ -40,18 +84,41 @@
             "type": "date"
         },
         {
-            "name": "statusz",
-            "type": "select",
-            "options": ["Állandó", "alkalmi", "diák"]
+            "name": "pub",
+            "type": "integer"
+           
         }
     ],
     "foreign_keys": [
         {
             "column": "user_id",
             "references": "id",
-            "on": "users",
-            "onDelete": "cascade"
+            "on": "users"
+        },
+         {
+            "column": "unit_id",
+            "references": "id",
+            "on": "timeunits"
+        },
+
+        {
+            "column": "workrole_id",
+            "references": "id",
+            "on": "workroles"
+        },
+       
+        {
+            "column": "workertype_id",
+            "references": "id",
+            "on": "workertypes"
+        },   
+        {
+            "column": "frame_id",
+            "references": "id",
+            "on": "timeunits"
         }
+
+
     ],
     "relationships": [
         {
@@ -60,21 +127,52 @@
             "class": "App\\User"
         },
         {
-            "name": "worktime",
-            "type": "hasMany",
-            "class": "App\\Worktime"
+            "name": "workrole",
+            "type": "belongsTo",
+            "class": "App\\Workrole"
         }
         ,
+        {
+            "name": "timeunit",
+            "type": "belongsTo",
+            "class": "App\\Timeunit"
+        }
+        ,
+        {
+            "name": "frameunit",
+            "type": "belongsTo",
+            "class": "App\\Timeunit"
+        } ,
+        {
+            "name": "status",
+            "type": "belongsTo",
+            "class": "App\\Statuses"
+        } ,
+        {
+            "name": "workertype",
+            "type": "belongsTo",
+            "class": "App\\Workertypes"
+        } 
         {
             "name": "day",
             "type": "hasMany",
             "class": "App\\Day"
+        },
+        {
+            "name": "daych",
+            "type": "hasMany",
+            "class": "App\\Daych"
+        },
+        {
+            "name": "time_ch",
+            "type": "hasMany",
+            "class": "App\\Timech"
         }
     ],
 
     "validations": [
         {
-            "field": "name",
+            "field": "fullname",
             "rules": "required|max:200 "
         },  
         {
@@ -88,7 +186,7 @@
         },
         {
             "field": "birth",
-            "rules": "date"
+            "rules": "required|date"
         },
         {
             "field": "ado",
@@ -106,12 +204,8 @@
         {
             "field": "end",
             "rules": "date"
-        },
-        {
-            "field": "statusz",
-            "rules": "max:50"
-            
         }
+       
 
     ]
 }

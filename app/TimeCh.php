@@ -4,14 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Workertype extends Model
+class TmeCh extends Model
 {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'workertypes';
+    protected $table = 'time_ch';
 
     /**
     * The database primary key value.
@@ -25,10 +25,14 @@ class Workertype extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'note'];
+    protected $fillable = ['time_id','type_id',  'start', 'end', 'hour','workernote','managernote','pub'];
 
-    public function worker(){
-        // return $this->belongsTo('App\User','user_id','id');
-        return $this->hasOne('App\Worker');
-         }
+    public function day()
+	{
+		return $this->belongsTo('App\Day');
+	}
+    public function type()
+	{
+		return $this->belongsTo('App\DayType');
+	}
 }
