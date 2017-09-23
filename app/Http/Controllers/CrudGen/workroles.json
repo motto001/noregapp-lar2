@@ -1,0 +1,23 @@
+{
+    "fields": [
+        {
+            "name": "name",
+            "type": "string"
+        },
+        {
+            "name": "unit",
+            "type": "select",
+            "options": ["nap","munkanap", "hétmunkanapjai","hét", "hónap"]
+        },
+        {
+            "name": "unitlong",
+            "type": "integer"
+        },
+        {
+            "name": "pub",
+            "type": "integer"
+        }
+    ]
+  
+
+}

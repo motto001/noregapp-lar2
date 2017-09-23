@@ -30,3 +30,5 @@ class CreateStatusesTable extends Migration
         Schema::drop('statuses');
     }
 }
+
+,,,,,
