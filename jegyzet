@@ -1,7 +1,7 @@
 days:
 worker_id(workers)-null-key1,datum-key2,daytype_id(daytypes),note
 belongsTo:('App\\Worker'),('App\\Daytype')
-hasMany(App\\Worktimes)
+belongsToMany(App\\WorktimeUnit)
 
 day_ch:
 day_id(days),daytype_id(daytypes),pub-def0,workernote-null,managernote-null,$table->timestamps()
@@ -11,7 +11,9 @@ belongsTo('App\\Day'),('App\\Daytype')
 daytypes:
 napok tipusának beállítása (szabadság ,ünnepnap,stb)
 name,szorzo(decimal,4,2)-null,fixplusz-null,color-null,dt_note-null,pub-def0
-belongsToMany('App\\Timeunit');
+hasMany('App\\Timeunit');
+hasOne('App\\Day');
+
 ---------------------------------------------------------------------------------
 workers:
 user_id(users), satus_id(statuses)-null,workergroup_id(workertypes)-null,sallary,
@@ -20,9 +22,9 @@ fullname,cim,tel-null,birth,ado-null,tb-null,start,end-null,pub-def(0),timestamp
 
 belongsTo('App\\User');('App\\Workrole');('App\\Status');('App\Workergroup');
 
-belongsToMany('App\\Workole');('App\\Timeframe');
+belongsToMany('App\\Timeframe');
 
-hasMany('App\\Day');('App\\Daych');('App\\Timech');
+hasMany('App\\Day');('App\\Daych');('App\\TimeUnitch')
 --------------------------------------------------------------------------
 workergroup:
 name,value,note-nullable
@@ -33,36 +35,40 @@ hasMany(app\\Timeframe);
 belongsToMany('App\\Daytype');
 
 timeframes:
-munkarend pl:id:1  name:kétmúszak, timeunit_id,
-unitlong:1 (hány unit egy frame),hourmin(kötelezö óraszám)-null,hourmax-null;pub-def(0)
+name:kétmúszak, timeunit_id,start
+hourmin(kötelezö óraszám)-null,hourmax-null;pub-def(0)
 belongsTo('App\\Timeunit');
+belongsToMany('App\\Worker');
 
+//---------------------------
 workroles:
-name, timeunit_id,workrole_note
-hasMany(App\\WorkroleCycl);
-belongsToMany('App\\worker);
+name, workrole_note,start
+hasMany(App\\WorkroleUnit);('App\\worker);
 
-workrole_cycl:
- (az aktuális workrole minden napján lefut )
-workrole_id:1(workroles), worktime_type_id(worktime_types),start,end,hour,
-belongsTo(App\\Workrole);(App\\WorktimeTypes);
-
+workrole_unit:
+workrole_id:1(workroles), timeunit_id(timeunits),Worktime_id(worktimes)_
+belongsTo(App\\Workrole);(App\\Timeunit);(App\\Worktime);
 
 worktimes:
-day_id,type_id,start,end-null, hour,note-null,pub-def(0)
-belongsTo(App\\Day);(App\\WorktimeType);
+name,note,
+belongsToMany(App\\WorktimeUnit);
+hasMany(App\\WorkroleUnit);
+
+worktime_unit:
+worktimetype_id,start,end-null, hour,note-null,pub-def(0)
+belongsTo(App\\WorktimeType);
 
 
 worktime_types
 name(alap,túlóra,túlóra éjszakai,ledolg,csúsztatás stb),
 szorzó(elszámoláshoz)-null,fixplus-null,color-null,wt_note-null 
-hasOne('App\Worktime');
-hasOne('App\workroleCycl');
+hasOne('App\WorktimeUnit');
 
-worktime_ch:
-day_id,type_id,start,end-null, hour ,usernote-null,mangernote-null,pub-def(0)
+worktimeunit_ch:
+worktimeunit_id,type_id,start,end-null, hour ,usernote-null,mangernote-null,pub-def(0)
 tipus változás kérelmek(szabi) jóváhagyás után kerülnek át a days-be
-belongsTo(App\\Day);(App\\WorktimeType);
+belongsTo(App\\Day);(App\\WorktimeUnit);
+
 
 config:
 name,value-null,note-null
