@@ -1,0 +1,75 @@
+{
+    "fields": [ 
+        {
+            "name": "timeunit_id",
+            "type": "integer#unsigned"
+        },
+        {
+            "name": "name",
+            "type": "string"
+        },
+       
+        {
+            "name": "start",
+            "type": "date"
+        }, 
+        {
+            "name": "hourmax",
+            "type": "integer#nullable"
+        },
+        {
+            "name": "hourmin",
+            "type": "integer#nullable"
+        },
+        {
+            "name": "note",
+            "type": "string#nullable"
+        },
+        {
+            "name": "pub",
+            "type": "integer"
+        }
+    ],
+    
+     "relationships": [
+         {
+             "name": "timeunit",
+             "type": "belongsTo",
+             "class": "App\\Timeunit"
+         }, {
+            "name": "worker",
+            "type": "belongsToMany",
+            "class": "App\\Worker"
+        }
+     ],
+     
+      "validations": [
+        {
+            "field": "timeunit_id",
+            "rules": "required|integer "
+        },
+          {
+              "field": "name",
+              "rules": "required|max:200 "
+          },
+          {
+            "field": "start",
+            "rules": "required|date"
+          }, 
+          {
+            "field": "unitlong",
+            "rules": "required|max:200"
+          },
+          {
+              "field": "note",
+              "rules": "max:200"
+          },  
+          {
+              "field": "pub",
+              "rules": "max:4"
+          }
+     
+      ]
+  
+
+}

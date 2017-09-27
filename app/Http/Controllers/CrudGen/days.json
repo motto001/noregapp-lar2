@@ -2,20 +2,26 @@
     "fields": [
         {
             "name": "worker_id",
+            "type": "integer#unsigned#nullable"
+        }, 
+        {
+            "name": "daytype_id",
             "type": "integer#unsigned"
         },
         {
             "name": "datum",
             "type": "date"
         },
+       
         {
-            "name": "type_id",
-            "type": "integer#unsigned"
+            "name": "managernote",
+            "type": "string#nullable"
         },
-        {
-            "name": "note",
-            "type": "string"
-        }
+        
+         {
+             "name": "usernote",
+             "type": "string#nullable"
+         }
     ],  
     "foreign_keys": [
         {
@@ -24,12 +30,21 @@
             "on": "workers"
         },  
         {
-            "column": "type_id",
+            "column": "daytype_id",
             "references": "id",
-            "on": "day_types"
+            "on": "daytypes"
         }
     ],
     "relationships": [
+        {
+            "name": "daytime",
+            "type": "hasMany",
+            "class": "App\\Daytime"
+        },{
+            "name": "daytimechange",
+            "type": "hasMany",
+            "class": "App\\Daytimechange"
+        },
         {
             "name": "worker",
             "type": "belongsTo",
@@ -38,8 +53,10 @@
         {
             "name": "daytype",
             "type": "belongsTo",
-            "class": "App\\DayType"
+            "class": "App\\Daytype"
         }
+      
+
     ],
 
     "validations": [
@@ -49,9 +66,7 @@
         {
             "field": "datum",       "rules": "required|date"
         },
-        {
-            "field": "type_id",      "rules": "required|integer"
-        },
+      
         {
             "field": "note",        "rules": "string"
         }

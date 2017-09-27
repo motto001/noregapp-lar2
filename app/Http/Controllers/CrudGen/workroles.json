@@ -5,19 +5,38 @@
             "type": "string"
         },
         {
-            "name": "unit",
-            "type": "select",
-            "options": ["nap","munkanap", "hétmunkanapjai","hét", "hónap"]
+            "name": "note",
+            "type": "string"
+           
         },
         {
-            "name": "unitlong",
-            "type": "integer"
+            "name": "start",
+            "type": "date"
         },
         {
             "name": "pub",
             "type": "integer"
         }
-    ]
-  
+    ],
+    "relationships": [
+        {
+            "name": "workroleunit",
+            "type": "hashasMany",
+            "class": "App\\Workroleunit"
+        }
+    ],
+    "validations": [
+        {
+            "field": "name",  "rules": "required|string|max:200"
+        },
+        {
+            "field": "note",      "rules": "string|max:200"
+        },
+        {
+            "field": "start",      "rules": "string|max:200"
+        },
+        {
+            "field": "pub",      "rules": "integer"
+        }]
 
 }

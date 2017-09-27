@@ -13,14 +13,7 @@
             "type": "password"
         }
     ],
-    "foreign_keys": [
-        {
-            "column": "worker_id",
-            "references": "id",
-            "on": "workers",
-            "onDelete": "cascade"
-        }
-    ],
+ 
     "relationships": [
         {
             "name": "worker",

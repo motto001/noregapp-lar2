@@ -25,10 +25,11 @@ class Status extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'note'];
+    protected $fillable = ['name', 'note', 'pub'];
 
-    public function worker(){
-        // return $this->belongsTo('App\User','user_id','id');
-        return $this->hasOne('App\Worker');
-         }
+    public function worker()
+	{
+		return $this->hasOne('App\Worker');
+	}
+	
 }

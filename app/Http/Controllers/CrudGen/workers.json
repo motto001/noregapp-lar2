@@ -7,29 +7,20 @@
         {
             "name": "workrole_id",
             "type": "integer#unsigned"
-        },
-          {
-            "name": "timeunit_id",
-            "type": "integer#unsigned"
-        },  
-        
-        {
-            "name": "'workertype_id",
-            "type": "integer#unsigned"
-        },   
-        
+        }, 
         {
             "name": "status_id",
             "type": "integer#unsigned"
         },
         {
-            "name": "frameunit_id",
+            "name": "'workertype_id",
             "type": "integer#unsigned"
-        }, 
-        {
-            "name": "frame_start",
-            "type": "date"
-        }, 
+        },   
+         {
+            "name": "'workgroup_id",
+            "type": "integer#unsigned"
+        },   
+ 
         {
             "name": "salary",
             "type": "integer"
@@ -46,7 +37,7 @@
         }, 
         {
             "name": "foto",
-            "type": "string"
+            "type": "string#nullable"
         }, 
 
          {
@@ -60,7 +51,7 @@
       
         {
             "name": "tel",
-            "type": "string"
+            "type": "string#nullable"
         },
         {
             "name": "birth",
@@ -68,12 +59,12 @@
         },
         {
             "name": "ado",
-            "type": "string"
+            "type": "string#nullable"
         },
       
         {
             "name": "tb",
-            "type": "string"
+            "type": "string#nullable"
         },
         {
             "name": "start",
@@ -81,7 +72,7 @@
         },
         {
             "name": "end",
-            "type": "date"
+            "type": "date#nullable"
         },
         {
             "name": "pub",
@@ -95,27 +86,26 @@
             "references": "id",
             "on": "users"
         },
-         {
-            "column": "unit_id",
-            "references": "id",
-            "on": "timeunits"
-        },
 
         {
             "column": "workrole_id",
             "references": "id",
             "on": "workroles"
         },
-       
+        {
+            "column": "status",
+            "references": "id",
+            "on": "statuses"
+        },
         {
             "column": "workertype_id",
             "references": "id",
             "on": "workertypes"
         },   
         {
-            "column": "frame_id",
+            "column": "workergroup_id",
             "references": "id",
-            "on": "timeunits"
+            "on": "workergroups"
         }
 
 
@@ -133,26 +123,23 @@
         }
         ,
         {
-            "name": "timeunit",
+            "name": "status",
             "type": "belongsTo",
-            "class": "App\\Timeunit"
+            "class": "App\\Status"
         }
         ,
         {
-            "name": "frameunit",
-            "type": "belongsTo",
-            "class": "App\\Timeunit"
-        } ,
-        {
-            "name": "status",
-            "type": "belongsTo",
-            "class": "App\\Statuses"
-        } ,
-        {
             "name": "workertype",
             "type": "belongsTo",
-            "class": "App\\Workertypes"
-        } 
+            "class": "App\\Workertype"
+        }
+        ,
+        {
+            "name": "workergroup",
+            "type": "belongsTo",
+            "class": "App\\Workergroup"
+        } ,
+     
         {
             "name": "day",
             "type": "hasMany",
@@ -164,9 +151,15 @@
             "class": "App\\Daych"
         },
         {
-            "name": "time_ch",
+            "name": "timeunitch",
             "type": "hasMany",
-            "class": "App\\Timech"
+            "class": "App\\Timeunitch"
+        }
+        ,
+        {
+            "name": "timeframe",
+            "type": "belongsToMany",
+            "class": "App\\Timeframe"
         }
     ],
 
@@ -190,12 +183,12 @@
         },
         {
             "field": "ado",
-            "rules": "string"
+            "rules": "strin|max:50"
         },
       
         {
             "field": "tb",
-            "rules": "string"
+            "rules": "string|max:50"
         },
         {
             "field": "start",
@@ -205,7 +198,11 @@
             "field": "end",
             "rules": "date"
         }
-       
+        ,
+        {
+            "field": "pub",
+            "rules": "integer"
+        }
 
     ]
 }

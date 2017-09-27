@@ -25,17 +25,7 @@ class Worktime extends Model
      *
      * @var array
      */
-    protected $fillable = ['day_id','type_id',  'start', 'end', 'hour', 'pub'];
+    protected $fillable = ['name', 'note'];
 
-    public function day(){
-    // return $this->belongsTo('App\User','user_id','id');
-    return $this->belongsTo('App\Day');
-    }
-    public function type(){
-        // return $this->belongsTo('App\User','user_id','id');
-    return $this->belongsTo('App\WorktimeType');
-    }
-
-
-	
+    
 }

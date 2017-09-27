@@ -4,23 +4,25 @@
             "name": "name",
             "type": "string"
         }, 
-        {
-            "name": "value",
-            "type": "string"
-        },  
+       
         {
             "name": "note",
             "type": "string"
         }
       
     ],
+     "relationships": [
+        {
+            "name": "worker",
+            "type": "hasOne",
+            "class": "App\\Worker"
+        }
+    ],
+    
 
     "validations": [
         {
             "field": "name",  "rules": "required|string"
-        },
-        {
-            "field": "value",       "rules": "required|string"
         },
         {
             "field": "note",      "rules": "string"

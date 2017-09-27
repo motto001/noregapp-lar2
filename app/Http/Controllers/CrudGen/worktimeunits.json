@@ -1,0 +1,55 @@
+{
+    "fields": [
+        {
+            "name": "worktimetype_id",
+            "type": "integer#unsigned"
+        },  {
+            "name": "start",
+            "type": "time"
+        },  {
+            "name": "end",
+            "type": "time"
+        },
+          {
+            "name": "hour",
+            "type": "number"
+        },
+        {
+            "name": "note",
+            "type": "string"
+        },
+        {
+            "name": "pub",
+            "type": "integer"
+        }
+    ],
+    
+    "relationships": [
+        {
+            "name": "worktimetype",
+            "type": "belongsTo",
+            "class": "App\\Worktimetype"
+        }
+    ],
+
+    "validations": [
+        {
+            "field": "worktimetype_id",  "rules": "required|integer"
+        },
+        {
+            "field": "start",       "rules": "required|time"
+        },
+        {
+            "field": "end",       "rules": "time"
+        },
+        {
+            "field": "hour",       "rules": "required|number|max:24"
+        },
+        {
+            "field": "note",       "rules": "string|max:200"
+        },
+        {
+            "field": "pub",       "rules": "integer"
+        }
+    ]
+}

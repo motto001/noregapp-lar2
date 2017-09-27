@@ -1,14 +1,36 @@
 https://github.com/appzcoder/crud-generator
+----------------------------------
+admin:
+--------------------------------
+1 conf:     php artisan crud:generate Conf --fields_from_file="app/Http/Controllers/CrudGen/conf.json" --view-path=admin --controller-namespace=Admin --route-group=admin
 
-php artisan crud:generate Workers --fields_from_file="app/Http/Controllers/CrudGen/workers.json" --view-path=manager --controller-namespace=Manager --route-group=manager
-php artisan crud:generate Users --fields_from_file="app/Http/Controllers/CrudGen/users.json" --view-path=manager --controller-namespace=Manager --route-group=manager
+-------------------------
+manager
+--------------------------
+6 daytypes:       php artisan crud:generate Daytypes --fields_from_file="app/Http/Controllers/CrudGen/daytypes.json" --view-path=manager --controller-namespace=Manager --route-group=manager
+7 statuses:       php artisan crud:generate Statuses --fields_from_file="app/Http/Controllers/CrudGen/statuses.json" --view-path=manager --controller-namespace=Manager --route-group=manager
+8 timeframes:     php artisan crud:generate Timeframes --fields_from_file="app/Http/Controllers/CrudGen/timeframes.json" --view-path=manager --controller-namespace=Manager --route-group=manager
+9 timeunits:      php artisan crud:generate Timeunits --fields_from_file="app/Http/Controllers/CrudGen/timeunits.json" --view-path=manager --controller-namespace=Manager --route-group=manager
+10 workergroups:  php artisan crud:generate Workergroups --fields_from_file="app/Http/Controllers/CrudGen/workergroups.json" --view-path=manager --controller-namespace=Manager --route-group=manager
+11 workers:       php artisan crud:generate Workers --fields_from_file="app/Http/Controllers/CrudGen/workers.json" --view-path=manager --controller-namespace=Manager --route-group=manager
+12 workertypes:   php artisan crud:generate Workertypes --fields_from_file="app/Http/Controllers/CrudGen/workertypes.json" --view-path=manager --controller-namespace=Manager --route-group=manager
+13 workroles:     php artisan crud:generate Workroles --fields_from_file="app/Http/Controllers/CrudGen/workroles.json" --view-path=manager --controller-namespace=Manager --route-group=manager
+14 workroleunits: php artisan crud:generate Workroleunits --fields_from_file="app/Http/Controllers/CrudGen/workroleunits.json" --view-path=manager --controller-namespace=Manager --route-group=manager
+15 worktimes:     php artisan crud:generate Worktimes --fields_from_file="app/Http/Controllers/CrudGen/worktimes.json" --view-path=manager --controller-namespace=Manager --route-group=manager
+16 worktimetypes: php artisan crud:generate Worktimetypes --fields_from_file="app/Http/Controllers/CrudGen/worktimetypes.json" --view-path=manager --controller-namespace=Manager --route-group=manager
+17 worktimeunits: php artisan crud:generate Worktimeunits --fields_from_file="app/Http/Controllers/CrudGen/worktimeunits.json" --view-path=manager --controller-namespace=Manager --route-group=manager
 
-php artisan crud:generate Worktimes --fields_from_file="app/Http/Controllers/CrudGen/worktime.json" --view-path=workadmin --controller-namespace=Workadmin  --route-group=workadmin 
-php artisan crud:generate Workers --fields_from_file="app/Http/Controllers/CrudGen/workers.json" --view-path=workadmin --controller-namespace=Workadmin --route-group=workadmin 
-php artisan crud:generate Days --fields_from_file="app/Http/Controllers/CrudGen/days.json" --view-path=workadmin --controller-namespace=Workadmin  --route-group=workadmin 
+------------------------------------------------
+workadmin
+-------------------------------------
+2 days:           php artisan crud:generate Days --fields_from_file="app/Http/Controllers/CrudGen/days.json" --view-path=workadmin --controller-namespace=Workadmin --route-group=workadmin
+3 daytimechange:  php artisan crud:generate Daytimechange --fields_from_file="app/Http/Controllers/CrudGen/daytimechange.json" --view-path=workadmin --controller-namespace=Workadmin --route-group=workadmin
+4 daytimes:       php artisan crud:generate Daytimes --fields_from_file="app/Http/Controllers/CrudGen/daytimes.json" --view-path=workadmin --controller-namespace=Workadmin --route-group=workadmin
+5 daytypechange:  php artisan crud:generate Daytypechange --fields_from_file="app/Http/Controllers/CrudGen/daytypechange.json" --view-path=workadmin --controller-namespace=Workadmin --route-group=workadmin
 
-php artisan crud:generate Workers --fields_from_file="app/Http/Controllers/CrudGen/workers.json" --view-path=worker --controller-namespace=Worker --route-group=worker 
-php artisan crud:generate Worktimes --fields_from_file="app/Http/Controllers/CrudGen/worktime.json" --view-path=worker  --controller-namespace=Worker   --route-group=worker 
+
+
+---------------------------------------------------------------------
 
 php artisan crud:generate Chpassword --fields_from_file="app/Http/Controllers/CrudGen/chpassword.json" --view-path=user --controller-namespace=User --route-group=user
 php artisan crud:generate Chemail --fields_from_file="app/Http/Controllers/CrudGen/chemail.json" --view-path=user --controller-namespace=User --route-group=user
@@ -22,3 +44,6 @@ Migration Field Types:
 string ,char ,varchar ,date ,datetime ,time ,timestamp ,text ,mediumtext ,longtext
  ,json ,jsonb ,binary ,integer ,bigint ,mediumint ,tinyint ,smallint ,boolean 
  ,decimal ,double ,float ,enum
+
+
+ php artisan crud:generate Conf --fields_from_file="app/Http/Controllers/CrudGen/conf.json" --view-path=admin --controller-namespace=Admin --route-group=admin

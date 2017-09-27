@@ -1,0 +1,63 @@
+{
+    "fields": [
+        {
+            "name": "name",
+            "type": "string"
+        },
+        {
+            "name": "unit",
+            "type": "select",
+            "options": ["nap","hét", "hónap","év"]
+        },
+        {
+            "name": "unitlong",
+            "type": "integer"
+        },
+        {
+            "name": "note",
+            "type": "string"
+        },
+        {
+            "name": "pub",
+            "type": "integer"
+        }
+    ],
+    
+     "relationships": [
+         {
+             "name": "timeframes",
+             "type": "hasMany",
+             "class": "App\\Timeframe"
+         }, {
+            "name": "daytype",
+            "type": "belongsToMany",
+            "class": "App\\Daytype"
+        }
+     ],
+     
+      "validations": [
+          {
+              "field": "name",
+              "rules": "required|max:200 "
+          },
+          {
+            "field": "unit",
+            "rules": "max:200"
+          }, 
+          {
+            "field": "unitlong",
+            "rules": "max:200"
+          },
+          {
+              "field": "note",
+              "rules": "max:200"
+          },  
+          {
+              "field": "pub",
+              "rules": "max:4"
+          }
+     
+      ]
+  
+
+}

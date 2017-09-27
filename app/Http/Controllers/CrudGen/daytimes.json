@@ -1,0 +1,75 @@
+{
+    "fields": [
+        {
+            "name": "day_id",
+            "type": "integer#unsigned"
+        },
+        {
+            "name": "worktimetype_id",
+            "type": "integer#unsigned"
+        }, 
+        {
+            "name": "start",
+            "type": "time"
+        },  {
+            "name": "end",
+            "type": "time#nullable"
+        },
+          {
+            "name": "hour",
+            "type": "integer"
+        },
+        {
+            "name": "managernote",
+            "type": "string#nullable"
+        },
+        
+        {
+            "name": "workernote",
+            "type": "string#nullable"
+        },
+        {
+            "name": "pub",
+            "type": "integer"
+        }
+    ],
+    
+    "relationships": [
+        {
+            "name": "day",
+            "type": "belongsTo",
+            "class": "App\\day"
+        }, {
+            "name": "worktimetype",
+            "type": "belongsTo",
+            "class": "App\\Worktimetype"
+        }
+    ],
+
+    "validations": [
+        {
+            "field": "day_id",  "rules": "required|integer"
+        },
+        {
+            "field": "worktimetype_id",  "rules": "required|integer"
+        },
+        {
+            "field": "start",       "rules": "required|time"
+        },
+        {
+            "field": "end",       "rules": "time"
+        },
+        {
+            "field": "hour",       "rules": "required|integer|max:24"
+        },
+        {
+            "field": "managernote",       "rules": "string|max:200"
+        },
+        {
+            "field": "workernote",       "rules": "string|max:200"
+        },
+        {
+            "field": "pub",       "rules": "integer"
+        }
+    ]
+}
