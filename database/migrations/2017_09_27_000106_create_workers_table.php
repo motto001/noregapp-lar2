@@ -17,8 +17,8 @@ class CreateWorkersTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->integer('workrole_id')->unsigned();
             $table->integer('status_id')->unsigned();
-            $table->integer(''workertype_id')->unsigned();
-            $table->integer(''workgroup_id')->unsigned();
+            $table->integer('workertype_id')->unsigned();
+            $table->integer('workergroup_id')->unsigned();
             $table->integer('salary');
             $table->string('salary_type');
             $table->string('position');
@@ -34,7 +34,7 @@ class CreateWorkersTable extends Migration
             $table->integer('pub');
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('workrole_id')->references('id')->on('workroles');
-            $table->foreign('status')->references('id')->on('statuses');
+            $table->foreign('status_id')->references('id')->on('statuses');
             $table->foreign('workertype_id')->references('id')->on('workertypes');
             $table->foreign('workergroup_id')->references('id')->on('workergroups');
             $table->timestamps();

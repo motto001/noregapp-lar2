@@ -27,10 +27,6 @@
         {
             "name": "workernote",
             "type": "string#nullable"
-        },
-        {
-            "name": "pub",
-            "type": "integer"
         }
     ],
     

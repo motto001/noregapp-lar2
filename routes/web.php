@@ -32,3 +32,4 @@ Route::resource('manager/workroles', 'Manager\\WorkrolesController');
 Route::resource('manager/worktimes', 'Manager\\WorktimesController');
 Route::resource('manager/worktimetypes', 'Manager\\WorktimetypesController');
 Route::resource('manager/worktimeunits', 'Manager\\WorktimeunitsController');
+Route::resource('workadmin/daytimes', 'Workadmin\\DaytimesController');

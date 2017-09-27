@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateDaytypechangesTable extends Migration
+class CreateDaytimesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,15 +12,15 @@ class CreateDaytypechangesTable extends Migration
      */
     public function up()
     {
-        Schema::create('daytypechanges', function(Blueprint $table) {
+        Schema::create('daytimes', function(Blueprint $table) {
             $table->increments('id');
             $table->integer('day_id')->unsigned();
-            $table->integer('daytype_id')->unsigned();
-            $table->integer('pub');
-            $table->string('workernote')->nullable();
+            $table->integer('worktimetype_id')->unsigned();
+            $table->time('start');
+            $table->time('end')->nullable();
+            $table->integer('hour');
             $table->string('managernote')->nullable();
-            $table->foreign('day_id')->references('id')->on('dayss');
-            $table->foreign('daytype_id')->references('id')->on('daytypes');
+            $table->string('workernote')->nullable();
             $table->timestamps();
         });
     }
@@ -32,6 +32,6 @@ class CreateDaytypechangesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('daytypechanges');
+        Schema::drop('daytimes');
     }
 }

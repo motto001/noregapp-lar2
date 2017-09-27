@@ -24,9 +24,9 @@
     ], 
     "foreign_keys": [
         {
-            "column": "worker_id",
+            "column": "day_id",
             "references": "id",
-            "on": "workers"
+            "on": "days"
         },  
         {
             "column": "daytype_id",
