@@ -1,10 +1,6 @@
 {
     "fields": [
         {
-            "name": "worker_id",
-            "type": "integer#unsigned#nullable"
-        }, 
-        {
             "name": "daytype_id",
             "type": "integer#unsigned"
         },
@@ -13,22 +9,14 @@
             "type": "date"
         },
        
-        {
-            "name": "managernote",
-            "type": "string#nullable"
-        },
         
          {
-             "name": "usernote",
+             "name": "note",
              "type": "string#nullable"
          }
     ],  
     "foreign_keys": [
-        {
-            "column": "worker_id",
-            "references": "id",
-            "on": "workers"
-        },  
+    
         {
             "column": "daytype_id",
             "references": "id",
@@ -36,20 +24,8 @@
         }
     ],
     "relationships": [
-        {
-            "name": "daytime",
-            "type": "hasMany",
-            "class": "App\\Daytime"
-        },{
-            "name": "daytimechange",
-            "type": "hasMany",
-            "class": "App\\Daytimechange"
-        },
-        {
-            "name": "worker",
-            "type": "belongsTo",
-            "class": "App\\Worker"
-        },
+  
+     
         {
             "name": "daytype",
             "type": "belongsTo",

@@ -1,14 +1,19 @@
 {
     "fields": [ 
-        {
-            "name": "timeunit_id",
-            "type": "integer#unsigned"
-        },
+      
         {
             "name": "name",
             "type": "string"
         },
-       
+        {
+            "name": "unit",
+            "type": "select",
+            "options": ["nap", "hét", "hónap"]
+        }, 
+         {
+            "name": "long",
+            "type": "integer"
+        },
         {
             "name": "start",
             "type": "date"
@@ -33,10 +38,6 @@
     
      "relationships": [
          {
-             "name": "timeunit",
-             "type": "belongsTo",
-             "class": "App\\Timeunit"
-         }, {
             "name": "worker",
             "type": "belongsToMany",
             "class": "App\\Worker"
@@ -44,10 +45,7 @@
      ],
      
       "validations": [
-        {
-            "field": "timeunit_id",
-            "rules": "required|integer "
-        },
+       
           {
               "field": "name",
               "rules": "required|max:200 "
@@ -55,10 +53,14 @@
           {
             "field": "start",
             "rules": "required|date"
+          },  
+          {
+            "field": "unit",
+            "rules": "required|max:50"
           }, 
           {
-            "field": "unitlong",
-            "rules": "required|max:200"
+            "field": "long",
+            "rules": "required"
           },
           {
               "field": "note",

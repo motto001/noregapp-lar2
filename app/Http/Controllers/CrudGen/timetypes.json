@@ -21,9 +21,13 @@
     
     "relationships": [
         {
-            "name": "worktimeunit",
+            "name": "roletime",
             "type": "hasOne",
-            "class": "App\\Worktimeunit"
+            "class": "App\\Roletime"
+        },{
+            "name": "worktime",
+            "type": "hasOne",
+            "class": "App\\Worktime"
         }
     ],
 

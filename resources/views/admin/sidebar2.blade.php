@@ -2,15 +2,13 @@
 
  
             <div class="panel panel-default panel-flush">
-@if (Auth::user()->hasRole('workadmin'))  
-           
                 <div class="panel-heading">
-                  admin
+                  Menü
                 </div>
 
                 <div class="panel-body">
                     <ul class="nav" role="tablist">
-                 
+ @if (Auth::user()->hasRole('workadmin'))                 
                     
  <li role="workadmin">
                                 <a href="{{ url('/workadmin/workerdays') }}">
@@ -20,9 +18,11 @@
 
 
 
-@endif
 
 
+
+                            
+@elseif(Auth::user()->hasRole('worker'))
 <li role="admin">
                                 <a href="{{ url('/user/personal') }}">
                                    Személyes adatok
@@ -35,7 +35,7 @@
                                 </a>
                             </li>
 
- 
+ @endif
  @if (Auth::user()->hasRole('manager'))  
                             <li role="manager">
                                 <a href="{{ url('/manager/workerusers') }}">

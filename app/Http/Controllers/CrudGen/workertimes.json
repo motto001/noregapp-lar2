@@ -5,7 +5,7 @@
             "type": "integer#unsigned"
         },
         {
-            "name": "worktimetype_id",
+            "name": "timetype_id",
             "type": "integer#unsigned"
         }, 
         {
@@ -27,10 +27,6 @@
         {
             "name": "workernote",
             "type": "string#nullable"
-        },
-        {
-            "name": "pub",
-            "type": "integer"
         }
     ],
     
@@ -40,9 +36,9 @@
             "type": "belongsTo",
             "class": "App\\day"
         }, {
-            "name": "worktimetype",
+            "name": "timetype",
             "type": "belongsTo",
-            "class": "App\\Worktimetype"
+            "class": "App\\Timetype"
         }
     ],
 
@@ -51,16 +47,16 @@
             "field": "day_id",  "rules": "required|integer"
         },
         {
-            "field": "worktimetype_id",  "rules": "required|integer"
+            "field": "Timetype_id",  "rules": "required|integer"
         },
         {
-            "field": "start",       "rules": "time"
+            "field": "start",       "rules": "required|time"
         },
         {
             "field": "end",       "rules": "time"
         },
         {
-            "field": "hour",       "rules": "integer|max:24"
+            "field": "hour",       "rules": "required|integer|max:24"
         },
         {
             "field": "managernote",       "rules": "string|max:200"

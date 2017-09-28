@@ -1,41 +1,46 @@
 <?php
 
+Route::get('', 'Admin\AdminController@index');
 
 //root-----------------------------------------------------------
 Route::group(['prefix' => '/admin'],function()
 {
-    Route::get('', 'Admin\AdminController@index');
+    Route::resource('conf', 'Admin\\ConfController');  
     Route::resource('/roles', 'Admin\RolesController');
-    Route::resource('/users', 'Admin\UsersController');
     Route::resource('/permissions', 'Admin\PermissionsController'); 
     Route::get('/give-role-permissions', 'Admin\AdminController@getGiveRolePermissions');
     Route::get('/generator', ['uses' => '\Appzcoder\LaravelAdmin\Controllers\ProcessController@getGenerator']);
-    Route::post('/generator', ['uses' => '\Appzcoder\LaravelAdmin\Controllers\ProcessController@postGenerator']);   
+//Route::post('/generator', ['uses' => '\Appzcoder\LaravelAdmin\Controllers\ProcessController@postGenerator']);   
+//Route::resource('/users', 'Admin\UsersController');
 });
 //manageer---------------------------------------------------------------
 Route::group(['prefix' => '/manager'],function()
 {
     Route::resource('/users', 'Manager\UsersController');
     Route::resource('/workerusers', 'Manager\\WorkerusersController');
-    Route::resource('/workers', 'Manager\\WorkersController');
-    //Route::resource('/users', 'Manager\\UsersController');
+  
+    Route::resource('daytypes', 'Manager\\DaytypesController');
+    Route::resource('statuses', 'Manager\\StatusesController');
+    Route::resource('timeframes', 'Manager\\TimeframesController');
+    Route::resource('timeunits', 'Manager\\TimeunitsController');
+    Route::resource('workergroups', 'Manager\\WorkergroupsController');
+    Route::resource('workers', 'Manager\\WorkersController');
+    Route::resource('workertypes', 'Manager\\WorkertypesController');
+    Route::resource('workroleunits', 'Manager\\WorkroleunitsController');
+    Route::resource('workroles', 'Manager\\WorkrolesController');
+    Route::resource('worktimes', 'Manager\\WorktimesController');
+    Route::resource('worktimetypes', 'Manager\\WorktimetypesController');
+    Route::resource('worktimeunits', 'Manager\\WorktimeunitsController');
+    
 });
 //workadmin---------------------------------------------------------------
 Route::group(['prefix' => '/workadmin'],function()
 {
-    Route::get('/workerdays/{year}/{month}/{day}/{user}', 'Workadmin\\WorkerdaysController@index2');
-    Route::get('/workerdays/create/{year}/{month}/{day}/{user}', 'Workadmin\\WorkerdaysController@create');
-    Route::get('/workerdays/edit/{year}/{month}/{day}/{user}', 'Workadmin\\WorkerdaysController@index2');
-    Route::post('/workerdays/store/{year}/{month}/{day}/{user}', 'Workadmin\\WorkerdaysController@store');
-    Route::post('/workerdays/store', 'Workadmin\\WorkerdaysController@store');
-    Route::post('/workerdays/update/{id}', 'Workadmin\\WorkerdaysController@update');
-    Route::get('/workerdays/del/{id}', 'Workadmin\\WorkerdaysController@delete');
-    Route::resource('/workerdays', 'Workadmin\\WorkerdaysController');
-    Route::resource('/worktimes', 'Workadmin\\WorktimesController');
-    Route::resource('/days', 'Workadmin\\DaysController');
-    Route::resource('/workers', 'Workadmin\\WorkersController');
-    Route::resource('/worktimes', 'Workadmin\\WorktimesController');
-    Route::resource('/users', 'Workadmin\\UsersController');
+    Route::resource('days', 'Workadmin\\DaysController');
+    Route::resource('daytimechange', 'Workadmin\\DaytimechangeController');
+    Route::resource('daytimes', 'Workadmin\\DaytimesController');
+    Route::resource('daytypechange', 'Workadmin\\DaytypechangeController');
+    
 });
 
 //----------------------------------------------------------------

@@ -39,9 +39,9 @@
             "class": "App\\Day"
         },
         {
-            "name": "daytypechange",
+            "name": "daytypech",
             "type": "hasOne",
-            "class": "App\\Daytypechange"
+            "class": "App\\Daytypech"
         }
     ],
 

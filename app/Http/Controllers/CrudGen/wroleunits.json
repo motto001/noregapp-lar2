@@ -1,7 +1,7 @@
 {
     "fields": [
         {
-            "name": "worktimetype_id",
+            "name": "workrole_id",
             "type": "integer#unsigned"
         },  {
             "name": "start",
@@ -23,18 +23,34 @@
             "type": "integer"
         }
     ],
+    "foreign_keys": [
+        {
+            "column": "workrole_id",
+            "references": "id",
+            "on": "workroles"
+        },
+      
+    ],
     
     "relationships": [
         {
-            "name": "worktimetype",
+            "name": "daytype",
+            "type": "belongsToMany",
+            "class": "App\\Daytype"
+        }, {
+            "name": "timeunit",
             "type": "belongsTo",
-            "class": "App\\Worktimetype"
+            "class": "App\\Timeunit"
+        }, {
+            "name": "worktime",
+            "type": "belongsTo",
+            "class": "App\\Worktime"
         }
     ],
 
     "validations": [
         {
-            "field": "worktimetype_id",  "rules": "required|integer"
+            "field": "timetype_id",  "rules": "required|integer"
         },
         {
             "field": "start",       "rules": "required|time"
