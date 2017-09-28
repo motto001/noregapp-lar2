@@ -5,7 +5,7 @@
             "type": "integer#unsigned"
         },
         {
-            "name": "workrole_id",
+            "name": "wrole_id",
             "type": "integer#unsigned"
         }, 
         {
@@ -13,11 +13,11 @@
             "type": "integer#unsigned"
         },
         {
-            "name": "'workertype_id",
-            "type": "integer#unsigned"
+            "name": "workertype_id",
+            "type": "integer#unsigned"                 
         },   
          {
-            "name": "'workergroup_id",
+            "name": "workergroup_id",
             "type": "integer#unsigned"
         },   
  
