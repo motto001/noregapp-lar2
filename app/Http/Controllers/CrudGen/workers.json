@@ -17,7 +17,7 @@
             "type": "integer#unsigned"
         },   
          {
-            "name": "'workgroup_id",
+            "name": "'workergroup_id",
             "type": "integer#unsigned"
         },   
  
@@ -75,6 +75,10 @@
             "type": "date#nullable"
         },
         {
+            "name": "note",
+            "type": "string#nullable"
+        },     
+        {
             "name": "pub",
             "type": "integer"
            
@@ -88,12 +92,12 @@
         },
 
         {
-            "column": "workrole_id",
+            "column": "wrole_id",
             "references": "id",
-            "on": "workroles"
+            "on": "wroles"
         },
         {
-            "column": "status",
+            "column": "status_id",
             "references": "id",
             "on": "statuses"
         },
@@ -119,7 +123,7 @@
         {
             "name": "workrole",
             "type": "belongsTo",
-            "class": "App\\Workrole"
+            "class": "App\\Wrole"
         }
         ,
         {
@@ -146,14 +150,14 @@
             "class": "App\\Day"
         },
         {
-            "name": "daych",
+            "name": "chworkerday",
             "type": "hasMany",
-            "class": "App\\Daych"
+            "class": "App\\chworkerda"
         },
         {
-            "name": "timeunitch",
+            "name": "Chworkertime",
             "type": "hasMany",
-            "class": "App\\Timeunitch"
+            "class": "App\\Chworkertime"
         }
         ,
         {

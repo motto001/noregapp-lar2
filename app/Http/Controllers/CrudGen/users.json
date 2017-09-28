@@ -17,7 +17,7 @@
     "relationships": [
         {
             "name": "worker",
-            "type": "belongsTo",
+            "type": "hasOne",
             "class": "App\\worker"
         }
     ],

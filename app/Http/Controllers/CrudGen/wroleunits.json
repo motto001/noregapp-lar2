@@ -1,7 +1,7 @@
 {
     "fields": [
         {
-            "name": "workrole_id",
+            "name": "wrole_id",
             "type": "integer#unsigned"
         },  {
             "name": "start",
@@ -25,10 +25,10 @@
     ],
     "foreign_keys": [
         {
-            "column": "workrole_id",
+            "column": "wrole_id",
             "references": "id",
-            "on": "workroles"
-        },
+            "on": "wroles"
+        }
       
     ],
     
@@ -38,13 +38,13 @@
             "type": "belongsToMany",
             "class": "App\\Daytype"
         }, {
-            "name": "timeunit",
+            "name": "wrole",
             "type": "belongsTo",
-            "class": "App\\Timeunit"
+            "class": "App\\Wroles"
         }, {
-            "name": "worktime",
-            "type": "belongsTo",
-            "class": "App\\Worktime"
+            "name": "wroletime",
+            "type": "hasMany",
+            "class": "App\\Wroletime"
         }
     ],
 

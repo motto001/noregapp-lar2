@@ -1,11 +1,11 @@
 {
     "fields": [
         {
-            "name": "day_id",
+            "name": "wroleunit_id",
             "type": "integer#unsigned"
         },
         {
-            "name": "worktimetype_id",
+            "name": "timetype_id",
             "type": "integer#unsigned"
         }, 
         {
@@ -32,13 +32,13 @@
     
     "relationships": [
         {
-            "name": "day",
+            "name": "wroleunit_",
             "type": "belongsTo",
-            "class": "App\\day"
+            "class": "App\\Wroleunit_"
         }, {
-            "name": "worktimetype",
+            "name": "timetype",
             "type": "belongsTo",
-            "class": "App\\Worktimetype"
+            "class": "App\\Timetype"
         }
     ],
 

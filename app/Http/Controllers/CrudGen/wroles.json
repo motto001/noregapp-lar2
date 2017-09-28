@@ -20,9 +20,9 @@
     ],
     "relationships": [
         {
-            "name": "roleunit",
-            "type": "hashasMany",
-            "class": "App\\Roleunit"
+            "name": "wroleunit",
+            "type": "hasMany",
+            "class": "App\\Wroleunit"
         }
     ],
     "validations": [

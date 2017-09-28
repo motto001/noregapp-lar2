@@ -21,13 +21,13 @@
     
     "relationships": [
         {
-            "name": "roletime",
+            "name": "wroletime",
             "type": "hasOne",
-            "class": "App\\Roletime"
+            "class": "App\\Wroletime"
         },{
-            "name": "worktime",
+            "name": "workertime",
             "type": "hasOne",
-            "class": "App\\Worktime"
+            "class": "App\\Workertime"
         }
     ],
 

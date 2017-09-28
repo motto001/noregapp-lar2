@@ -41,9 +41,9 @@
             "type": "hasMany",
             "class": "App\\workertime"
         },{
-            "name": "daytypech",
-            "type": "hasMany",
-            "class": "App\\Daytypech"
+            "name": "chworkerday",
+            "type": "hasOne",
+            "class": "App\\Chworkerday"
         },
         {
             "name": "worker",

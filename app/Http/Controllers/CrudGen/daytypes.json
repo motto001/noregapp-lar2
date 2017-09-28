@@ -35,13 +35,13 @@
         },
         {
             "name": "day",
-            "type": "hasMany",
+            "type": "hasOne",
             "class": "App\\Day"
         },
         {
-            "name": "daytypech",
+            "name": "chworkerday",
             "type": "hasOne",
-            "class": "App\\Daytypech"
+            "class": "App\\chworkerday"
         }
     ],
 
