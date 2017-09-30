@@ -12,7 +12,7 @@ use App\Facades\MoView;
 
 class UsersController extends Controller
 {
-    use SoftDeletes;  
+    //use SoftDeletes;  
     /**
      * Display a listing of the resource.
      *

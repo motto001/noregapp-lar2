@@ -32,9 +32,9 @@
     
     "relationships": [
         {
-            "name": "wroleunit_",
+            "name": "wroleunit",
             "type": "belongsTo",
-            "class": "App\\Wroleunit_"
+            "class": "App\\Wroleunit"
         }, {
             "name": "timetype",
             "type": "belongsTo",

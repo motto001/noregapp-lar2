@@ -27,5 +27,13 @@ class Timetype extends Model
      */
     protected $fillable = ['name', 'szorzo', 'fixplusz', 'color', 'note'];
 
+    public function wroletime()
+    {
+        return $this->hasOne('App\Wroletime');
+    }
+    public function workertime()
+    {
+        return $this->hasOne('App\Workertime');
+    }   
     
 }

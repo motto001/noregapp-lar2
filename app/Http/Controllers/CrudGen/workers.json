@@ -152,10 +152,10 @@
         {
             "name": "chworkerday",
             "type": "hasMany",
-            "class": "App\\chworkerda"
+            "class": "App\\Chworkerday"
         },
         {
-            "name": "Chworkertime",
+            "name": "chworkertime",
             "type": "hasMany",
             "class": "App\\Chworkertime"
         }

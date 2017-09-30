@@ -26,6 +26,18 @@ class Wroleunit extends Model
      * @var array
      */
     protected $fillable = ['wrole_id', 'start', 'end', 'hour', 'note', 'pub'];
-
+   
+    public function daytype()
+    {
+        return $this->belongsToMany('App\Daytype');
+    }
+    public function wrole()
+    {
+        return $this->belongsTo('App\Wrole');
+    }
+    public function wroletime()
+    {
+        return $this->hasMany('App\wroletime');
+    }
     
 }

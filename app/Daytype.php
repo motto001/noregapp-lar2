@@ -26,6 +26,18 @@ class Daytype extends Model
      * @var array
      */
     protected $fillable = ['name', 'szorzo', 'fixplusz', 'color', 'note'];
-
+  
+    public function timeunit()
+    {
+        return $this->belongsToMany('App\Timeunit');
+    }  
+    public function day()
+    {
+        return $this->hasOne('App\Day');
+    }  
+    public function chworkerday()
+    {
+        return $this->hasOne('App\chworkerday');
+    }  
     
 }

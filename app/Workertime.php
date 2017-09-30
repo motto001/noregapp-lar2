@@ -26,6 +26,13 @@ class Workertime extends Model
      * @var array
      */
     protected $fillable = ['day_id', 'timetype_id', 'start', 'end', 'hour', 'managernote', 'workernote'];
-
-    
+   
+    public function day()
+    {
+        return $this->belongsTo('App\Day');
+    }
+    public function timetype()
+    {
+        return $this->belongsTo('App\Timetype');
+    }
 }

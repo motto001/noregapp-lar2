@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Middleware;
-
+use Illuminate\Support\Facades\Auth;
 use Closure;
 
 class CheckRole
@@ -24,12 +24,16 @@ class CheckRole
             return $next($request);
         }
 
-        return response([
+      /*  return response([
             'error' => [
                 'code' => 'INSUFFICIENT_ROLE',
                 'description' => 'You are not authorized to access this resource.',
             ],
         ], 401);
+        */
+        Auth::logout();
+        return redirect('/login');
+
     }
 
     private function getRequiredRoleForRoute($route)

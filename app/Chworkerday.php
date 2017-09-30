@@ -26,6 +26,15 @@ class Chworkerday extends Model
      * @var array
      */
     protected $fillable = ['workerday_id', 'daytype_id', 'managernote', 'workernote', 'pub'];
-
+   
+    public function day()
+    {
+        return $this->belongsTo('App\Day');
+    } 
+    
+    public function daytype()
+    {
+        return $this->belongsTo('App\Daytype');
+    }
     
 }

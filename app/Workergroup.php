@@ -31,5 +31,6 @@ class Workergroup extends Model
 	{
 		return $this->hasOne('App\Worker');
 	}
-	
+    
+
 }
