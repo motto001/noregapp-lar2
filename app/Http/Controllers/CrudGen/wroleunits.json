@@ -1,36 +1,29 @@
 {
-    "fields": [
+    "fields": [ 
         {
-            "name": "wrole_id",
-            "type": "integer#unsigned"
-        },  {
-            "name": "start",
-            "type": "time"
-        },  {
-            "name": "end",
-            "type": "time"
+            "name": "name",
+            "type": "string"
         },
-          {
-            "name": "hour",
-            "type": "number"
+        {
+            "name": "unit",
+            "type": "select",
+            "options": ["nap", "hét", "hónap"]
+        }, 
+         {
+            "name": "long",
+            "type": "integer"
         },
+      
         {
             "name": "note",
-            "type": "string"
+            "type": "string#nullable"
         },
         {
             "name": "pub",
             "type": "integer"
         }
     ],
-    "foreign_keys": [
-        {
-            "column": "wrole_id",
-            "references": "id",
-            "on": "wroles"
-        }
-      
-    ],
+   
     
     "relationships": [
         {
@@ -39,7 +32,7 @@
             "class": "App\\Daytype"
         }, {
             "name": "wrole",
-            "type": "belongsTo",
+            "type": "belongsToMany",
             "class": "App\\Wroles"
         }, {
             "name": "wroletime",
@@ -49,17 +42,15 @@
     ],
 
     "validations": [
+      
         {
-            "field": "timetype_id",  "rules": "required|integer"
+            "field": "name",       "rules": "required|string"
         },
         {
-            "field": "start",       "rules": "required|time"
+            "field": "unit",       "rules": "required|string"
         },
         {
-            "field": "end",       "rules": "time"
-        },
-        {
-            "field": "hour",       "rules": "required|number|max:24"
+            "field": "long",       "rules": "required|integer"
         },
         {
             "field": "note",       "rules": "string|max:200"

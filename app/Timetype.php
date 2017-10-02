@@ -12,7 +12,7 @@ class Timetype extends Model
      * @var string
      */
     protected $table = 'timetypes';
-
+    public $timestamps = false;
     /**
     * The database primary key value.
     *
@@ -26,7 +26,7 @@ class Timetype extends Model
      * @var array
      */
     protected $fillable = ['name', 'szorzo', 'fixplusz', 'color', 'note'];
-
+    
     public function wroletime()
     {
         return $this->hasOne('App\Wroletime');

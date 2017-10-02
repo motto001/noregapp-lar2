@@ -14,13 +14,11 @@ class CreateWroleunitsTable extends Migration
     {
         Schema::create('wroleunits', function(Blueprint $table) {
             $table->increments('id');
-            $table->integer('wrole_id')->unsigned();
-            $table->time('start');
-            $table->time('end');
-            $table->integer('hour');
-            $table->string('note');
+            $table->string('name');
+            $table->string('unit');
+            $table->integer('long');
+            $table->string('note')->nullable();
             $table->integer('pub');
-            $table->foreign('wrole_id')->references('id')->on('wroles');
             $table->timestamps();
         });
     }

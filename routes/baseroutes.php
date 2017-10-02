@@ -31,7 +31,7 @@ Route::group(['prefix' => '/manager','middleware' => ['auth', 'roles'], 'roles' 
     Route::resource('/timetypes', 'Manager\\TimetypesController');
     
     Route::resource('/wroles', 'Manager\\WrolesController');
-    Route::resource('/wroleunits', 'Manager\\WroleunitsControl/');
+    Route::resource('/wroleunits', 'Manager\\WroleunitsController');
     Route::resource('/wroletimes', 'Manager\\WroletimesController');
     
 });

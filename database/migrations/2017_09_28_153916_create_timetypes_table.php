@@ -15,11 +15,11 @@ class CreateTimetypesTable extends Migration
         Schema::create('timetypes', function(Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->decimal('szorzo');
-            $table->integer('fixplusz');
-            $table->string('color');
-            $table->string('note');
-            $table->timestamps();
+            $table->decimal('szorzo',4,2)->default(1);
+            $table->integer('fixplusz')->default(0);
+            $table->string('color')->nullable();
+            $table->string('note')->nullable();
+           // $table->timestamps();
         });
     }
 

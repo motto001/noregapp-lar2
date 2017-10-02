@@ -7,9 +7,13 @@
 </div><div class="form-group {{ $errors->has('timetype_id') ? 'has-error' : ''}}">
     {!! Form::label('timetype_id', 'Timetype Id', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::number('timetype_id', null, ['class' => 'form-control', 'required' => 'required']) !!}
-        {!! $errors->first('timetype_id', '<p class="help-block">:message</p>') !!}
+      
+        {!! Form::select('timetype_id', $wroletime['timetype'], null, ['class' => 'form-control', 'required' => 'required']) !!}
+        
+         {!! $errors->first('timetype_id', '<p class="help-block">:message</p>') !!}
     </div>
+
+
 </div><div class="form-group {{ $errors->has('start') ? 'has-error' : ''}}">
     {!! Form::label('start', 'Start', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
@@ -31,13 +35,13 @@
 </div><div class="form-group {{ $errors->has('managernote') ? 'has-error' : ''}}">
     {!! Form::label('managernote', 'Managernote', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::text('managernote', null, ['class' => 'form-control', 'required' => 'required']) !!}
+        {!! Form::text('managernote', null, ['class' => 'form-control']) !!}
         {!! $errors->first('managernote', '<p class="help-block">:message</p>') !!}
     </div>
 </div><div class="form-group {{ $errors->has('workernote') ? 'has-error' : ''}}">
     {!! Form::label('workernote', 'Workernote', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::text('workernote', null, ['class' => 'form-control', 'required' => 'required']) !!}
+        {!! Form::text('workernote', null, ['class' => 'form-control']) !!}
         {!! $errors->first('workernote', '<p class="help-block">:message</p>') !!}
     </div>
 </div>

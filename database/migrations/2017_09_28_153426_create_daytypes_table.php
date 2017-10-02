@@ -15,11 +15,11 @@ class CreateDaytypesTable extends Migration
         Schema::create('daytypes', function(Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->integer('szorzo')->nullable();
-            $table->integer('fixplusz')->nullable();
+            $table->decimal('szorzo',4,2)->default(1);
+            $table->integer('fixplusz')->default(0);
             $table->string('color')->nullable();
             $table->string('note')->nullable();
-            $table->timestamps();
+           // $table->timestamps();
         });
     }
 

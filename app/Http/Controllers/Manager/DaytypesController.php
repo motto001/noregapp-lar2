@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Manager;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
+use Illuminate\Support\MessageBag;
 use App\Daytype;
 use Illuminate\Http\Request;
 use Session;
@@ -42,7 +42,8 @@ class DaytypesController extends Controller
      */
     public function create()
     {
-        return view('manager.daytypes.create');
+    
+        return view('manager.daytypes.create',compact('data'));
     }
 
     /**
@@ -55,11 +56,11 @@ class DaytypesController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-			'name' => 'required|string',
-			'szorzo' => 'number',
-			'fixplusz' => 'integer',
-			'color' => 'string',
-			'note' => 'string'
+			'name' => 'required|string|min:5|max:50',
+			'szorzo' => 'between:0,99.99|nullable',
+			'fixplusz' => 'integer|nullable',
+			'color' => 'string|nullable|max:50',
+			'note' => 'string|nullable|max:150'
 		]);
         $requestData = $request->all();
         
@@ -109,11 +110,11 @@ class DaytypesController extends Controller
     public function update($id, Request $request)
     {
         $this->validate($request, [
-			'name' => 'required|string',
-			'szorzo' => 'number',
-			'fixplusz' => 'integer',
-			'color' => 'string',
-			'note' => 'string'
+			'name' => 'required|string|min:5|max:50',
+			'szorzo' => 'between:0,99.99|nullable',
+			'fixplusz' => 'integer|nullable',
+			'color' => 'string|nullable|max:50',
+			'note' => 'string|nullable|max:150'
 		]);
         $requestData = $request->all();
         

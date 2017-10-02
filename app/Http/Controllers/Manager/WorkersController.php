@@ -6,6 +6,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Worker;
+use App\Status;
 use Illuminate\Http\Request;
 use Session;
 
@@ -45,6 +46,12 @@ class WorkersController extends Controller
         } else {
             $workers = Worker::paginate($perPage);
         }
+       /* if(isset($workers->status_id)){
+           $status= Status::where('id', '=', $workers->status_id )
+        ->select('id', 'name');
+        $workers['status']=$status;  
+        }else{ $workers['status']=["id"=>"0","name"=>"nics"]; }
+       */
 
         return view('manager.workers.index', compact('workers'));
     }
@@ -73,7 +80,7 @@ class WorkersController extends Controller
 			'cim' => 'required|max:200',
 			'tel' => 'max:50',
 			'birth' => 'required|date',
-			'ado' => 'strin|max:50',
+			'ado' => 'string|max:50',
 			'tb' => 'string|max:50',
 			'start' => 'required|date',
 			'end' => 'date',

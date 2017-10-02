@@ -6,6 +6,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Wroleunit;
+use App\Daytype;
 use Illuminate\Http\Request;
 use Session;
 
@@ -22,10 +23,9 @@ class WroleunitsController extends Controller
         $perPage = 25;
 
         if (!empty($keyword)) {
-            $wroleunits = Wroleunit::where('wrole_id', 'LIKE', "%$keyword%")
-				->orWhere('start', 'LIKE', "%$keyword%")
-				->orWhere('end', 'LIKE', "%$keyword%")
-				->orWhere('hour', 'LIKE', "%$keyword%")
+            $wroleunits = Wroleunit::where('name', 'LIKE', "%$keyword%")
+				->orWhere('unit', 'LIKE', "%$keyword%")
+				->orWhere('long', 'LIKE', "%$keyword%")
 				->orWhere('note', 'LIKE', "%$keyword%")
 				->orWhere('pub', 'LIKE', "%$keyword%")
 				->paginate($perPage);
@@ -43,7 +43,10 @@ class WroleunitsController extends Controller
      */
     public function create()
     {
-        return view('manager.wroleunits.create');
+
+        $wroleunit['basedaytype']=Daytype::get();
+        $wroleunit['checked_daytype']=[5];
+        return view('manager.wroleunits.create', compact('wroleunit'));
     }
 
     /**
@@ -56,20 +59,20 @@ class WroleunitsController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-			'timetype_id' => 'required|integer',
-			'start' => 'required|time',
-			'end' => 'time',
-			'hour' => 'required|number|max:24',
+			'name' => 'required|string',
+			'unit' => 'required|string',
+			'long' => 'required|integer',
 			'note' => 'string|max:200',
 			'pub' => 'integer'
 		]);
         $requestData = $request->all();
         
-        Wroleunit::create($requestData);
+        $wroleunit= Wroleunit::create($requestData)->daytype()->sync($request->daytype_id);
 
         Session::flash('flash_message', 'Wroleunit added!');
 
-        return redirect('manager/wroleunits');
+        return redirect('manager/wroleunits/'.$wroleunit->id);
+
     }
 
     /**
@@ -95,8 +98,16 @@ class WroleunitsController extends Controller
      */
     public function edit($id)
     {
-        $wroleunit = Wroleunit::findOrFail($id);
-
+              
+        $wroleunit = Wroleunit::with(['daytype','wroletime','wroletime.timetype'])->findOrFail($id);
+        $wroleunit['basedaytype']=Daytype::get();
+    
+        foreach($wroleunit->daytype as $role){
+            
+            $checked_daytype[] =  $role->id;
+        }
+        $wroleunit['checked_daytype']=$checked_daytype;
+       
         return view('manager.wroleunits.edit', compact('wroleunit'));
     }
 
@@ -111,17 +122,19 @@ class WroleunitsController extends Controller
     public function update($id, Request $request)
     {
         $this->validate($request, [
-			'timetype_id' => 'required|integer',
-			'start' => 'required|time',
-			'end' => 'time',
-			'hour' => 'required|number|max:24',
+			'name' => 'required|string',
+			'unit' => 'required|string',
+			'long' => 'required|integer',
 			'note' => 'string|max:200',
 			'pub' => 'integer'
 		]);
         $requestData = $request->all();
         
         $wroleunit = Wroleunit::findOrFail($id);
+        
         $wroleunit->update($requestData);
+
+        $wroleunit->daytype()->sync($request->daytype_id);
 
         Session::flash('flash_message', 'Wroleunit updated!');
 
@@ -138,7 +151,8 @@ class WroleunitsController extends Controller
     public function destroy($id)
     {
         Wroleunit::destroy($id);
-
+        //->timetype()->detach('timetype_id');
+        DB::table('wroleunit_daytype')->where('wroleunit_id', '=', $id)->delete();
         Session::flash('flash_message', 'Wroleunit deleted!');
 
         return redirect('manager/wroleunits');

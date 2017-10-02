@@ -20,7 +20,7 @@
                                 @endforeach
                             </ul>
                         @endif
-
+@include('manager.wroletimes.list')
                         {!! Form::model($wroleunit, [
                             'method' => 'PATCH',
                             'url' => ['/manager/wroleunits', $wroleunit->id],

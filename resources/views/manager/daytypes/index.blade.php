@@ -30,14 +30,14 @@
                             <table class="table table-borderless">
                                 <thead>
                                     <tr>
-                                        <th>ID</th><th>Name</th><th>Szorzo</th><th>Fixplusz</th><th>Actions</th>
+                                        <th>ID</th><th>Name</th><th>Szorzo</th><th>Fixplusz</th><th>Megjegyzés</th><th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($daytypes as $item)
                                     <tr>
                                         <td>{{ $item->id }}</td>
-                                        <td>{{ $item->name }}</td><td>{{ $item->szorzo }}</td><td>{{ $item->fixplusz }}</td>
+                                        <td>{{ $item->name }}</td><td>{{ $item->szorzo }}</td><td>{{ $item->fixplusz }}</td><td>{{ str_limit($item->note, 20) }}</td>
                                         <td>
                                             <a href="{{ url('/manager/daytypes/' . $item->id) }}" title="View Daytype"><button class="btn btn-info btn-xs"><i class="fa fa-eye" aria-hidden="true"></i> View</button></a>
                                             <a href="{{ url('/manager/daytypes/' . $item->id . '/edit') }}" title="Edit Daytype"><button class="btn btn-primary btn-xs"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button></a>

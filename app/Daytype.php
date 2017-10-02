@@ -19,7 +19,7 @@ class Daytype extends Model
     * @var string
     */
     protected $primaryKey = 'id';
-
+    public $timestamps = false;
     /**
      * Attributes that should be mass-assignable.
      *
@@ -27,10 +27,15 @@ class Daytype extends Model
      */
     protected $fillable = ['name', 'szorzo', 'fixplusz', 'color', 'note'];
   
-    public function timeunit()
+    public function wroleunit()
     {
-        return $this->belongsToMany('App\Timeunit');
-    }  
+        return $this->belongsToMany('App\Wroleunit','wroleunit_daytype');
+    } 
+    public function users()
+    {
+      return $this->belongsToMany('User', 'user_tasks'); // assuming user_id and task_id as fk
+    }
+    
     public function day()
     {
         return $this->hasOne('App\Day');

@@ -55,11 +55,11 @@ class TimetypesController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-			'name' => 'required|string|max:200',
-			'szorzo' => 'number',
-			'fixplusz' => 'integer',
-			'color' => 'string|max:200',
-			'note' => 'string|max:200'
+			'name' => 'required|string|min:5|max:50',
+			'szorzo' => 'between:0,99.99|nullable',
+			'fixplusz' => 'integer|nullable',
+			'color' => 'string|nullable|max:50',
+			'note' => 'string|nullable|max:150'
 		]);
         $requestData = $request->all();
         
@@ -109,11 +109,11 @@ class TimetypesController extends Controller
     public function update($id, Request $request)
     {
         $this->validate($request, [
-			'name' => 'required|string|max:200',
-			'szorzo' => 'number',
-			'fixplusz' => 'integer',
-			'color' => 'string|max:200',
-			'note' => 'string|max:200'
+			'name' => 'required|string|min:5|max:50',
+			'szorzo' => 'between:0,99.99|nullable',
+			'fixplusz' => 'integer|nullable',
+			'color' => 'string|nullable|max:50',
+			'note' => 'string|nullable|max:150'
 		]);
         $requestData = $request->all();
         

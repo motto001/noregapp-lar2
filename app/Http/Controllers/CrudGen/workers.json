@@ -187,7 +187,7 @@
         },
         {
             "field": "ado",
-            "rules": "strin|max:50"
+            "rules": "string|max:50"
         },
       
         {

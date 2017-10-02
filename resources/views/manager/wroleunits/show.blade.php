@@ -33,7 +33,7 @@
                                     <tr>
                                         <th>ID</th><td>{{ $wroleunit->id }}</td>
                                     </tr>
-                                    <tr><th> Wrole Id </th><td> {{ $wroleunit->wrole_id }} </td></tr><tr><th> Start </th><td> {{ $wroleunit->start }} </td></tr><tr><th> End </th><td> {{ $wroleunit->end }} </td></tr>
+                                    <tr><th> Name </th><td> {{ $wroleunit->name }} </td></tr><tr><th> Unit </th><td> {{ $wroleunit->unit }} </td></tr><tr><th> Long </th><td> {{ $wroleunit->long }} </td></tr>
                                 </tbody>
                             </table>
                         </div>
