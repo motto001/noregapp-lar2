@@ -20,6 +20,9 @@
                                 @endforeach
                             </ul>
                         @endif
+<button type="button" class="btn btn-primary btn-xs" 
+data-toggle="modal" data-remote="http://localhost:8000/manager/wroleunit-add-to-wrole-modal/{{ $wrole->id }}" data-target="#myModel">Munkarend ciklus hozzáadása</button>
+  @include ('manager.wroleunits.wroleunit-list-to-wrole')
 
                         {!! Form::model($wrole, [
                             'method' => 'PATCH',

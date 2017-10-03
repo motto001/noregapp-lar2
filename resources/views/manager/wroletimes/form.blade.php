@@ -1,14 +1,22 @@
+
+@if($wroletimes['wroleunit_id']<1)
 <div class="form-group {{ $errors->has('wroleunit_id') ? 'has-error' : ''}}">
     {!! Form::label('wroleunit_id', 'Wroleunit Id', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
         {!! Form::number('wroleunit_id', null, ['class' => 'form-control']) !!}
         {!! $errors->first('wroleunit_id', '<p class="help-block">:message</p>') !!}
     </div>
-</div><div class="form-group {{ $errors->has('timetype_id') ? 'has-error' : ''}}">
+</div>
+@else
+ {!! Form::hidden('wroleunit_id', $wroletimes['wroleunit_id']) !!}
+
+@endif
+
+<div class="form-group {{ $errors->has('timetype_id') ? 'has-error' : ''}}">
     {!! Form::label('timetype_id', 'Timetype Id', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
       
-        {!! Form::select('timetype_id', $wroletime['timetype'], null, ['class' => 'form-control', 'required' => 'required']) !!}
+        {!! Form::select('timetype_id', $wroletimes['timetype'], null, ['class' => 'form-control', 'required' => 'required']) !!}
         
          {!! $errors->first('timetype_id', '<p class="help-block">:message</p>') !!}
     </div>

@@ -7,9 +7,10 @@
 
             <div class="col-md-9">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Create New Wrole</div>
+                    <div class="panel-heading">Edit Wroletime #{{ $wroletimes->id }}</div>
                     <div class="panel-body">
-                        <a href="{{ url('/manager/wroles') }}" title="Back"><button class="btn btn-warning btn-xs"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button></a>
+                        <a href="{{ url('/manager/wroletimes-to-unit/index2/'.$wroletimes['wroleunit_id']) }}"
+                         title="Back"><button class="btn btn-warning btn-xs"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button></a>
                         <br />
                         <br />
 
@@ -20,9 +21,15 @@
                                 @endforeach
                             </ul>
                         @endif
-                       {!! Form::open(['url' => '/manager/wroles', 'class' => 'form-horizontal', 'files' => true]) !!}
 
-                        @include ('manager.wroles.form')
+                        {!! Form::model($wroletimes, [
+                            'method' => 'PATCH',
+                            'url' => ['/manager/wroletimes-to-unit/'.$wroletimes['wroleunit_id']],
+                            'class' => 'form-horizontal',
+                            'files' => true
+                        ]) !!}
+
+                        @include ('manager.wroletimes.form', ['submitButtonText' => 'Update'])
 
                         {!! Form::close() !!}
 

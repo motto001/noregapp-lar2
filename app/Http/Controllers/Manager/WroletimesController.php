@@ -72,7 +72,7 @@ class WroletimesController extends Controller
 			'start' => 'required|date_format:H:i',
 			'end' => 'date_format:H:i',
 			'hour' => 'required|integer|max:24',
-			'managernote' => 'string|max:200',
+			'managernote' => 'string|max:200|nullable',
 			'workernote' => 'string|max:200|nullable',
 			'pub' => 'integer'
 		]);
@@ -136,7 +136,7 @@ class WroletimesController extends Controller
 			'start' => 'required|date_format:H:i',
 			'end' => 'date_format:H:i',
 			'hour' => 'required|integer|max:24',
-			'managernote' => 'string|max:200',
+			'managernote' => 'string|max:200|nullable',
 			'workernote' => 'string|max:200|nullable',
 			'pub' => 'integer'
 		]);

@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Manager;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
+use Illuminate\Support\Facades\DB;
 use App\Wrole;
+use App\Wroleunit;
 use Illuminate\Http\Request;
 use Session;
 
@@ -61,11 +62,11 @@ class WrolesController extends Controller
 		]);
         $requestData = $request->all();
         
-        Wrole::create($requestData);
+       $wrole= Wrole::create($requestData);
 
         Session::flash('flash_message', 'Wrole added!');
 
-        return redirect('manager/wroles');
+        return redirect('manager/wroles/'.$wrole->id).'/edit';
     }
 
     /**
@@ -91,10 +92,26 @@ class WrolesController extends Controller
      */
     public function edit($id)
     {
-        $wrole = Wrole::findOrFail($id);
+        $wrole = Wrole::with(['wroleunit'])->findOrFail($id);
 
         return view('manager.wroles.edit', compact('wrole'));
     }
+    public function wroleunitSelectToSave($wroleunit_id,$wrole_id)
+    {
+        DB::table('wroleunit_wrole')->insert(
+            ['wroleunit_id' =>$wroleunit_id , 'wrole_id' => $wrole_id]
+        );
+        return redirect('manager/wroles/'.$wrole_id.'/edit');
+    }
+    public function wroleunitToDel($wroleunit_id,$wrole_id)
+    {
+      DB::table('wroleunit_wrole')
+        ->where('wroleunit_id', '=', $wroleunit_id)
+        ->where('wrole_id', '=', $wrole_id)
+        ->delete();;
+        return redirect('manager/wroles/'.$wrole_id.'/edit');
+    }
+
 
     /**
      * Update the specified resource in storage.

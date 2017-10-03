@@ -10,7 +10,7 @@ use App\Wroletime;
 use Illuminate\Http\Request;
 use Session;
 
-class WroletimesController extends Controller
+class WroletimesToUnitController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,11 +19,15 @@ class WroletimesController extends Controller
      */
     public function index(Request $request)
     {
+        return redirect('manager/wroletimes');
+    }
+    public function index2($unit_id,Request $request)
+    {
         $keyword = $request->get('search');
         $perPage = 25;
 
         if (!empty($keyword)) {
-            $wroletimes = Wroletime::where('wroleunit_id', 'LIKE', "%$keyword%")
+            $wroletimes2 = Wroletime::where('wroleunit_id', '=', $unit_id)
 				->orWhere('timetype_id', 'LIKE', "%$keyword%")
 				->orWhere('start', 'LIKE', "%$keyword%")
 				->orWhere('end', 'LIKE', "%$keyword%")
@@ -32,31 +36,33 @@ class WroletimesController extends Controller
 				->orWhere('workernote', 'LIKE', "%$keyword%")
 				->paginate($perPage);
         } else {
-            $wroletimes = Wroletime::with('timetype')->paginate($perPage);
+            $wroletimes2 = Wroletime::where('wroleunit_id', '=', $unit_id)
+            ->with('timetype')->paginate($perPage);
         }
-
-        return view('manager.wroletimes.index', compact('wroletimes'));
+       
+        $wroletimes['wroletimes']=$wroletimes2;
+        $wroletimes['wroleunit_id']=$unit_id;
+      
+        return view('manager.wroletimes.index2', compact('wroletimes'));
     }
-
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\View\View
      */
-    public function create()
+     public function create()
+     {
+        return redirect('manager/wroletimes');
+     }
+
+    public function create2($unit_id)
     {
-        $wroletime = Wroletime::get();
-        $wroletime['timetype']= Timetype::pluck('name','id');
-        $wroletime['wroleunit_id']= 0;
-        return view('manager.wroletimes.create',compact('wroletime'));
+        $wroletimes = Wroletime::get();
+        $wroletimes['timetype']= Timetype::pluck('name','id');
+        $wroletimes['wroleunit_id']= $unit_id;
+        return view('manager.wroletimes.create2',compact('wroletimes'));
     }
-    public function create2($id)
-    {
-        $wroletime = Wroletime::get();
-        $wroletime['timetype']= Timetype::pluck('name','id');
-        $wroletime['wroleunit_id']= $id;
-        return view('manager.wroletimes.create',compact('wroletime'));
-    }
+  
     /**
      * Store a newly created resource in storage.
      *
@@ -72,7 +78,7 @@ class WroletimesController extends Controller
 			'start' => 'required|date_format:H:i',
 			'end' => 'date_format:H:i',
 			'hour' => 'required|integer|max:24',
-			'managernote' => 'string|max:200',
+			'managernote' => 'string|max:200|nullable',
 			'workernote' => 'string|max:200|nullable',
 			'pub' => 'integer'
 		]);
@@ -82,21 +88,7 @@ class WroletimesController extends Controller
 
         Session::flash('flash_message', 'Wroletime added!');
 
-        return redirect('manager/wroletimes');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     *
-     * @return \Illuminate\View\View
-     */
-    public function show($id)
-    {
-        $wroletime = Wroletime::findOrFail($id);
-
-        return view('manager.wroletimes.show', compact('wroletime'));
+        return redirect('manager/wroletimes-to-unit/index2/'.$request->wroleunit_id);
     }
 
     /**
@@ -108,18 +100,15 @@ class WroletimesController extends Controller
      */
     public function edit($id)
     {
-        $wroletime = Wroletime::findOrFail($id);
-        $wroletime['timetype']= Timetype::pluck('name','id');
-        $wroletime['wroleunit_id']= 0;
-        return view('manager.wroletimes.edit', compact('wroletime'));
+        $wroletimes = Wroletime::findOrFail($id);
+        $wroletimes['timetype']= Timetype::pluck('name','id');
+        $wroletimes['wroleunit_id']= $wroletimes->wroleunit_id;
+
+        $wroletimes->start=substr( $wroletimes->start, 0, -3);
+        $wroletimes->end=substr( $wroletimes->end, 0, -3);
+        return view('manager.wroletimes.edit2', compact('wroletimes'));
     }
-    public function edit2($id,$wroleunit_id)
-    {
-        $wroletime = Wroletime::findOrFail($id);
-        $wroletime['timetype']= Timetype::pluck('name','id');
-        $wroletime['wroleunit_id']= $wroleunit_id;
-        return view('manager.wroletimes.edit', compact('wroletime'));
-    }
+ 
     /**
      * Update the specified resource in storage.
      *
@@ -136,7 +125,7 @@ class WroletimesController extends Controller
 			'start' => 'required|date_format:H:i',
 			'end' => 'date_format:H:i',
 			'hour' => 'required|integer|max:24',
-			'managernote' => 'string|max:200',
+			'managernote' => 'string|max:200|nullable',
 			'workernote' => 'string|max:200|nullable',
 			'pub' => 'integer'
 		]);
@@ -147,7 +136,7 @@ class WroletimesController extends Controller
 
         Session::flash('flash_message', 'Wroletime updated!');
 
-        return redirect('manager/wroletimes');
+        return redirect('manager/wroletimes-to-unit/index2/'.$request->wroleunit_id);
     }
 
     /**
@@ -159,10 +148,11 @@ class WroletimesController extends Controller
      */
     public function destroy($id)
     {
+        $wroletime = Wroletime::findOrFail($id);
         Wroletime::destroy($id);
 
         Session::flash('flash_message', 'Wroletime deleted!');
 
-        return redirect('manager/wroletimes');
+        return redirect('manager/wroletimes-to-unit/index2/'. $wroletime->wroleunit_id);
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 
 use App\Wroleunit;
 use App\Daytype;
+use App\Wroletime;
 use Illuminate\Http\Request;
 use Session;
 
@@ -157,4 +158,30 @@ class WroleunitsController extends Controller
 
         return redirect('manager/wroleunits');
     }
+     public function wroleunitToModal($wroleid)
+    {
+        $wroleunits2 = Wroleunit::get();
+       // print_r($wroleunits);
+       $wroleunits['wroleunits']=$wroleunits2;
+        $wroleunits['wrole_id']=$wroleid;
+        return view('manager.wroleunits.wroleunit-to-selectmodal', compact('wroleunits'));
+    }
+    public function showToModal($id)
+    {
+        $wroleunit = Wroleunit::with(['daytype','wroletime','wroletime.timetype'])->findOrFail($id);
+        $wroleunit['basedaytype']=Daytype::get();
+    
+        foreach($wroleunit->daytype as $role){
+            
+            $checked_daytype[] =  $role->id;
+        }
+        $wroleunit['checked_daytype']=$checked_daytype;
+        return view('manager.wroleunits.show-to-modal', compact('wroleunit'));
+    }
+    public function timedel($id)
+    {
+        Wroletime::destroy($id);
+        return redirect('manager/wroleunits');
+    }
+
 }

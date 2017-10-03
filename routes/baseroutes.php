@@ -31,9 +31,18 @@ Route::group(['prefix' => '/manager','middleware' => ['auth', 'roles'], 'roles' 
     Route::resource('/timetypes', 'Manager\\TimetypesController');
     
     Route::resource('/wroles', 'Manager\\WrolesController');
+
     Route::resource('/wroleunits', 'Manager\\WroleunitsController');
-    Route::resource('/wroletimes', 'Manager\\WroletimesController');
+    Route::get('/wroleunit-show-to-modal/{wrole_id}', 'Manager\\WroleunitsController@showToModal');
+    Route::get('/wroleunit-add-to-wrole-modal/{wrole_id}', 'Manager\\WroleunitsController@wroleunitToModal');
     
+    Route::get('/wroleunit-select-to-save/{wroleunit_id}/{wrole_id}', 'Manager\\WrolesController@wroleunitSelectToSave');
+    Route::get('/wroleunit-to-del/{wroleunit_id}/{wrole_id}', 'Manager\\WrolesController@wroleunitToDel');
+    
+    Route::resource('/wroletimes', 'Manager\\WroletimesController');
+    Route::resource('/wroletimes-to-unit', 'Manager\\WroletimesToUnitController');
+    Route::get('/wroletimes-to-unit/index2/{unit_id}', 'Manager\\WroletimesToUnitController@index2'); 
+    Route::get('/wroletimes-to-unit/create2/{unit_id}', 'Manager\\WroletimesToUnitController@create2'); 
 });
 //workadmin---------------------------------------------------------------
 Route::group(['prefix' => '/workadmin','middleware' => ['auth', 'roles'], 'roles' => 'workadmin'],function()

@@ -29,7 +29,7 @@ class Wrole extends Model
 
     public function wroleunit()
 	{
-		return $this->hasMany('App\Wroleunit');
+		return $this->belongsToMany('App\Wroleunit','wroleunit_wrole');
 	}
 	
 }
