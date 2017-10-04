@@ -15,8 +15,8 @@ class CheckLogin
      */
     public function handle($request, Closure $next)
     {
-       // if(Auth::check() && Auth::user()->hasRole('admin')) {
-        if(Auth::id()<1) {  
+        if(Auth::check() && Auth::user()->hasRole('worker')) {
+       // if(Auth::id()<1) {  
             return redirect('/login');
         } 
 // return $next($request);

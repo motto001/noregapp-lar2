@@ -71,7 +71,7 @@
                 </a>
             </li>
             <li role="manager">
-                <a href="{{ url('/manager/timframes') }}">
+                <a href="{{ url('/manager/timeframes') }}">
                     Időkeretek
                 </a>
             </li>

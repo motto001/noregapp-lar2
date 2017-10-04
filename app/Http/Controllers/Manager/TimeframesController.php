@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Manager;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
+use App\Daytype;
 use App\Timeframe;
 use Illuminate\Http\Request;
 use Session;
@@ -45,7 +45,9 @@ class TimeframesController extends Controller
      */
     public function create()
     {
-        return view('manager.timeframes.create');
+        $timeframe['basedaytype']=Daytype::get();
+        $timeframe['checked_daytype']=[5];
+        return view('manager.timeframes.create',compact('timeframe'));
     }
 
     /**
@@ -67,7 +69,8 @@ class TimeframesController extends Controller
 		]);
         $requestData = $request->all();
         
-        Timeframe::create($requestData);
+       // Timeframe::create($requestData);
+        Timeframe::create($requestData)->daytype()->sync($request->daytype_id);
 
         Session::flash('flash_message', 'Timeframe added!');
 
@@ -97,7 +100,17 @@ class TimeframesController extends Controller
      */
     public function edit($id)
     {
-        $timeframe = Timeframe::findOrFail($id);
+
+        $timeframe = Timeframe::with(['daytype'])->findOrFail($id);
+        $timeframe['basedaytype']=Daytype::get();
+    
+        foreach($timeframe->daytype as $role){
+            
+            $checked_daytype[] =  $role->id;
+        }
+        $timeframe['checked_daytype']=$checked_daytype;
+
+       // $timeframe = Timeframe::findOrFail($id);
 
         return view('manager.timeframes.edit', compact('timeframe'));
     }
@@ -121,9 +134,15 @@ class TimeframesController extends Controller
 			'pub' => 'max:4'
 		]);
         $requestData = $request->all();
-        
+      
         $timeframe = Timeframe::findOrFail($id);
+        
         $timeframe->update($requestData);
+
+        $timeframe->daytype()->sync($request->daytype_id);
+
+        //$timeframe = Timeframe::findOrFail($id);
+       // $timeframe->update($requestData);
 
         Session::flash('flash_message', 'Timeframe updated!');
 
@@ -140,7 +159,7 @@ class TimeframesController extends Controller
     public function destroy($id)
     {
         Timeframe::destroy($id);
-
+        DB::table('daytype_timeframe')->where('timeframe_id', '=', $id)->delete();
         Session::flash('flash_message', 'Timeframe deleted!');
 
         return redirect('manager/timeframes');

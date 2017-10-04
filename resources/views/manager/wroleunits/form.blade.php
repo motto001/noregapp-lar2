@@ -17,7 +17,7 @@
 </div><div class="form-group {{ $errors->has('unit') ? 'has-error' : ''}}">
     {!! Form::label('unit', 'Unit', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::select('unit', ['nap', 'hét', 'hónap'], null, ['class' => 'form-control', 'required' => 'required']) !!}
+        {!! Form::select('unit',['nap'=>'nap', 'hét'=>'hét', 'hónap'=>'hónap'], null, ['class' => 'form-control', 'required' => 'required']) !!}
         {!! $errors->first('unit', '<p class="help-block">:message</p>') !!}
     </div>
 </div><div class="form-group {{ $errors->has('long') ? 'has-error' : ''}}">

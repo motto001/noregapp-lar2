@@ -31,5 +31,8 @@ class Timeframe extends Model
 	{
 		return $this->belongsToMany('App\Worker');
 	}
-	
+    public function daytype()
+    {
+        return $this->belongsToMany('App\Daytype','daytype_timeframe');
+    }
 }

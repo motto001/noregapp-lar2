@@ -6,7 +6,14 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Worker;
+use App\User;
+use App\Wrole;
+use App\Timeframe;
 use App\Status;
+use App\Workertype;
+use App\Workergroup;
+
+
 use Illuminate\Http\Request;
 use Session;
 
@@ -63,7 +70,17 @@ class WorkersController extends Controller
      */
     public function create()
     {
-        return view('manager.workers.create');
+
+        $worker = Worker::get();
+        $worker['user']=User::get()->pluck('name','id');
+        $worker['wrole']=Wrole::get()->pluck('name','id');
+$worker['base_timeframe']=Timeframe::get(['id','name'])->toarray();
+$worker['checked_timeframe']=[1];
+$worker['status']=Status::get()->pluck('name','id');
+$worker['workertype']=Workertype::get()->pluck('name','id');
+$worker['workergroup']=Workergroup::get()->pluck('name','id');
+
+        return view('manager.workers.create',compact('worker'));
     }
 
     /**
@@ -145,6 +162,7 @@ class WorkersController extends Controller
 			'pub' => 'integer'
 		]);
         $requestData = $request->all();
+    //'checked_timeframe' ,base_timeframe
         
         $worker = Worker::findOrFail($id);
         $worker->update($requestData);

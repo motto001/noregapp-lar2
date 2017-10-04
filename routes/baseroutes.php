@@ -1,9 +1,8 @@
 <?php
 
-Route::get('admin', 'Admin\AdminController@index',function(){
+Route::get('admin','Admin\AdminController@index',function(){
 
-
-});
+})->middleware('checklogin');
 
 //root-----------------------------------------------------------
 Route::group(['prefix' => '/admin','middleware' => ['auth', 'roles'], 'roles' => 'admin'],function()

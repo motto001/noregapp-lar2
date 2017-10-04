@@ -54,7 +54,7 @@ class WorkergroupsController extends Controller
     {
         $this->validate($request, [
 			'name' => 'required|max:200',
-			'note' => 'max:200',
+			'note' => 'max:200|nullable',
 			'pub' => 'max:4'
 		]);
         $requestData = $request->all();
@@ -106,7 +106,7 @@ class WorkergroupsController extends Controller
     {
         $this->validate($request, [
 			'name' => 'required|max:200',
-			'note' => 'max:200',
+			'note' => 'max:200|nullable',
 			'pub' => 'max:4'
 		]);
         $requestData = $request->all();

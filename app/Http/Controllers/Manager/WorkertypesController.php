@@ -53,7 +53,7 @@ class WorkertypesController extends Controller
     {
         $this->validate($request, [
 			'name' => 'required|string',
-			'note' => 'string'
+			'note' => 'string|nullable'
 		]);
         $requestData = $request->all();
         
@@ -104,7 +104,7 @@ class WorkertypesController extends Controller
     {
         $this->validate($request, [
 			'name' => 'required|string',
-			'note' => 'string'
+			'note' => 'string|nullable'
 		]);
         $requestData = $request->all();
         

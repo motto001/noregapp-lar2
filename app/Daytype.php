@@ -43,6 +43,10 @@ class Daytype extends Model
     public function chworkerday()
     {
         return $this->hasOne('App\chworkerday');
-    }  
+    } 
+    public function timeframe()
+    {
+        return $this->belongsToMany('App\Timeframe','daytype_timeframe');
+    }
     
 }
