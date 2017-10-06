@@ -89,7 +89,7 @@
 </div><div class="form-group {{ $errors->has('birth') ? 'has-error' : ''}}">
     {!! Form::label('birth', 'Születési dátum', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
-        {!! Form::date('birth', null, ['class' => 'form-control', 'required' => 'required']) !!}
+        {!! Form::text('birth', null, ['class' => 'form-control datepicker', 'required' => 'required']) !!}
         {!! $errors->first('birth', '<p class="help-block">:message</p>') !!}
     </div>
 </div><div class="form-group {{ $errors->has('ado') ? 'has-error' : ''}}">
@@ -128,7 +128,7 @@
     </div>
 </div>
 
- {!! Form::hidden('pub', 0, ['class' => 'form-control', 'required' => 'required']) !!}
+ {!! Form::hidden('pub', 0) !!}
        
 
 

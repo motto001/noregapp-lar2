@@ -21,7 +21,7 @@ class CreateTimeframesTable extends Migration
             $table->integer('hourmax')->nullable();
             $table->integer('hourmin')->nullable();
             $table->string('note')->nullable();
-            $table->integer('pub');
+            $table->integer('pub')->default(0);
             $table->timestamps();
         });
     }

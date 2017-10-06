@@ -8,7 +8,8 @@ Route::get('admin','Admin\AdminController@index',function(){
 Route::group(['prefix' => '/admin','middleware' => ['auth', 'roles'], 'roles' => 'admin'],function()
 {
     Route::resource('/users', 'Admin\UsersController');
-    Route::resource('/conf', 'Admin\\ConfController');  
+    
+    Route::resource('/conf', 'Admin\ConfController');  
     Route::resource('/roles', 'Admin\RolesController');
     Route::resource('/permissions', 'Admin\PermissionsController'); 
     Route::get('/give-role-permissions', 'Admin\AdminController@getGiveRolePermissions');

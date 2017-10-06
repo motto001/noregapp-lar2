@@ -18,7 +18,7 @@ class CreateWroleunitsTable extends Migration
             $table->string('unit');
             $table->integer('long');
             $table->string('note')->nullable();
-            $table->integer('pub');
+            $table->integer('pub')->default(0);
             $table->timestamps();
         });
     }

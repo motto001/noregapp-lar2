@@ -15,9 +15,9 @@ class CreateWrolesTable extends Migration
         Schema::create('wroles', function(Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('note');
-            $table->date('start');
-            $table->integer('pub');
+            $table->string('note')->nullable();
+            $table->date('start')->nullable();
+            $table->integer('pub')->default(0);
             $table->timestamps();
         });
     }

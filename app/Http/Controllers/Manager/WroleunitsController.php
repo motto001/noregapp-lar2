@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Manager;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
+//use Illuminate\Support\Facades\DB;
 use App\Wroleunit;
 use App\Daytype;
 use App\Wroletime;
@@ -63,16 +63,16 @@ class WroleunitsController extends Controller
 			'name' => 'required|string',
 			'unit' => 'required|string',
 			'long' => 'required|integer',
-			'note' => 'string|max:200',
+			'note' => 'string|max:200|nullable',
 			'pub' => 'integer'
 		]);
         $requestData = $request->all();
         
-        $wroleunit= Wroleunit::create($requestData)->daytype()->sync($request->daytype_id);
-
+        $wroleunit= Wroleunit::create($requestData);
+        $wroleunit->daytype()->sync($request->daytype_id);
         Session::flash('flash_message', 'Wroleunit added!');
 
-        return redirect('manager/wroleunits/'.$wroleunit->id);
+        return redirect('manager/wroleunits/'.$wroleunit->id.'/edit');
 
     }
 
@@ -126,7 +126,7 @@ class WroleunitsController extends Controller
 			'name' => 'required|string',
 			'unit' => 'required|string',
 			'long' => 'required|integer',
-			'note' => 'string|max:200',
+			'note' => 'string|max:200|nullable',
 			'pub' => 'integer'
 		]);
         $requestData = $request->all();

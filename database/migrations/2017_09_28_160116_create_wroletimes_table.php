@@ -15,7 +15,9 @@ class CreateWroletimesTable extends Migration
         Schema::create('wroletimes', function(Blueprint $table) {
             $table->increments('id');
             $table->integer('wroleunit_id')->unsigned();
+            $table->foreign('wroleunit_id')->references('id')->on('wroleunits');
             $table->integer('timetype_id')->unsigned();
+            $table->foreign('timetype_id')->references('id')->on('timetypes');
             $table->time('start');
             $table->time('end')->nullable();
             $table->integer('hour');

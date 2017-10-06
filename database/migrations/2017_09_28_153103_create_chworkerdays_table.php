@@ -18,7 +18,7 @@ class CreateChworkerdaysTable extends Migration
             $table->integer('daytype_id')->unsigned();
             $table->string('managernote')->nullable();
             $table->string('workernote')->nullable();
-            $table->integer('pub');
+            $table->integer('pub')->default('0');
             $table->foreign('workerday_id')->references('id')->on('days');
             $table->foreign('daytype_id')->references('id')->on('daytypes');
             $table->timestamps();

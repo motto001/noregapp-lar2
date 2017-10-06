@@ -15,7 +15,7 @@ class CreateWorkertypesTable extends Migration
         Schema::create('workertypes', function(Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('note');
+            $table->string('note')->nullable();
             $table->timestamps();
         });
     }

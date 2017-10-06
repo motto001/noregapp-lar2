@@ -15,14 +15,17 @@ class CreateChworkertimesTable extends Migration
         Schema::create('chworkertimes', function(Blueprint $table) {
             $table->increments('id');
             $table->integer('workerday_id')->unsigned();
+            $table->foreign('workerday_id')->references('id')->on('workerdays');
             $table->integer('workertime_id')->unsigned();
+            $table->foreign('workertime_id')->references('id')->on('workertimes');
             $table->integer('timetype_id')->unsigned();
+            $table->foreign('timetype_id')->references('id')->on('timetypes');
             $table->time('start');
             $table->time('end')->nullable();
             $table->integer('hour');
             $table->string('managernote')->nullable();
             $table->string('workernote')->nullable();
-            $table->integer('pub');
+            $table->integer('pub')->default(0);
             $table->timestamps();
         });
     }

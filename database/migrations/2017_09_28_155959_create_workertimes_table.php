@@ -15,7 +15,9 @@ class CreateWorkertimesTable extends Migration
         Schema::create('workertimes', function(Blueprint $table) {
             $table->increments('id');
             $table->integer('day_id')->unsigned();
+            $table->foreign('day_id')->references('id')->on('days');
             $table->integer('timetype_id')->unsigned();
+            $table->foreign('timetype_id')->references('id')->on('timetypes');
             $table->time('start');
             $table->time('end')->nullable();
             $table->integer('hour');

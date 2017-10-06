@@ -15,8 +15,8 @@ class CreateWorkergroupsTable extends Migration
         Schema::create('workergroups', function(Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('note');
-            $table->integer('pub');
+            $table->string('note')->nullable();
+            $table->integer('pub')->default(0);
             $table->timestamps();
         });
     }

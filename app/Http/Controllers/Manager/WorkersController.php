@@ -74,11 +74,11 @@ class WorkersController extends Controller
         $worker = Worker::get();
         $worker['user']=User::get()->pluck('name','id');
         $worker['wrole']=Wrole::get()->pluck('name','id');
-$worker['base_timeframe']=Timeframe::get(['id','name'])->toarray();
-$worker['checked_timeframe']=[1];
-$worker['status']=Status::get()->pluck('name','id');
-$worker['workertype']=Workertype::get()->pluck('name','id');
-$worker['workergroup']=Workergroup::get()->pluck('name','id');
+        $worker['base_timeframe']=Timeframe::get(['id','name'])->toarray();
+        $worker['checked_timeframe']=[1];
+        $worker['status']=Status::get()->pluck('name','id');
+        $worker['workertype']=Workertype::get()->pluck('name','id');
+        $worker['workergroup']=Workergroup::get()->pluck('name','id');
 
         return view('manager.workers.create',compact('worker'));
     }
@@ -100,13 +100,14 @@ $worker['workergroup']=Workergroup::get()->pluck('name','id');
 			'ado' => 'string|max:50',
 			'tb' => 'string|max:50',
 			'start' => 'required|date',
-			'end' => 'date',
+            'end' => 'date|nullable',
+            'note' => 'string|nullable',
 			'pub' => 'integer'
 		]);
         $requestData = $request->all();
-        
-        Worker::create($requestData);
-
+      //  print_r($requestData);
+      //  Worker::create($requestData);
+       Worker::create($requestData)->timeframe()->sync($request->timeframe_id);
         Session::flash('flash_message', 'Worker added!');
 
         return redirect('manager/workers');
@@ -151,6 +152,7 @@ $worker['workergroup']=Workergroup::get()->pluck('name','id');
     public function update($id, Request $request)
     {
         $this->validate($request, [
+            'workergroup_id'=>'integer',
 			'fullname' => 'required|max:200',
 			'cim' => 'required|max:200',
 			'tel' => 'max:50',
@@ -158,7 +160,8 @@ $worker['workergroup']=Workergroup::get()->pluck('name','id');
 			'ado' => 'strin|max:50',
 			'tb' => 'string|max:50',
 			'start' => 'required|date',
-			'end' => 'date',
+            'end' => 'date|nullable',
+            'note' => 'string|nullable',
 			'pub' => 'integer'
 		]);
         $requestData = $request->all();

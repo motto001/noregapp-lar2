@@ -1,4 +1,4 @@
-@php ($baseurl = '/manager/users/')
+@php ($baseurl = '/manager/users')
 
 @extends('layouts.backend')
 

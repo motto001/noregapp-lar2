@@ -15,10 +15,15 @@ class CreateWorkersTable extends Migration
         Schema::create('workers', function(Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users');
             $table->integer('wrole_id')->unsigned();
+            $table->foreign('wrole_id')->references('id')->on('wroles');
             $table->integer('status_id')->unsigned();
+            $table->foreign('status_id')->references('id')->on('statuses');
             $table->integer('workertype_id')->unsigned();
+            $table->foreign('workertype_id')->references('id')->on('workertypes');
             $table->integer('workergroup_id')->unsigned();
+            $table->foreign('workergroup_id')->references('id')->on('workergroups');
             $table->integer('salary');
             $table->string('salary_type');
             $table->string('position');
@@ -32,12 +37,7 @@ class CreateWorkersTable extends Migration
             $table->date('start');
             $table->date('end')->nullable();
             $table->string('note')->nullable();
-            $table->integer('pub');
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('wrole_id')->references('id')->on('wroles');
-            $table->foreign('status_id')->references('id')->on('statuses');
-            $table->foreign('workertype_id')->references('id')->on('workertypes');
-            $table->foreign('workergroup_id')->references('id')->on('workergroups');
+            $table->integer('pub');       
             $table->timestamps();
         });
     }

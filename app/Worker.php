@@ -25,18 +25,18 @@ class Worker extends Model
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'wrole_id', 'status_id', 'workertype_id', 'workergroup_id', 'salary', 'salary_type', 'position', 'foto', 'fullname', 'cim', 'tel', 'birth', 'ado', 'tb', 'start', 'end', 'note', 'pub'];
+    protected $fillable = ['user_id', 'wrole_id', 'status_id', 'workertype_id','workergroup_id', 'salary', 'salary_type', 'position', 'foto', 'fullname','cim', 'tel', 'birth', 'ado', 'tb', 'start', 'end', 'note', 'pub'];
     public function user()
     {
         return $this->belongsTo('App\User');
     }
-    public function workrole()
+    public function wrole()
     {
-        return $this->belongsTo('App\Workrole');
+        return $this->belongsTo('App\Wrole');
     }
     public function status()
     {
-        return $this->belongsTo('App\status');
+        return $this->belongsTo('App\Status');
     }
     public function workertype()
     {
@@ -48,7 +48,7 @@ class Worker extends Model
     }
     public function day()
     {
-        return $this->hasMany('App\day');
+        return $this->hasMany('App\Day');
     }
     public function chworkerday()
     {
@@ -60,7 +60,7 @@ class Worker extends Model
     }
     public function timeframe()
     {
-        return $this->belongsToMany('App\Timeframe');
+        return $this->belongsToMany('App\Timeframe','worker_timeframe');
     }
     
 }
