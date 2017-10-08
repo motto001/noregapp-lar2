@@ -1,8 +1,6 @@
 
                     <div class="panel-body">
-                        <a href="{{ url('/manager/wroletimes-to-unit/create2/'.$wroleunit->id) }}" class="btn btn-success btn-sm" title="Add New Wroletime">
-                            <i class="fa fa-plus" aria-hidden="true"></i> uj időegység
-                        </a>
+                    
 
                         <div class="table-responsive">
                             <table class="table table-borderless">
@@ -12,17 +10,18 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($wroleunit->wroletime as $item)
+                                @foreach($data['list'] as $item)
                                     <tr>
                                         <td>{{ $item->timetype->name }}</td>
                                         <td>{{ $item->start }}</td><td>{{ $item->end }}</td><td>{{ $item->hour }}</td><td>{{ $item->timetype->szorzo }}</td><td>{{ $item->timetype->fixplusz }}</td>
                                         <td>
                                         
-                                            <a href="{{ url('/manager/wroletimes-to-unit/' . $item->id . '/edit') }}" 
-                                            title="Edit Wroletime"><button class="btn btn-primary btn-xs"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button></a>
+                                            <a href="{{ url('/'.$param['baseroute'].'/' . $item->id . '/edit') }}" 
+                                            title="Edit Wroletime"><button class="btn btn-primary btn-xs">
+                                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button></a>
                                             {!! Form::open([
                                                 'method'=>'DELETE',
-                                                'url' => ['/manager/wroleunit/timedel', $item->id],
+                                                'url' => ['/'.$param['baseroute'], $item->id],
                                                 'style' => 'display:inline'
                                             ]) !!}
                                                 {!! Form::button('<i class="fa fa-trash-o" aria-hidden="true"></i> Delete', array(

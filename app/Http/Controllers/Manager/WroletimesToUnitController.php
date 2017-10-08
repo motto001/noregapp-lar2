@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Manager;
 
 //use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\View;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Timetype;
@@ -13,19 +14,43 @@ use Session;
 class WroletimesToUnitController extends Controller
 {
     /**
+     * validációs szabályok 
+     */
+protected $valT=[
+	'wroleunit_id' => 'required|integer',
+    'timetype_id' => 'required|integer',
+    'start' => 'required|date_format:H:i',
+    'end' => 'date_format:H:i',
+    'hour' => 'required|integer|max:24',
+    'managernote' => 'string|max:200|nullable',
+    'workernote' => 'string|max:200|nullable',
+    'pub' => 'integer'
+];
+/**
+ * minden viewnwk megosztott paraméterek
+ */
+protected $paramT= [
+            'baseroute'=>'manager/wroletimes-to-unit',
+            'baseview'=>'manager.wroletimestounit', 
+            'cim'=>'Idők',
+];
+
+   function __construct(){
+
+        View::share('param',$this->paramT);
+   }
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\View\View
      */
+ 
     public function index(Request $request)
-    {
-        return redirect('manager/wroletimes');
-    }
-    public function index2($unit_id,Request $request)
     {
         $keyword = $request->get('search');
         $perPage = 25;
-
+        $routeparam=$request->get('routeparam');
+       // $data['routeparam']=$_GET['routeparam'];
         if (!empty($keyword)) {
             $wroletimes2 = Wroletime::where('wroleunit_id', '=', $unit_id)
 				->orWhere('timetype_id', 'LIKE', "%$keyword%")
@@ -36,31 +61,30 @@ class WroletimesToUnitController extends Controller
 				->orWhere('workernote', 'LIKE', "%$keyword%")
 				->paginate($perPage);
         } else {
-            $wroletimes2 = Wroletime::where('wroleunit_id', '=', $unit_id)
+            $wroletimes2 = Wroletime::where('wroleunit_id', '=',$routeparam)
             ->with('timetype')->paginate($perPage);
         }
-       
-        $wroletimes['wroletimes']=$wroletimes2;
-        $wroletimes['wroleunit_id']=$unit_id;
-      
-        return view('manager.wroletimes.index2', compact('wroletimes'));
+     //  print_r($wroletimes2);
+        $data['list']=$wroletimes2;
+        $data['wroleunit_id']=$routeparam;
+        $data['routeparam']='?routeparam='.$routeparam;
+        $data['backurl']='manager/wroleunits/'.$routeparam.'/edit';
+        return view('crudbase.index', compact('data'));
     }
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\View\View
      */
-     public function create()
-     {
-        return redirect('manager/wroletimes');
-     }
 
-    public function create2($unit_id)
+    public function create(Request $request)
     {
-        $wroletimes = Wroletime::get();
-        $wroletimes['timetype']= Timetype::pluck('name','id');
-        $wroletimes['wroleunit_id']= $unit_id;
-        return view('manager.wroletimes.create2',compact('wroletimes'));
+       // $wroletimes = Wroletime::get();
+        $data['timetype']= Timetype::pluck('name','id');
+        $data['wroleunit_id']= $request->get('routeparam');
+        $data['routeparam']='?routeparam=' .$request->get('routeparam');
+        $data['cancelurl']=$this->paramT['baseroute'].'/'.$data['routeparam'];  
+        return view('crudbase.create',compact('data'));
     }
   
     /**
@@ -72,23 +96,14 @@ class WroletimesToUnitController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-			'wroleunit_id' => 'required|integer',
-			'timetype_id' => 'required|integer',
-			'start' => 'required|date_format:H:i',
-			'end' => 'date_format:H:i',
-			'hour' => 'required|integer|max:24',
-			'managernote' => 'string|max:200|nullable',
-			'workernote' => 'string|max:200|nullable',
-			'pub' => 'integer'
-		]);
+        $this->validate($request, $this->valT);
         $requestData = $request->all();
-        
-        Wroletime::create($requestData);
+       // $routeparam=$request->get('routeparam');
+         $wroletime=Wroletime::create($requestData);
 
         Session::flash('flash_message', 'Wroletime added!');
 
-        return redirect('manager/wroletimes-to-unit/index2/'.$request->wroleunit_id);
+        return redirect($this->paramT['baseroute'].'/?routeparam='.$wroletime->wroleunit_id);
     }
 
     /**
@@ -100,13 +115,15 @@ class WroletimesToUnitController extends Controller
      */
     public function edit($id)
     {
-        $wroletimes = Wroletime::findOrFail($id);
-        $wroletimes['timetype']= Timetype::pluck('name','id');
-        $wroletimes['wroleunit_id']= $wroletimes->wroleunit_id;
-
-        $wroletimes->start=substr( $wroletimes->start, 0, -3);
-        $wroletimes->end=substr( $wroletimes->end, 0, -3);
-        return view('manager.wroletimes.edit2', compact('wroletimes'));
+        $data = Wroletime::findOrFail($id);
+        $data['timetype']= Timetype::pluck('name','id');
+        $data['wroleunit_id']= $data->wroleunit_id;
+      //  $routeparam=$request->get('routeparam');
+        $data['routeparam']='?routeparam='.$data->wroleunit_id;
+        $data['cancelurl']=$this->paramT['baseroute'].'/'.$data['routeparam'];       
+        $data->start=substr( $data->start, 0, -3);
+        $data->end=substr( $data->end, 0, -3);
+        return view('crudbase.edit', compact('data'));
     }
  
     /**
@@ -119,24 +136,15 @@ class WroletimesToUnitController extends Controller
      */
     public function update($id, Request $request)
     {
-        $this->validate($request, [
-            'wroleunit_id' => 'required|integer',
-			'timetype_id' => 'required|integer',
-			'start' => 'required|date_format:H:i',
-			'end' => 'date_format:H:i',
-			'hour' => 'required|integer|max:24',
-			'managernote' => 'string|max:200|nullable',
-			'workernote' => 'string|max:200|nullable',
-			'pub' => 'integer'
-		]);
+        $this->validate($request, $this->valT);
         $requestData = $request->all();
         
         $wroletime = Wroletime::findOrFail($id);
         $wroletime->update($requestData);
-
+       // $routeparam=$request->get('routeparam');
         Session::flash('flash_message', 'Wroletime updated!');
 
-        return redirect('manager/wroletimes-to-unit/index2/'.$request->wroleunit_id);
+        return redirect($this->paramT['baseroute'].'/?routeparam='.$wroletime->wroleunit_id);
     }
 
     /**
@@ -148,11 +156,12 @@ class WroletimesToUnitController extends Controller
      */
     public function destroy($id)
     {
-        $wroletime = Wroletime::findOrFail($id);
+        //$wroletime = Wroletime::findOrFail($id);
+        $wroletime=Wroletime::find($id);
         Wroletime::destroy($id);
-
+       // $routeparam=$request->get('routeparam');
         Session::flash('flash_message', 'Wroletime deleted!');
 
-        return redirect('manager/wroletimes-to-unit/index2/'. $wroletime->wroleunit_id);
+        return redirect($this->paramT['baseroute'].'/?routeparam='.$wroletime->wroleunit_id);
     }
 }

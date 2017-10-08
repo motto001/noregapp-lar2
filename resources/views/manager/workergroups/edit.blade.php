@@ -28,7 +28,7 @@
                             'files' => true
                         ]) !!}
 
-                        @include ('manager.workergroups.form', ['submitButtonText' => 'Update'])
+                        @include ('manager.workergroups.form', ['submitButtonText' => 'Update','noteText' => 'note uj'])
 
                         {!! Form::close() !!}
 

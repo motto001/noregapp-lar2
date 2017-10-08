@@ -41,8 +41,8 @@ Route::group(['prefix' => '/manager','middleware' => ['auth', 'roles'], 'roles' 
     
     Route::resource('/wroletimes', 'Manager\\WroletimesController');
     Route::resource('/wroletimes-to-unit', 'Manager\\WroletimesToUnitController');
-    Route::get('/wroletimes-to-unit/index2/{unit_id}', 'Manager\\WroletimesToUnitController@index2'); 
-    Route::get('/wroletimes-to-unit/create2/{unit_id}', 'Manager\\WroletimesToUnitController@create2'); 
+  //  Route::get('/wroletimes-to-unit/index2/{unit_id}', 'Manager\\WroletimesToUnitController@index2'); 
+   // Route::get('/wroletimes-to-unit/create2/{unit_id}', 'Manager\\WroletimesToUnitController@create2'); 
 });
 //workadmin---------------------------------------------------------------
 Route::group(['prefix' => '/workadmin','middleware' => ['auth', 'roles'], 'roles' => 'workadmin'],function()

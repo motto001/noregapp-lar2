@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Manager;
 
 use App\Http\Requests;
+use Illuminate\Support\Facades\View;
 use App\Http\Controllers\Controller;
 //use Illuminate\Support\Facades\DB;
 use App\Wroleunit;
@@ -13,11 +14,29 @@ use Session;
 
 class WroleunitsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
+/**
+ * validációs szabályok 
+ */
+protected $valT=[
+	'name' => 'required|string',
+    'unit' => 'required|string',
+    'long' => 'required|integer',
+    'note' => 'string|max:200|nullable',
+    'pub' => 'integer'
+];
+/**
+ * minden viewnwk megosztott paraméterek
+ */
+protected $paramT= [
+            'baseroute'=>'manager/wroleunits',
+            'baseview'=>'manager.wroleunits', 
+            'cim'=>'Időciklusok',
+];
+
+   function __construct(){
+
+        View::share('param',$this->paramT);
+   }
     public function index(Request $request)
     {
         $keyword = $request->get('search');
@@ -33,8 +52,8 @@ class WroleunitsController extends Controller
         } else {
             $wroleunits = Wroleunit::paginate($perPage);
         }
-
-        return view('manager.wroleunits.index', compact('wroleunits'));
+        $data['list']=$wroleunits;
+        return view('crudbase.index', compact('data'));
     }
 
     /**
@@ -45,9 +64,9 @@ class WroleunitsController extends Controller
     public function create()
     {
 
-        $wroleunit['basedaytype']=Daytype::get();
-        $wroleunit['checked_daytype']=[5];
-        return view('manager.wroleunits.create', compact('wroleunit'));
+        $data['basedaytype']=Daytype::get();
+        $data['checked_daytype']=[5];
+        return view('crudbase.create', compact('data'));
     }
 
     /**
@@ -59,13 +78,7 @@ class WroleunitsController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-			'name' => 'required|string',
-			'unit' => 'required|string',
-			'long' => 'required|integer',
-			'note' => 'string|max:200|nullable',
-			'pub' => 'integer'
-		]);
+        $this->validate($request,$this->valT);
         $requestData = $request->all();
         
         $wroleunit= Wroleunit::create($requestData);
@@ -100,16 +113,16 @@ class WroleunitsController extends Controller
     public function edit($id)
     {
               
-        $wroleunit = Wroleunit::with(['daytype','wroletime','wroletime.timetype'])->findOrFail($id);
-        $wroleunit['basedaytype']=Daytype::get();
+        $data = Wroleunit::with(['daytype','wroletime','wroletime.timetype'])->findOrFail($id);
+        $data['basedaytype']=Daytype::get();
     
-        foreach($wroleunit->daytype as $role){
+        foreach($data->daytype as $role){
             
             $checked_daytype[] =  $role->id;
         }
-        $wroleunit['checked_daytype']=$checked_daytype;
+        $data['checked_daytype']=$checked_daytype;
        
-        return view('manager.wroleunits.edit', compact('wroleunit'));
+        return view('crudbase.edit', compact('data'));
     }
 
     /**
@@ -123,11 +136,7 @@ class WroleunitsController extends Controller
     public function update($id, Request $request)
     {
         $this->validate($request, [
-			'name' => 'required|string',
-			'unit' => 'required|string',
-			'long' => 'required|integer',
-			'note' => 'string|max:200|nullable',
-			'pub' => 'integer'
+		
 		]);
         $requestData = $request->all();
         

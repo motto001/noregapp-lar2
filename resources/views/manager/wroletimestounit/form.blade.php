@@ -1,5 +1,5 @@
 
-@if($wroletimes['wroleunit_id']<1)
+@if($data['wroleunit_id']<1)
 <div class="form-group {{ $errors->has('wroleunit_id') ? 'has-error' : ''}}">
     {!! Form::label('wroleunit_id', 'Wroleunit Id', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
@@ -8,7 +8,7 @@
     </div>
 </div>
 @else
- {!! Form::hidden('wroleunit_id', $wroletimes['wroleunit_id']) !!}
+ {!! Form::hidden('wroleunit_id', $data['wroleunit_id']) !!}
 
 @endif
 
@@ -16,7 +16,7 @@
     {!! Form::label('timetype_id', 'Timetype Id', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
       
-        {!! Form::select('timetype_id', $wroletimes['timetype'], null, ['class' => 'form-control', 'required' => 'required']) !!}
+        {!! Form::select('timetype_id', $data['timetype'], null, ['class' => 'form-control', 'required' => 'required']) !!}
         
          {!! $errors->first('timetype_id', '<p class="help-block">:message</p>') !!}
     </div>
@@ -44,12 +44,6 @@
     <div class="col-md-6">
         {!! Form::text('managernote', null, ['class' => 'form-control']) !!}
         {!! $errors->first('managernote', '<p class="help-block">:message</p>') !!}
-    </div>
-</div><div class="form-group {{ $errors->has('workernote') ? 'has-error' : ''}}">
-    {!! Form::label('workernote', 'Workernote', ['class' => 'col-md-4 control-label']) !!}
-    <div class="col-md-6">
-        {!! Form::text('workernote', null, ['class' => 'form-control']) !!}
-        {!! $errors->first('workernote', '<p class="help-block">:message</p>') !!}
     </div>
 </div>
 
