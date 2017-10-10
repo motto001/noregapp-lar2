@@ -20,11 +20,13 @@ Route::group(['prefix' => '/admin','middleware' => ['auth', 'roles'], 'roles' =>
 Route::group(['prefix' => '/manager','middleware' => ['auth', 'roles'], 'roles' => 'manager'],function()
 {
     Route::resource('/users', 'Manager\UsersController');
-    Route::resource('/workers', 'Manager\\WorkersController');
+    //Route::resource('/workers', 'Manager\\WorkersController');
+    Route::resource('workersfull', 'Manager\\WorkersfullController');
     Route::resource('/workerusers', 'Manager\\WorkerusersController');
     Route::resource('/workergroups', 'Manager\\WorkergroupsController');
     Route::resource('/workertypes', 'Manager\\WorkertypesController');
-    
+    Route::resource('/statuses', 'Manager\\StatusesController');
+
     Route::resource('/days', 'Manager\\DaysController');
     Route::resource('/daytypes', 'Manager\\DaytypesController');
     Route::resource('/timeframes', 'Manager\\TimeframesController');

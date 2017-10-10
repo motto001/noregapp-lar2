@@ -30,6 +30,10 @@ class Wrole extends Model
     public function wroleunit()
 	{
 		return $this->belongsToMany('App\Wroleunit','wroleunit_wrole');
+    }  
+    public function worker()
+	{
+		return $this->hasMany('App\Worker');
 	}
 	
 }

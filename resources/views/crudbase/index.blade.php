@@ -3,14 +3,16 @@
 
 @section('content')
 
-    <div class="container">
-        <div class="row">
-            @include('admin.sidebar')
-            <div class="col-md-9">
-@endif   
 
+            @include('admin.sidebar')
+           
+@endif 
+<section id="main-content">  
+    <section class="wrapper">
+        <div class="row">   
+            <div class="col-lg-12 main-chart">
                 <div class="panel panel-default">
-                    <div class="panel-heading">{{  $param['cim'] or ''  }} </div>
+                    <div class="panel-heading">{{  $param['cim'] or ''  }} lista</div>
                     <div class="panel-body">
                  
                   <div class="pagination-wrapper"> {!! $data['list']->appends(['search' => Request::get('search')])->render() !!} </div>  
@@ -19,9 +21,8 @@
                             <i class="fa fa-plus" aria-hidden="true"></i> uj időegység
                         </a>
  @if(isset($data['backurl']))
-
-    @php $backurl='/'.$data['backurl']; @endphp
-    <a href="{{ $backurl }}" title="Cancel"><button class="btn btn-warning btn-sm">
+ 
+    <a href="{{ '/'.$data['backurl'] }}" title="Cancel"><button class="btn btn-warning btn-sm">
     <i class="fa fa-arrow-left" aria-hidden="true"></i> Vissza</button></a>
 
  @endif
@@ -55,6 +56,9 @@
                 </div>
             </div>
         </div>
+           </div>
+</section>
+</section>      
 @if(!isset($param['modal']))        
     </div>
 @endsection

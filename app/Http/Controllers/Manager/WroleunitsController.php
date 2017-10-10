@@ -121,8 +121,9 @@ protected $paramT= [
             $checked_daytype[] =  $role->id;
         }
         $data['checked_daytype']=$checked_daytype;
+        $data['list']=$data->wroletime;
        
-        return view('crudbase.edit', compact('data'));
+        return view('manager.wroleunits.edit-wrole', compact('data'));
     }
 
     /**
@@ -167,6 +168,10 @@ protected $paramT= [
 
         return redirect('manager/wroleunits');
     }
+
+
+
+    
      public function wroleunitToModal($wroleid)
     {
         $wroleunits2 = Wroleunit::get();

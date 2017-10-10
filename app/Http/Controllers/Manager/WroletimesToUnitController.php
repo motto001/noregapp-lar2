@@ -50,6 +50,7 @@ protected $paramT= [
         $keyword = $request->get('search');
         $perPage = 25;
         $routeparam=$request->get('routeparam');
+      
        // $data['routeparam']=$_GET['routeparam'];
         if (!empty($keyword)) {
             $wroletimes2 = Wroletime::where('wroleunit_id', '=', $unit_id)
@@ -69,6 +70,7 @@ protected $paramT= [
         $data['wroleunit_id']=$routeparam;
         $data['routeparam']='?routeparam='.$routeparam;
         $data['backurl']='manager/wroleunits/'.$routeparam.'/edit';
+
         return view('crudbase.index', compact('data'));
     }
     /**

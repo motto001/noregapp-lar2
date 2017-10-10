@@ -8,8 +8,8 @@
 </div><div class="form-group {{ $errors->has('timetype_id') ? 'has-error' : ''}}">
     {!! Form::label('daytype_id', 'Naptípusok ', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">     
-            @foreach ($wroleunit['basedaytype'] as $time)  
-           {{ Form::checkbox('daytype_id[]', $time['id'],in_array($time['id'],$wroleunit['checked_daytype']), ['multiple' => 'multiple']) }} {{ $time['name']}}   
+            @foreach ($data['basedaytype'] as $time)  
+           {{ Form::checkbox('daytype_id[]', $time['id'],in_array($time['id'],$data['checked_daytype']), ['multiple' => 'multiple']) }} {{ $time['name']}}   
             @endforeach            
          {!! $errors->first('daytype_id', '<p class="help-block">:message</p>') !!}
     </div>

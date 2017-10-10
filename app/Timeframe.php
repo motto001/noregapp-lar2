@@ -29,7 +29,7 @@ class Timeframe extends Model
 
     public function worker()
 	{
-		return $this->belongsToMany('App\Worker','worker_timeframe');
+		return $this->belongsToMany('App\Worker','worker_timeframe','worker_id','timeframe_id');
 	}
     public function daytype()
     {

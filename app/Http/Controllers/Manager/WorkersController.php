@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Manager;
 
-use App\Http\Requests;
+//use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Worker;
@@ -30,7 +30,7 @@ class WorkersController extends Controller
         $perPage = 25;
 
         if (!empty($keyword)) {
-            $workers = Worker::where('user_id', 'LIKE', "%$keyword%")
+            $workers = Worker::with('user'.'wrole')->where('user_id', 'LIKE', "%$keyword%")
 				->orWhere('wrole_id', 'LIKE', "%$keyword%")
 				->orWhere('status_id', 'LIKE', "%$keyword%")
 				->orWhere('workertype_id', 'LIKE', "%$keyword%")
@@ -51,14 +51,9 @@ class WorkersController extends Controller
 				->orWhere('pub', 'LIKE', "%$keyword%")
 				->paginate($perPage);
         } else {
-            $workers = Worker::paginate($perPage);
+            $workers = Worker::with('user'.'wrole')->paginate($perPage);
         }
-       /* if(isset($workers->status_id)){
-           $status= Status::where('id', '=', $workers->status_id )
-        ->select('id', 'name');
-        $workers['status']=$status;  
-        }else{ $workers['status']=["id"=>"0","name"=>"nics"]; }
-       */
+  
 
         return view('manager.workers.index', compact('workers'));
     }
@@ -107,7 +102,18 @@ class WorkersController extends Controller
         $requestData = $request->all();
       //  print_r($requestData);
       //  Worker::create($requestData);
-       Worker::create($requestData)->timeframe()->sync($request->timeframe_id);
+     // echo $request->wrole_id;
+   $dat=['user_id'=>$request->user_id, 'wrole_id'=>$request->wrole_id,
+    'status_id'=>$request->status_id, 'workertype_id'=>$request->workertype_id,
+   'workergroup_id'=>$request->workergroup_id, 'salary'=>$request->salary,
+    'salary_type'=>$request->salary_type, 'position'=>$request->position,
+    'foto'=>$request->foto, 'fullname'=>$request->fullname,'cim'=>$request->cim, 'tel'=>$request->tel, 
+    'birth'=>$request->birth, 'ado'=>$request->ado,
+     'tb'=>$request->tb, 'start'=>$request->start, 'end'=>$request->end, 
+     'note'=>$request->note, 'pub'=>$request->pub];
+      $worker=Worker::create($dat);
+     // $worker->timeframe()->sync($request->timeframe_id);
+
         Session::flash('flash_message', 'Worker added!');
 
         return redirect('manager/workers');

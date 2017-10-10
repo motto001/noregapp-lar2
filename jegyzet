@@ -1,10 +1,22 @@
 !!!!migration figyelni!!!
-
+--------------------------------------------------------------
 a decimal(4.2) 4 jegyü szám két tizeds törtel (pl: daytype, timetype-> szorzo) 
 csak decimal(4.0) lesz.(4 jegyú egész szám)
  a php myadminban is csak sql prancsal lehet beállítani.
 pl.: ALTER TABLE `timetypes` CHANGE `szorzo` `szorzo` DECIMAL(4,2) NULL DEFAULT '1';
 
+
+//változtatások----------------------------------------------
+worker mentéshiba miatt ( error: 1364,  column not found)
+ worker_id, workergroup_id-et nem volt hajlandó menteni pedig a pstban benne volt 
+ és a model fillable tömbjében is, Továbbá nem szerepelt a guarded tömbben.
+ezért: config/database.php
+'connections' => 'mysql' =>'strict' => false, ra lett állítva (true-ról)
+
+
+
+
+//----------------------------------------------------------
 tervezés:
 
 days:-

@@ -3,10 +3,9 @@
 
 @section('content')
 
-    <div class="container">
-        <div class="row">
+
             @include('admin.sidebar')
-            <div class="col-md-9">
+           
 @endif   
    
  @if(isset($data['cancelurl']))
@@ -14,9 +13,12 @@
  @else
     @php $cancelurl='/'.$param['baseroute']; @endphp   
  @endif
-
+<section id="main-content">  
+    <section class="wrapper">
+        <div class="row">   
+            <div class="col-lg-12 main-chart">
                 <div class="panel panel-default">
-                    <div class="panel-heading">{{  $param['cim'] or ''  }}</div>
+                    <div class="panel-heading">{{  $param['cim']  or ''  }}  szerkesztés</div>
                     <div class="panel-body">
                         <a href="{{ $cancelurl }}" title="Cancel"><button class="btn btn-warning btn-xs">
                         <i class="fa fa-arrow-left" aria-hidden="true"></i> Mégsem</button></a>
@@ -46,6 +48,9 @@
                 </div>
             </div>
         </div>
+          </div>
+</section>
+</section>        
 @if(!isset($param['modal']))        
     </div>
 @endsection

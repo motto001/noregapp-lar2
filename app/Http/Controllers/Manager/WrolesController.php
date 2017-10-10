@@ -12,6 +12,13 @@ use Session;
 
 class WrolesController extends Controller
 {
+ protected $valT = [
+        'name' => 'required|string|max:200',
+        'note' => 'string|max:200|nullable',
+        'start' => 'string|max:200|nullable',
+        'pub' => 'integer'
+ ];
+
     /**
      * Display a listing of the resource.
      *
@@ -54,19 +61,14 @@ class WrolesController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-			'name' => 'required|string|max:200',
-			'note' => 'string|max:200',
-			'start' => 'string|max:200',
-			'pub' => 'integer'
-		]);
+        $this->validate($request, $this->valT);
         $requestData = $request->all();
         
        $wrole= Wrole::create($requestData);
 
         Session::flash('flash_message', 'Wrole added!');
 
-        return redirect('manager/wroles/'.$wrole->id).'/edit';
+        return redirect('manager/wroles/'.$wrole->id.'/edit');
     }
 
     /**
@@ -123,12 +125,7 @@ class WrolesController extends Controller
      */
     public function update($id, Request $request)
     {
-        $this->validate($request, [
-			'name' => 'required|string|max:200',
-			'note' => 'string|max:200',
-			'start' => 'string|max:200',
-			'pub' => 'integer'
-		]);
+        $this->validate($request, $this->valT);
         $requestData = $request->all();
         
         $wrole = Wrole::findOrFail($id);
