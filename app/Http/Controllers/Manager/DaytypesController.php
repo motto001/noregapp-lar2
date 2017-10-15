@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Manager;
-
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\MessageBag;
@@ -11,6 +12,23 @@ use Session;
 
 class DaytypesController extends Controller
 {
+protected $paramT= [
+        'baseroute'=>'manager/daytypes',
+        'baseview'=>'manager.daytypes', 
+        'cim'=>'Nap tipusok',
+];
+function __construct(Request $request){
+    
+    $this->paramT['id']=$request->route('id') ;
+    $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+
+    if($this->paramT['parrent_id']>0){
+        $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
+    else{
+        $this->paramT['route_param']='';}
+
+    View::share('param',$this->paramT);
+       }
     /**
      * Display a listing of the resource.
      *
@@ -31,8 +49,8 @@ class DaytypesController extends Controller
         } else {
             $daytypes = Daytype::paginate($perPage);
         }
-
-        return view('manager.daytypes.index', compact('daytypes'));
+        $data['list']= $daytypes;
+        return view('crudbase.index', compact('data'));;
     }
 
     /**
@@ -43,7 +61,7 @@ class DaytypesController extends Controller
     public function create()
     {
     
-        return view('manager.daytypes.create',compact('data'));
+        return view('crudbase.create');
     }
 
     /**
@@ -68,7 +86,7 @@ class DaytypesController extends Controller
 
         Session::flash('flash_message', 'Daytype added!');
 
-        return redirect('manager/daytypes');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -80,9 +98,9 @@ class DaytypesController extends Controller
      */
     public function show($id)
     {
-        $daytype = Daytype::findOrFail($id);
+        $data = Daytype::findOrFail($id);
 
-        return view('manager.daytypes.show', compact('daytype'));
+        return view($this->paramT['baseview'].'.show', compact('data'));
     }
 
     /**
@@ -94,9 +112,9 @@ class DaytypesController extends Controller
      */
     public function edit($id)
     {
-        $daytype = Daytype::findOrFail($id);
-
-        return view('manager.daytypes.edit', compact('daytype'));
+        $data = Daytype::findOrFail($id);
+        $data['id']=$id ;
+        return view('crudbase.edit', compact('data'));
     }
 
     /**
@@ -123,7 +141,7 @@ class DaytypesController extends Controller
 
         Session::flash('flash_message', 'Daytype updated!');
 
-        return redirect('manager/daytypes');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -139,6 +157,6 @@ class DaytypesController extends Controller
 
         Session::flash('flash_message', 'Daytype deleted!');
 
-        return redirect('manager/daytypes');
+        return redirect($this->paramT['baseroute']);
     }
 }

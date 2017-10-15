@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Manager;
-
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Daytype;
@@ -11,6 +12,24 @@ use Session;
 
 class TimeframesController extends Controller
 {
+    protected $paramT= [
+        'baseroute'=>'manager/timeframes',
+        'baseview'=>'manager.timeframes', 
+        'cim'=>'Időkeretek',
+    ];
+    
+    function __construct(Request $request){
+    
+        $this->paramT['id']=$request->route('id') ;
+        $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+
+        if($this->paramT['parrent_id']>0){
+            $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
+        else{
+            $this->paramT['route_param']='';}
+
+        View::share('param',$this->paramT);
+       }
     /**
      * Display a listing of the resource.
      *
@@ -35,7 +54,9 @@ class TimeframesController extends Controller
             $timeframes = Timeframe::paginate($perPage);
         }
 
-        return view('manager.timeframes.index', compact('timeframes'));
+       
+        $data['list']=$timeframes;
+        return view('crudbase.index', compact('data'));
     }
 
     /**
@@ -45,9 +66,9 @@ class TimeframesController extends Controller
      */
     public function create()
     {
-        $timeframe['basedaytype']=Daytype::get();
-        $timeframe['checked_daytype']=[5];
-        return view('manager.timeframes.create',compact('timeframe'));
+        $data['basedaytype']=Daytype::get();
+        $data['checked_daytype']=[5];
+        return view('crudbase.create',compact('data'));
     }
 
     /**
@@ -74,7 +95,7 @@ class TimeframesController extends Controller
 
         Session::flash('flash_message', 'Timeframe added!');
 
-        return redirect('manager/timeframes');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -86,9 +107,9 @@ class TimeframesController extends Controller
      */
     public function show($id)
     {
-        $timeframe = Timeframe::findOrFail($id);
+        $data = Timeframe::findOrFail($id);
 
-        return view('manager.timeframes.show', compact('timeframe'));
+        return view($this->paramT['baseview'].'.show', compact('data'));
     }
 
     /**
@@ -101,18 +122,18 @@ class TimeframesController extends Controller
     public function edit($id)
     {
 
-        $timeframe = Timeframe::with(['daytype'])->findOrFail($id);
-        $timeframe['basedaytype']=Daytype::get();
+        $data = Timeframe::with(['daytype'])->findOrFail($id);
+        $data['basedaytype']=Daytype::get();
     
-        foreach($timeframe->daytype as $role){
+        foreach($data->daytype as $role){
             
             $checked_daytype[] =  $role->id;
         }
-        $timeframe['checked_daytype']=$checked_daytype;
-
+        $data['checked_daytype']=$checked_daytype;
+        $data['id']=$id ;
        // $timeframe = Timeframe::findOrFail($id);
 
-        return view('manager.timeframes.edit', compact('timeframe'));
+        return view('crudbase.edit', compact('data'));
     }
 
     /**
@@ -146,7 +167,7 @@ class TimeframesController extends Controller
 
         Session::flash('flash_message', 'Timeframe updated!');
 
-        return redirect('manager/timeframes');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -162,6 +183,6 @@ class TimeframesController extends Controller
         DB::table('daytype_timeframe')->where('timeframe_id', '=', $id)->delete();
         Session::flash('flash_message', 'Timeframe deleted!');
 
-        return redirect('manager/timeframes');
+        return redirect($this->paramT['baseroute']);
     }
 }

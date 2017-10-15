@@ -1,18 +1,16 @@
 
-                    <div class="panel-body">
-                       
                         <div class="table-responsive">
                             <table class="table table-borderless">
                                 <thead>
                                     <tr>
-                                        <th>Időtipus</th><th>Start</th><th>End</th><th>Óra</th><th>Szorzó</th><th>Fixplusz</th><th>Actions</th>
+                                        <th>ID</th><th>Name</th><th>Szorzo</th><th>Fixplusz</th><th>Megjegyzés</th><th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($data['list'] as $item)
+                                @foreach($data['list']  as $item)
                                     <tr>
-                                        <td>{{ $item->timetype->name }}</td>
-                                        <td>{{ $item->start }}</td><td>{{ $item->end }}</td><td>{{ $item->hour }}</td><td>{{ $item->timetype->szorzo }}</td><td>{{ $item->timetype->fixplusz }}</td>
+                                        <td>{{ $item->id }}</td>
+                                        <td>{{ $item->name }}</td><td>{{ $item->szorzo }}</td><td>{{ $item->fixplusz }}</td><td>{{str_limit($item->note, 20)  }}</td>
                                         <td>
                                   @include('crudbase.listbuttons')
                                         </td>
@@ -20,6 +18,5 @@
                                 @endforeach
                                 </tbody>
                             </table>
-       
-                        </div>
-                     </div>   
+</div>
+

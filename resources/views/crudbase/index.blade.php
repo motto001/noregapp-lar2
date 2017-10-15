@@ -17,12 +17,12 @@
                  
                   <div class="pagination-wrapper"> {!! $data['list']->appends(['search' => Request::get('search')])->render() !!} </div>  
                       
-                        <a href="/{{ $param['baseroute'] }}/create/{{ $data['routeparam'] or ''}} " class="btn btn-success btn-sm" title="Add New Wroletime">
-                            <i class="fa fa-plus" aria-hidden="true"></i> uj időegység
+                        <a href="/{{ $param['baseroute'].'/create'.$param['route_param'] }} " class="btn btn-success btn-sm" title="Add New Wroletime">
+                            <i class="fa fa-plus" aria-hidden="true"></i> Új {{  $param['cim'] or ''  }}
                         </a>
- @if(isset($data['backurl']))
+ @if(isset($data['link_cancel']))
  
-    <a href="{{ '/'.$data['backurl'] }}" title="Cancel"><button class="btn btn-warning btn-sm">
+    <a href="{{ '/'.$data['link_cancel'] }}" title="Cancel"><button class="btn btn-warning btn-sm">
     <i class="fa fa-arrow-left" aria-hidden="true"></i> Vissza</button></a>
 
  @endif
@@ -30,13 +30,8 @@
                         
                         <br />
                         <br />
-
-                @if(isset($data['routeparam']))
-                    @php $formurl='/'.$param['baseroute'].'/'.$data['routeparam']; @endphp
-                @else
-                    @php $formurl='/'.$param['baseroute']; @endphp
-                @endif       
-                        {!! Form::open(['method' => 'GET', 'url' => $formurl , 
+     
+                        {!! Form::open(['method' => 'GET', 'url' => $param['baseroute'] , 
                         'class' => 'navbar-form navbar-right', 'role' => 'search'])  !!}
                         <div class="input-group">
                             <input type="text" class="form-control" name="search" placeholder="Search...">

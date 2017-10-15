@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Manager;
-
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -12,6 +13,24 @@ use App\Facades\MoView;
 
 class UsersController extends Controller
 {
+    protected $paramT= [
+        'baseroute'=>'manager/users',
+        'baseview'=>'manager.users', 
+        'cim'=>'Felhasználók',
+    ];
+    
+    function __construct(Request $request){
+        $this->paramT['id']=$request->route('id') ;
+        $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+
+        if($this->paramT['parrent_id']>0){
+            $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
+        else{
+            $this->paramT['route_param']='';}
+
+        View::share('param',$this->paramT);
+       }
+    
     //use SoftDeletes;  
     /**
      * Display a listing of the resource.
@@ -31,9 +50,8 @@ class UsersController extends Controller
         } else {
             $users = User::paginate($perPage);
         }
-    //return view('manager.users.index', compact('users'));
-    return  MoView::view( 'manager.users.index',$users,'users');
-
+        $data['list']= $users;
+        return view('crudbase.index', compact('data'));
 
     }
 
@@ -44,7 +62,7 @@ class UsersController extends Controller
      */
     public function create()
     {
-        return view('manager.users.create');
+        return view('crudbase.create');
     }
 
     /**
@@ -67,7 +85,7 @@ class UsersController extends Controller
 
         Session::flash('flash_message', 'User added!');
 
-        return redirect('manager/users');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -79,10 +97,10 @@ class UsersController extends Controller
      */
     public function show($id)
     {
-        $user = User::findOrFail($id);
+        $data = User::findOrFail($id);
 
- return  MoView::view( 'manager.users.show',$user,'user');
-       // return view('manager.users.show', compact('user'));
+ //return  MoView::view( 'manager.users.show',$user,'user');
+ return view($this->paramT['baseview'].'.show', compact('data'));
     }
 
     /**
@@ -94,9 +112,9 @@ class UsersController extends Controller
      */
     public function edit($id)
     {
-        $user = User::findOrFail($id);
-
-        return view('manager.users.edit', compact('user'));
+        $data = User::findOrFail($id);
+        $data['id']=$id ;
+        return view('crudbase.edit', compact('data'));
     }
 
     /**
@@ -121,7 +139,7 @@ class UsersController extends Controller
 
         Session::flash('flash_message', 'User updated!');
 
-        return redirect('manager/users');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -137,6 +155,6 @@ class UsersController extends Controller
 
         Session::flash('flash_message', 'User deleted!');
 
-        return redirect('manager/users');
+        return redirect($this->paramT['baseroute']);
     }
 }

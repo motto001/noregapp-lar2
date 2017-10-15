@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Manager;
-
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -11,6 +12,24 @@ use Session;
 
 class WorkerdaysController extends Controller
 {
+    protected $paramT= [
+        'baseroute'=>'manager/workerdays',
+        'baseview'=>'manager.workerdays', 
+        'cim'=>'Dolgozói napok',
+    ];
+    
+    function __construct(Request $request){
+    
+        $this->paramT['id']=$request->route('id') ;
+        $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+
+        if($this->paramT['parrent_id']>0){
+            $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
+        else{
+            $this->paramT['route_param']='';}
+
+        View::share('param',$this->paramT);
+       }
     /**
      * Display a listing of the resource.
      *
@@ -32,7 +51,8 @@ class WorkerdaysController extends Controller
             $workerdays = Workerday::paginate($perPage);
         }
 
-        return view('manager.workerdays.index', compact('workerdays'));
+        $data['list']=$workerdays;
+        return view('crudbase.index', compact('data'));
     }
 
     /**
@@ -42,7 +62,7 @@ class WorkerdaysController extends Controller
      */
     public function create()
     {
-        return view('manager.workerdays.create');
+        return view('crudbase.create');
     }
 
     /**
@@ -67,7 +87,7 @@ class WorkerdaysController extends Controller
 
         Session::flash('flash_message', 'Workerday added!');
 
-        return redirect('manager/workerdays');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -79,9 +99,9 @@ class WorkerdaysController extends Controller
      */
     public function show($id)
     {
-        $workerday = Workerday::findOrFail($id);
+        $data = Workerday::findOrFail($id);
 
-        return view('manager.workerdays.show', compact('workerday'));
+        return view($this->paramT['baseview'].'.show', compact('data'));
     }
 
     /**
@@ -93,9 +113,9 @@ class WorkerdaysController extends Controller
      */
     public function edit($id)
     {
-        $workerday = Workerday::findOrFail($id);
-
-        return view('manager.workerdays.edit', compact('workerday'));
+        $data = Workerday::findOrFail($id);
+        $data['id']=$id ;
+        return view('crudbase.edit', compact('data'));
     }
 
     /**
@@ -122,7 +142,7 @@ class WorkerdaysController extends Controller
 
         Session::flash('flash_message', 'Workerday updated!');
 
-        return redirect('manager/workerdays');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -138,6 +158,6 @@ class WorkerdaysController extends Controller
 
         Session::flash('flash_message', 'Workerday deleted!');
 
-        return redirect('manager/workerdays');
+        return redirect($this->paramT['baseroute']);
     }
 }

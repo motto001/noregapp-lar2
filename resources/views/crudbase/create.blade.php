@@ -8,16 +8,11 @@
             @include('admin.sidebar')
     
 @endif   
-@if(isset($data['routeparam']))
-      @php $formurl='/'.$param['baseroute'].'/'.$data['routeparam']; @endphp
- @else
-     @php $formurl='/'.$param['baseroute']; @endphp
- @endif
 
- @if(isset($data['cancelurl']))
-    @php $cancelurl='/'.$data['cancelurl']; @endphp
+ @if(isset($data['link_cancel']))
+    @php $cancelurl='/'.$data['link_cancel']; @endphp
  @else
-    @php $cancelurl='/'.$param['baseroute']; @endphp   
+    @php $cancelurl='/'.$param['baseroute'].$param['route_param']; @endphp   
  @endif
 <section id="main-content">  
     <section class="wrapper">
@@ -39,7 +34,7 @@
                             </ul>
                         @endif
 
-                        {!! Form::open(['url' => $formurl, 
+                        {!! Form::open(['url' => $param['baseroute'].$param['route_param'], 
                         'class' => 'form-horizontal', 'files' => true]) !!}
 
                         @include ($param['baseview'].'.form')

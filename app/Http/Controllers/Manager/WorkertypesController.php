@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Manager;
-
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -11,6 +12,25 @@ use Session;
 
 class WorkertypesController extends Controller
 {
+    protected $paramT= [
+        'baseroute'=>'manager/workertypes',
+        'baseview'=>'manager.workertypes', 
+        'cim'=>'Munkatipus',
+];
+
+function __construct(Request $request){
+    
+      
+    $this->paramT['id']=$request->route('id') ;
+    $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+
+    if($this->paramT['parrent_id']>0){
+        $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
+    else{
+        $this->paramT['route_param']='';}
+
+    View::share('param',$this->paramT);
+       }
     /**
      * Display a listing of the resource.
      *
@@ -28,8 +48,8 @@ class WorkertypesController extends Controller
         } else {
             $workertypes = Workertype::paginate($perPage);
         }
-
-        return view('manager.workertypes.index', compact('workertypes'));
+        $data['list']=$workertypes;
+        return view('crudbase.index', compact('data'));
     }
 
     /**
@@ -39,7 +59,7 @@ class WorkertypesController extends Controller
      */
     public function create()
     {
-        return view('manager.workertypes.create');
+        return view('crudbase.create');
     }
 
     /**
@@ -61,7 +81,7 @@ class WorkertypesController extends Controller
 
         Session::flash('flash_message', 'Workertype added!');
 
-        return redirect('manager/workertypes');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -73,9 +93,9 @@ class WorkertypesController extends Controller
      */
     public function show($id)
     {
-        $workertype = Workertype::findOrFail($id);
+        $data = Workertype::findOrFail($id);
 
-        return view('manager.workertypes.show', compact('workertype'));
+        return view($this->paramT['baseroute'].'.show', compact('data'));
     }
 
     /**
@@ -87,10 +107,10 @@ class WorkertypesController extends Controller
      */
     public function edit($id)
     {
-        $workertype = Workertype::findOrFail($id);
-
-        return view('manager.workertypes.edit', compact('workertype'));
-    }
+        $data= Workertype::findOrFail($id);
+        $data['id']=$id ;
+        return view('crudbase.edit', compact('data'));
+        }
 
     /**
      * Update the specified resource in storage.
@@ -113,7 +133,7 @@ class WorkertypesController extends Controller
 
         Session::flash('flash_message', 'Workertype updated!');
 
-        return redirect('manager/workertypes');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -129,6 +149,6 @@ class WorkertypesController extends Controller
 
         Session::flash('flash_message', 'Workertype deleted!');
 
-        return redirect('manager/workertypes');
+        return redirect($this->paramT['baseroute']);
     }
 }

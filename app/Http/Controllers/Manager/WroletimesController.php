@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Manager;
-
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Input;
 //use Illuminate\Support\Facades\DB;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -12,6 +13,23 @@ use Session;
 
 class WroletimesController extends Controller
 {
+        protected $paramT= [
+            'baseroute'=>'manager/wroletimes',
+            'baseview'=>'manager.wroletimes', 
+            'cim'=>'Munkarendidők',
+    ];
+    
+    function __construct(Request $request){
+        $this->paramT['id']=$request->route('id') ;
+        $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+
+        if($this->paramT['parrent_id']>0){
+            $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
+        else{
+            $this->paramT['route_param']='';}
+
+        View::share('param',$this->paramT);
+           }
     /**
      * Display a listing of the resource.
      *
@@ -34,8 +52,8 @@ class WroletimesController extends Controller
         } else {
             $wroletimes = Wroletime::with('timetype')->paginate($perPage);
         }
-
-        return view('manager.wroletimes.index', compact('wroletimes'));
+        $data['list']=$wroletimes;
+        return view('crudbase.index', compact('data'));
     }
 
     /**
@@ -82,7 +100,7 @@ class WroletimesController extends Controller
 
         Session::flash('flash_message', 'Wroletime added!');
 
-        return redirect('manager/wroletimes');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -94,9 +112,9 @@ class WroletimesController extends Controller
      */
     public function show($id)
     {
-        $wroletime = Wroletime::findOrFail($id);
+        $data = Wroletime::findOrFail($id);
 
-        return view('manager.wroletimes.show', compact('wroletime'));
+        return view($this->paramT['baseview'].'.show', compact('data'));
     }
 
     /**
@@ -108,18 +126,19 @@ class WroletimesController extends Controller
      */
     public function edit($id)
     {
-        $wroletime = Wroletime::findOrFail($id);
-        $wroletime['timetype']= Timetype::pluck('name','id');
-        $wroletime['wroleunit_id']= 0;
-        return view('manager.wroletimes.edit', compact('wroletime'));
+        $data = Wroletime::findOrFail($id);
+        $data['timetype']= Timetype::pluck('name','id');
+        $data['id']=$id ;
+        return view('crudbase.edit', compact('data'));
     }
+    /*
     public function edit2($id,$wroleunit_id)
     {
         $wroletime = Wroletime::findOrFail($id);
         $wroletime['timetype']= Timetype::pluck('name','id');
         $wroletime['wroleunit_id']= $wroleunit_id;
         return view('manager.wroletimes.edit', compact('wroletime'));
-    }
+    }*/
     /**
      * Update the specified resource in storage.
      *
@@ -147,7 +166,7 @@ class WroletimesController extends Controller
 
         Session::flash('flash_message', 'Wroletime updated!');
 
-        return redirect('manager/wroletimes');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -163,6 +182,6 @@ class WroletimesController extends Controller
 
         Session::flash('flash_message', 'Wroletime deleted!');
 
-        return redirect('manager/wroletimes');
+        return redirect($this->paramT['baseroute']);
     }
 }

@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Manager;
-
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -11,6 +12,25 @@ use Session;
 
 class DaysController extends Controller
 {
+
+    protected $paramT= [
+        'baseroute'=>'manager/days',
+        'baseview'=>'manager.days', 
+        'cim'=>'Napok',
+    ];
+    
+    function __construct(Request $request){ 
+ 
+        $this->paramT['id']=$request->route('id') ;
+        $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+
+        if($this->paramT['parrent_id']>0){
+            $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
+        else{
+            $this->paramT['route_param']='';}
+
+        View::share('param',$this->paramT);
+       }
     /**
      * Display a listing of the resource.
      *
@@ -30,7 +50,8 @@ class DaysController extends Controller
             $days = Day::paginate($perPage);
         }
 
-        return view('manager.days.index', compact('days'));
+        $data['list']=$days;
+        return view('crudbase.index', compact('data'));
     }
 
     /**
@@ -40,7 +61,7 @@ class DaysController extends Controller
      */
     public function create()
     {
-        return view('manager.days.create');
+        return view('crudbase.create');
     }
 
     /**
@@ -63,7 +84,7 @@ class DaysController extends Controller
 
         Session::flash('flash_message', 'Day added!');
 
-        return redirect('manager/days');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -75,9 +96,9 @@ class DaysController extends Controller
      */
     public function show($id)
     {
-        $day = Day::findOrFail($id);
+        $data = Day::findOrFail($id);
 
-        return view('manager.days.show', compact('day'));
+        return view($this->paramT['baseview'].'.show', compact('data'));
     }
 
     /**
@@ -89,9 +110,9 @@ class DaysController extends Controller
      */
     public function edit($id)
     {
-        $day = Day::findOrFail($id);
-
-        return view('manager.days.edit', compact('day'));
+        $data = Day::findOrFail($id);
+        $data['id']=$id ;
+        return view('crudbase.edit', compact('data'));
     }
 
     /**
@@ -116,7 +137,7 @@ class DaysController extends Controller
 
         Session::flash('flash_message', 'Day updated!');
 
-        return redirect('manager/days');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -132,6 +153,6 @@ class DaysController extends Controller
 
         Session::flash('flash_message', 'Day deleted!');
 
-        return redirect('manager/days');
+        return redirect($this->paramT['baseroute']);
     }
 }

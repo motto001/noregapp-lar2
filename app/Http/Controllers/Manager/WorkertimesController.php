@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Manager;
-
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -11,6 +12,24 @@ use Session;
 
 class WorkertimesController extends Controller
 {
+    protected $paramT= [
+        'baseroute'=>'manager/workertimes',
+        'baseview'=>'manager.workertimes', 
+        'cim'=>'Munkaidők',
+];
+
+function __construct(Request $request){
+    
+    $this->paramT['id']=$request->route('id') ;
+    $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+
+    if($this->paramT['parrent_id']>0){
+        $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
+    else{
+        $this->paramT['route_param']='';}
+
+    View::share('param',$this->paramT);
+       }   
     /**
      * Display a listing of the resource.
      *
@@ -34,7 +53,8 @@ class WorkertimesController extends Controller
             $workertimes = Workertime::paginate($perPage);
         }
 
-        return view('manager.workertimes.index', compact('workertimes'));
+        $data['list']= $workertimes;
+        return view('crudbase.index', compact('data'));
     }
 
     /**
@@ -44,7 +64,7 @@ class WorkertimesController extends Controller
      */
     public function create()
     {
-        return view('manager.workertimes.create');
+        return view('crudbase.create');
     }
 
     /**
@@ -72,7 +92,7 @@ class WorkertimesController extends Controller
 
         Session::flash('flash_message', 'Workertime added!');
 
-        return redirect('manager/workertimes');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -84,9 +104,9 @@ class WorkertimesController extends Controller
      */
     public function show($id)
     {
-        $workertime = Workertime::findOrFail($id);
+        $data = Workertime::findOrFail($id);
 
-        return view('manager.workertimes.show', compact('workertime'));
+        return view($this->paramT['baseview'].'.show', compact('data'));
     }
 
     /**
@@ -98,9 +118,9 @@ class WorkertimesController extends Controller
      */
     public function edit($id)
     {
-        $workertime = Workertime::findOrFail($id);
-
-        return view('manager.workertimes.edit', compact('workertime'));
+        $data = Workertime::findOrFail($id);
+        $data['id']=$id ;
+        return view('crudbase.edit', compact('data'));
     }
 
     /**
@@ -130,7 +150,7 @@ class WorkertimesController extends Controller
 
         Session::flash('flash_message', 'Workertime updated!');
 
-        return redirect('manager/workertimes');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -146,6 +166,6 @@ class WorkertimesController extends Controller
 
         Session::flash('flash_message', 'Workertime deleted!');
 
-        return redirect('manager/workertimes');
+        return redirect($this->paramT['baseroute']);
     }
 }

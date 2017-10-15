@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Manager;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Input;
 use App\Workersfull;
 use App\User;
 use App\Wrole;
@@ -37,9 +38,17 @@ class WorkersfullController extends Controller
     'note' => 'date|nullable',
     'pub' => 'integer'
 ];
-function __construct(){
+function __construct(Request $request){
     
-            View::share('param',$this->paramT);
+    $this->paramT['id']=$request->route('id') ;
+    $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+
+    if($this->paramT['parrent_id']>0){
+        $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
+    else{
+        $this->paramT['route_param']='';}
+
+    View::share('param',$this->paramT);
        }
     /**
      * Display a listing of the resource.
@@ -115,7 +124,7 @@ function __construct(){
        $datas->timeframe()->sync($request->timeframe_id);
         Session::flash('flash_message', 'Workersfull added!');
 
-        return redirect('manager/workersfull');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -129,7 +138,7 @@ function __construct(){
     {
         $data = Workersfull::findOrFail($id);
 
-        return view('manager.workersfull.show', compact('workersfull'));
+        return view($this->paramT['baseview'].'.show', compact('workersfull'));
     }
 
     /**
@@ -142,7 +151,7 @@ function __construct(){
     public function edit($id)
     {
         $data= Workersfull::with(['timeframe'])->findOrFail($id);
-
+        $data['id']=$id ;
         $data['user']=User::get()->pluck('name','id');
         $data['wrole']=Wrole::get()->pluck('name','id');
         $data['base_timeframe']=Timeframe::get(['id','name'])->toarray();
@@ -175,7 +184,7 @@ function __construct(){
 
         Session::flash('flash_message', 'Workersfull updated!');
 
-        return redirect('manager/workersfull');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -191,6 +200,6 @@ function __construct(){
 
         Session::flash('flash_message', 'Workersfull deleted!');
 
-        return redirect('manager/workersfull');
+        return redirect($this->paramT['baseroute']);
     }
 }

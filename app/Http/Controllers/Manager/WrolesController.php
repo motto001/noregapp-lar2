@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Manager;
-
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,24 @@ class WrolesController extends Controller
         'pub' => 'integer'
  ];
 
+  protected $paramT= [
+        'baseroute'=>'manager/wroles',
+        'baseview'=>'manager.wroles', 
+        'cim'=>'Munkarendek',
+];
+
+function __construct(Request $request){
+    
+    $this->paramT['id']=$request->route('id') ;
+    $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+
+    if($this->paramT['parrent_id']>0){
+        $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
+    else{
+        $this->paramT['route_param']='';}
+
+    View::share('param',$this->paramT);
+       }
     /**
      * Display a listing of the resource.
      *
@@ -38,8 +57,9 @@ class WrolesController extends Controller
         } else {
             $wroles = Wrole::paginate($perPage);
         }
+        $data['list']=$wroles;
+        return view('crudbase.index', compact('data'));
 
-        return view('manager.wroles.index', compact('wroles'));
     }
 
     /**
@@ -49,7 +69,7 @@ class WrolesController extends Controller
      */
     public function create()
     {
-        return view('manager.wroles.create');
+        return view('crudbase.create');
     }
 
     /**
@@ -68,7 +88,7 @@ class WrolesController extends Controller
 
         Session::flash('flash_message', 'Wrole added!');
 
-        return redirect('manager/wroles/'.$wrole->id.'/edit');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -80,9 +100,9 @@ class WrolesController extends Controller
      */
     public function show($id)
     {
-        $wrole = Wrole::findOrFail($id);
+        $data = Wrole::findOrFail($id);
 
-        return view('manager.wroles.show', compact('wrole'));
+        return view($this->paramT['baseroute'].'.show', compact('data'));
     }
 
     /**
@@ -94,9 +114,9 @@ class WrolesController extends Controller
      */
     public function edit($id)
     {
-        $wrole = Wrole::with(['wroleunit'])->findOrFail($id);
-
-        return view('manager.wroles.edit', compact('wrole'));
+        $data = Wrole::with(['wroleunit'])->findOrFail($id);
+        $data['id']=$id ;
+        return view('crudbase.edit', compact('data'));
     }
     public function wroleunitSelectToSave($wroleunit_id,$wrole_id)
     {
@@ -133,7 +153,7 @@ class WrolesController extends Controller
 
         Session::flash('flash_message', 'Wrole updated!');
 
-        return redirect('manager/wroles');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -149,6 +169,6 @@ class WrolesController extends Controller
 
         Session::flash('flash_message', 'Wrole deleted!');
 
-        return redirect('manager/wroles');
+        return redirect($this->paramT['baseroute']);
     }
 }

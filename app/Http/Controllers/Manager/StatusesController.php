@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Manager;
-
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -11,6 +12,23 @@ use Session;
 
 class StatusesController extends Controller
 {
+    protected $paramT= [
+        'baseroute'=>'manager/statuses',
+        'baseview'=>'manager.statuses', 
+        'cim'=>'Statuszok',
+];
+
+function __construct(Request $request){
+    $this->paramT['id']=$request->route('id') ;
+    $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+
+    if($this->paramT['parrent_id']>0){
+        $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
+    else{
+        $this->paramT['route_param']='';}
+
+    View::share('param',$this->paramT);
+       }
     /**
      * Display a listing of the resource.
      *
@@ -29,8 +47,8 @@ class StatusesController extends Controller
         } else {
             $statuses = Status::paginate($perPage);
         }
-
-        return view('manager.statuses.index', compact('statuses'));
+        $data['list']=$statuses;
+        return view('crudbase.index', compact('data'));
     }
 
     /**
@@ -40,7 +58,7 @@ class StatusesController extends Controller
      */
     public function create()
     {
-        return view('manager.statuses.create');
+        return view('crudbase.create');
     }
 
     /**
@@ -63,7 +81,7 @@ class StatusesController extends Controller
 
         Session::flash('flash_message', 'Status added!');
 
-        return redirect('manager/statuses');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -75,9 +93,9 @@ class StatusesController extends Controller
      */
     public function show($id)
     {
-        $status = Status::findOrFail($id);
+        $data = Status::findOrFail($id);
 
-        return view('manager.statuses.show', compact('status'));
+        return view($this->paramT['baseview'].'.show', compact('data'));
     }
 
     /**
@@ -89,9 +107,9 @@ class StatusesController extends Controller
      */
     public function edit($id)
     {
-        $status = Status::findOrFail($id);
-
-        return view('manager.statuses.edit', compact('status'));
+        $data = Status::findOrFail($id);
+        $data['id']=$id ;
+        return view('crudbase.edit', compact('data'));
     }
 
     /**
@@ -116,7 +134,7 @@ class StatusesController extends Controller
 
         Session::flash('flash_message', 'Status updated!');
 
-        return redirect('manager/statuses');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -132,6 +150,6 @@ class StatusesController extends Controller
 
         Session::flash('flash_message', 'Status deleted!');
 
-        return redirect('manager/statuses');
+        return redirect($this->paramT['baseroute']);
     }
 }

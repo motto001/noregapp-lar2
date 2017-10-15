@@ -1,9 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Manager;
-
-//use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Timetype;
@@ -32,12 +31,20 @@ protected $valT=[
 protected $paramT= [
             'baseroute'=>'manager/wroletimes-to-unit',
             'baseview'=>'manager.wroletimestounit', 
-            'cim'=>'Idők',
+            'cim'=>'Idők munkarend egységhez',
 ];
 
-   function __construct(){
+   function __construct(Request $request){
 
-        View::share('param',$this->paramT);
+    $this->paramT['id']=$request->route('id') ;
+    $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+
+    if($this->paramT['parrent_id']>0){
+        $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
+    else{
+        $this->paramT['route_param']='';}
+
+    View::share('param',$this->paramT);
    }
     /**
      * Display a listing of the resource.
@@ -49,8 +56,7 @@ protected $paramT= [
     {
         $keyword = $request->get('search');
         $perPage = 25;
-        $routeparam=$request->get('routeparam');
-      
+
        // $data['routeparam']=$_GET['routeparam'];
         if (!empty($keyword)) {
             $wroletimes2 = Wroletime::where('wroleunit_id', '=', $unit_id)
@@ -67,9 +73,9 @@ protected $paramT= [
         }
      //  print_r($wroletimes2);
         $data['list']=$wroletimes2;
-        $data['wroleunit_id']=$routeparam;
-        $data['routeparam']='?routeparam='.$routeparam;
-        $data['backurl']='manager/wroleunits/'.$routeparam.'/edit';
+        $data['wroleunit_id']=$this->paramT['parrent_id'];
+        $data['routeparam']=$this->paramT['route_param'];
+        $data['backurl']='manager/wroleunits/'.$this->paramT['parrent_id'].'/edit';
 
         return view('crudbase.index', compact('data'));
     }
@@ -83,9 +89,8 @@ protected $paramT= [
     {
        // $wroletimes = Wroletime::get();
         $data['timetype']= Timetype::pluck('name','id');
-        $data['wroleunit_id']= $request->get('routeparam');
-        $data['routeparam']='?routeparam=' .$request->get('routeparam');
-        $data['cancelurl']=$this->paramT['baseroute'].'/'.$data['routeparam'];  
+        $data['wroleunit_id']= $this->paramT['parrent_id'];
+        $data['cancelurl']=$this->paramT['baseroute'].'/'.$this->paramT['route_param'];  
         return view('crudbase.create',compact('data'));
     }
   
@@ -105,7 +110,7 @@ protected $paramT= [
 
         Session::flash('flash_message', 'Wroletime added!');
 
-        return redirect($this->paramT['baseroute'].'/?routeparam='.$wroletime->wroleunit_id);
+        return redirect($this->paramT['baseroute'].'/'.$this->paramT['route_param']);
     }
 
     /**
@@ -119,10 +124,8 @@ protected $paramT= [
     {
         $data = Wroletime::findOrFail($id);
         $data['timetype']= Timetype::pluck('name','id');
-        $data['wroleunit_id']= $data->wroleunit_id;
-      //  $routeparam=$request->get('routeparam');
-        $data['routeparam']='?routeparam='.$data->wroleunit_id;
-        $data['cancelurl']=$this->paramT['baseroute'].'/'.$data['routeparam'];       
+        $data['wroleunit_id']= $this->paramT['parrent_id'];
+        $data['cancelurl']=$this->paramT['baseroute'].'/'.$this->paramT['route_param'];       
         $data->start=substr( $data->start, 0, -3);
         $data->end=substr( $data->end, 0, -3);
         return view('crudbase.edit', compact('data'));
@@ -146,7 +149,7 @@ protected $paramT= [
        // $routeparam=$request->get('routeparam');
         Session::flash('flash_message', 'Wroletime updated!');
 
-        return redirect($this->paramT['baseroute'].'/?routeparam='.$wroletime->wroleunit_id);
+        return redirect($this->paramT['baseroute'].'/'.$this->paramT['route_param']);
     }
 
     /**
@@ -164,6 +167,6 @@ protected $paramT= [
        // $routeparam=$request->get('routeparam');
         Session::flash('flash_message', 'Wroletime deleted!');
 
-        return redirect($this->paramT['baseroute'].'/?routeparam='.$wroletime->wroleunit_id);
+        return redirect($this->paramT['baseroute'].'/'.$this->paramT['route_param']);
     }
 }

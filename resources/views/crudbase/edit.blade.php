@@ -7,11 +7,10 @@
             @include('admin.sidebar')
            
 @endif   
-   
  @if(isset($data['cancelurl']))
     @php $cancelurl='/'.$data['cancelurl']; @endphp
  @else
-    @php $cancelurl='/'.$param['baseroute']; @endphp   
+    @php $cancelurl='/'.$param['baseroute'].$param['route_param']; @endphp   
  @endif
 <section id="main-content">  
     <section class="wrapper">
@@ -35,7 +34,7 @@
 
                         {!! Form::model($data, [
                             'method' => 'PATCH',
-                            'url' => [$param['baseroute'], $data->id],
+                            'url' => $param['baseroute'].'/'.$data['id'].$param['route_param'],
                             'class' => 'form-horizontal',
                             'files' => true
                         ]) !!}

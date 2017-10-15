@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Manager;
-
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -11,6 +12,24 @@ use Session;
 
 class TimetypesController extends Controller
 {
+    protected $paramT= [
+        'baseroute'=>'manager/timetypes',
+        'baseview'=>'manager.timetypes', 
+        'cim'=>'Időtipusok',
+    ];
+    
+    function __construct(Request $request){
+    
+        $this->paramT['id']=$request->route('id') ;
+        $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+
+        if($this->paramT['parrent_id']>0){
+            $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
+        else{
+            $this->paramT['route_param']='';}
+
+        View::share('param',$this->paramT);
+       }
     /**
      * Display a listing of the resource.
      *
@@ -31,8 +50,8 @@ class TimetypesController extends Controller
         } else {
             $timetypes = Timetype::paginate($perPage);
         }
-
-        return view('manager.timetypes.index', compact('timetypes'));
+        $data['list']=$timetypes;
+        return view('crudbase.index', compact('data'));
     }
 
     /**
@@ -42,7 +61,7 @@ class TimetypesController extends Controller
      */
     public function create()
     {
-        return view('manager.timetypes.create');
+        return view('crudbase.create');
     }
 
     /**
@@ -67,7 +86,7 @@ class TimetypesController extends Controller
 
         Session::flash('flash_message', 'Timetype added!');
 
-        return redirect('manager/timetypes');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -79,9 +98,10 @@ class TimetypesController extends Controller
      */
     public function show($id)
     {
-        $timetype = Timetype::findOrFail($id);
+        $data = Timetype::findOrFail($id);
 
-        return view('manager.timetypes.show', compact('timetype'));
+        
+        return view($this->paramT['baseview'].'.show', compact('data'));
     }
 
     /**
@@ -93,9 +113,9 @@ class TimetypesController extends Controller
      */
     public function edit($id)
     {
-        $timetype = Timetype::findOrFail($id);
-
-        return view('manager.timetypes.edit', compact('timetype'));
+        $data = Timetype::findOrFail($id);
+        $data['id']=$id ;
+        return view('crudbase.edit', compact('data'));
     }
 
     /**
@@ -122,7 +142,7 @@ class TimetypesController extends Controller
 
         Session::flash('flash_message', 'Timetype updated!');
 
-        return redirect('manager/timetypes');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -138,6 +158,6 @@ class TimetypesController extends Controller
 
         Session::flash('flash_message', 'Timetype deleted!');
 
-        return redirect('manager/timetypes');
+        return redirect($this->paramT['baseroute']);
     }
 }

@@ -1,20 +1,21 @@
- <div class="table-responsive">
+
+                        <div class="table-responsive">
                             <table class="table table-borderless">
                                 <thead>
                                     <tr>
-                                        <th>ID</th><th>Name</th><th>Unit</th><th>Long</th><th>Actions</th>
+                                        <th>ID</th><th>Day Id</th><th>Timetype Id</th><th>Start</th><th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($data['list'] as $item)
+                                @foreach($workertimes as $item)
                                     <tr>
                                         <td>{{ $item->id }}</td>
-                                        <td>{{ $item->name }}</td><td>{{ $item->unit }}</td><td>{{ $item->long }}</td>
+                                        <td>{{ $item->day_id }}</td><td>{{ $item->timetype_id }}</td><td>{{ $item->start }}</td>
                                         <td>
-                                        @include('crudbase.listbuttons')
+                               @include('crudbase.listbuttons')
                                         </td>
                                     </tr>
                                 @endforeach
                                 </tbody>
                             </table>
- </div>
+                       </div>

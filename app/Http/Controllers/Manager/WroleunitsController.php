@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Http\Controllers\Manager;
-
-use App\Http\Requests;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Input;
+use App\Http\Requests;
+
 use App\Http\Controllers\Controller;
 //use Illuminate\Support\Facades\DB;
 use App\Wroleunit;
@@ -28,14 +29,21 @@ protected $valT=[
  * minden viewnwk megosztott paraméterek
  */
 protected $paramT= [
-            'baseroute'=>'manager/wroleunits',
-            'baseview'=>'manager.wroleunits', 
-            'cim'=>'Időciklusok',
+    'baseroute'=>'manager/wroleunits',
+    'baseview'=>'manager.wroleunits', 
+    'cim'=>'Munkarend egység',
 ];
 
-   function __construct(){
+   function __construct(Request $request){ 
+    $this->paramT['id']=$request->route('id') ?? 0; ;
+    $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+    
+    if($this->paramT['parrent_id']>0){
+        $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
+    else{
+        $this->paramT['route_param']='';}
 
-        View::share('param',$this->paramT);
+    View::share('param',$this->paramT);
    }
     public function index(Request $request)
     {
@@ -85,7 +93,7 @@ protected $paramT= [
         $wroleunit->daytype()->sync($request->daytype_id);
         Session::flash('flash_message', 'Wroleunit added!');
 
-        return redirect('manager/wroleunits/'.$wroleunit->id.'/edit');
+        return redirect($this->paramT['baseroute']);
 
     }
 
@@ -98,9 +106,9 @@ protected $paramT= [
      */
     public function show($id)
     {
-        $wroleunit = Wroleunit::findOrFail($id);
+        $data = Wroleunit::findOrFail($id);
 
-        return view('manager.wroleunits.show', compact('wroleunit'));
+        return view($this->paramT['baseview'].'.show', compact('data'));
     }
 
     /**
@@ -122,8 +130,8 @@ protected $paramT= [
         }
         $data['checked_daytype']=$checked_daytype;
         $data['list']=$data->wroletime;
-       
-        return view('manager.wroleunits.edit-wrole', compact('data'));
+        $data['id']=$id ;
+        return view('crudbase.edit', compact('data'));
     }
 
     /**
@@ -149,7 +157,7 @@ protected $paramT= [
 
         Session::flash('flash_message', 'Wroleunit updated!');
 
-        return redirect('manager/wroleunits');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -166,7 +174,7 @@ protected $paramT= [
         DB::table('wroleunit_daytype')->where('wroleunit_id', '=', $id)->delete();
         Session::flash('flash_message', 'Wroleunit deleted!');
 
-        return redirect('manager/wroleunits');
+        return redirect($this->paramT['baseroute']);
     }
 
 
@@ -195,7 +203,7 @@ protected $paramT= [
     public function timedel($id)
     {
         Wroletime::destroy($id);
-        return redirect('manager/wroleunits');
+        return redirect($this->paramT['basroute']);
     }
 
 }

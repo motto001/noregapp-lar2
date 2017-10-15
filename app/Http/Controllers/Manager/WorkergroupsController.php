@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Manager;
-
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -10,7 +11,27 @@ use Illuminate\Http\Request;
 use Session;
 
 class WorkergroupsController extends Controller
-{
+{ 
+    
+    protected $paramT= [
+    'baseroute'=>'manager/workergroups',
+    'baseview'=>'manager.workergroups', 
+    'cim'=>'Dolgozói csoportok',
+];
+
+function __construct(Request $request){
+ 
+    $this->paramT['id']=$request->route('id') ;
+    $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+
+    if($this->paramT['parrent_id']>0){
+        $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
+    else{
+        $this->paramT['route_param']='';}
+
+    View::share('param',$this->paramT);
+   }
+
     /**
      * Display a listing of the resource.
      *
@@ -30,7 +51,8 @@ class WorkergroupsController extends Controller
             $workergroups = Workergroup::paginate($perPage);
         }
 
-        return view('manager.workergroups.index', compact('workergroups'));
+        $data['list']=$workergroups;
+        return view('crudbase.index', compact('data'));
     }
 
     /**
@@ -40,7 +62,7 @@ class WorkergroupsController extends Controller
      */
     public function create()
     {
-        return view('manager.workergroups.create');
+        return view('crudbase.create');
     }
 
     /**
@@ -63,7 +85,7 @@ class WorkergroupsController extends Controller
 
         Session::flash('flash_message', 'Workergroup added!');
 
-        return redirect('manager/workergroups');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -75,9 +97,9 @@ class WorkergroupsController extends Controller
      */
     public function show($id)
     {
-        $workergroup = Workergroup::findOrFail($id);
+        $data = Workergroup::findOrFail($id);
 
-        return view('manager.workergroups.show', compact('workergroup'));
+        return view($this->paramT['baseview'].'.show', compact('data'));
     }
 
     /**
@@ -89,9 +111,9 @@ class WorkergroupsController extends Controller
      */
     public function edit($id)
     {
-        $workergroup = Workergroup::findOrFail($id);
-
-        return view('manager.workergroups.edit', compact('workergroup'));
+        $data = Workergroup::findOrFail($id);
+        $data['id']=$id ;
+        return view('crudbase.edit', compact('data'));
     }
 
     /**
@@ -116,7 +138,7 @@ class WorkergroupsController extends Controller
 
         Session::flash('flash_message', 'Workergroup updated!');
 
-        return redirect('manager/workergroups');
+        return redirect($this->paramT['baseroute']);
     }
 
     /**
@@ -132,6 +154,6 @@ class WorkergroupsController extends Controller
 
         Session::flash('flash_message', 'Workergroup deleted!');
 
-        return redirect('manager/workergroups');
+        return redirect($this->paramT['baseroute']);
     }
 }
