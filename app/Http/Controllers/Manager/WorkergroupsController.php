@@ -62,6 +62,7 @@ function __construct(Request $request){
      */
     public function create()
     {
+        
         return view('crudbase.create');
     }
 

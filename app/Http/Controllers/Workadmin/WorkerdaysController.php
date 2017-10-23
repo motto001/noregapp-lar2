@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Manager;
+namespace App\Http\Controllers\Workadmin;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
@@ -61,6 +61,9 @@ class WorkerdaysController extends Controller
         } 
 
         $data['list']=$workerdays;
+        $calendar=new \App\Handler\Calendar;
+        $data['calendar']=$calendar->getDays(2017,8);
+        $data['userid']=0;
         return view('crudbase.index', compact('data'));
     }
 
@@ -71,6 +74,8 @@ class WorkerdaysController extends Controller
      */
     public function create()
     {
+         $data = Days::get();
+        $data['user']=Daytype::get()->pluck('name','id');
         return view('crudbase.create');
     }
 

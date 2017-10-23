@@ -154,7 +154,12 @@
                 </a>
    </li>
   
-       
+           
+            <li class="mt" style="margin:0px;">
+                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/workerdays' ? 'active' : '' }}" href="{{ url('/workadmin/workerdays') }}">
+                   Napok
+                </a>
+            </li>
             <li class="mt" style="margin:0px;">
                 <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/users' ? 'active' : '' }}" href="{{ url('/workadmin/workerdays') }}">
                    Munkaidők
