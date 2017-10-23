@@ -22,4 +22,4 @@
       
     </div>
 
-
+ {!! $data['calendar']->generate() !!}

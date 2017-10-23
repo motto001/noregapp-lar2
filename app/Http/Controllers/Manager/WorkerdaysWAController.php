@@ -6,36 +6,33 @@ use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-use App\Day;
-use App\Daytype;
+use App\Workerday;
 use Illuminate\Http\Request;
 use Session;
 
-class DaysController extends Controller
+class WorkerdaysController extends Controller
 {
-
     protected $paramT= [
-        'baseroute'=>'manager/days',
-        'baseview'=>'manager.days', 
-        'cim'=>'Napok',
+        'baseroute'=>'workadmin/workerdays',
+        'baseview'=>'workadmin.workerdays', 
+        'cim'=>'Dolgozói napok',
     ];
-    protected $valT=[
+    protected $valT= [
         'worker_id' => 'integer',
-        //'datum' => 'required|date_format:mm-dd',
-        'datum' => 'required|string',
-        'note' => 'string'
+        'daytype_id' => 'integer',
+        'datum' => 'required|date',
+        'managernote' => 'string|max:150',
+        'usernote' => 'string|max:150'
     ];
+    function __construct(Request $request){
     
-    function __construct(Request $request){ 
- 
         $this->paramT['id']=$request->route('id') ;
         $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+        $this->paramT['daytype_id']=Input::get('daytype_id') ?? 0;
 
-        if($this->paramT['parrent_id']>0){
-            $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
-        else{
-            $this->paramT['route_param']='';}
-
+        $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id']
+        .'&parrentid='.$this->paramT['parrent_id'];
+      
         View::share('param',$this->paramT);
        }
     /**
@@ -47,17 +44,23 @@ class DaysController extends Controller
     {
         $keyword = $request->get('search');
         $perPage = 25;
+        $where[]= ['id', '<>','0']; //hogx mindenképpen legyen where
+        if($this->paramT['parrent_id']>0){$where[]= ['worker_id', '=', $this->paramT['parrent_id']];}
+        if($this->paramT['daytype_id']>0){$where[]= ['daytype_id', '=', $this->paramT['daytype_id']];}
 
         if (!empty($keyword)) {
-            $days = Day::with('daytype')->where('daytype_id', 'LIKE', "%$keyword%")
+            $workerdays = Workerday::where($where )
+				->orWhere('daytype_id', 'LIKE', "%$keyword%")
 				->orWhere('datum', 'LIKE', "%$keyword%")
-				->orWhere('note', 'LIKE', "%$keyword%")
+				->orWhere('managernote', 'LIKE', "%$keyword%")
+				->orWhere('usernote', 'LIKE', "%$keyword%")
 				->paginate($perPage);
         } else {
-            $days = Day::with('daytype')->paginate($perPage);
-        }
+            $workerdays = Workerday::where($where )
+            ->paginate($perPage);
+        } 
 
-        $data['list']=$days;
+        $data['list']=$workerdays;
         return view('crudbase.index', compact('data'));
     }
 
@@ -68,10 +71,7 @@ class DaysController extends Controller
      */
     public function create()
     {
-        //$data = Day::get();
-        $data['daytype']=Daytype::get()->pluck('name','id');
-        $data['datum']='01-01';
-        return view('crudbase.create' ,compact('data'));
+        return view('crudbase.create');
     }
 
     /**
@@ -83,13 +83,12 @@ class DaysController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request,$this->valT);
+        $this->validate($request,$this->valT );
         $requestData = $request->all();
-        $request->ev=$request->ev ?? '0000';
-        $requestData['datum']= $request->ev.'-'. $request->datum;
-        Day::create($requestData);
+        
+        Workerday::create($requestData);
 
-        Session::flash('flash_message', 'Day added!');
+        Session::flash('flash_message', 'Workerday added!');
 
         return redirect($this->paramT['baseroute']);
     }
@@ -103,7 +102,7 @@ class DaysController extends Controller
      */
     public function show($id)
     {
-        $data = Day::findOrFail($id);
+        $data = Workerday::findOrFail($id);
 
         return view($this->paramT['baseview'].'.show', compact('data'));
     }
@@ -117,10 +116,8 @@ class DaysController extends Controller
      */
     public function edit($id)
     {
-        $data = Day::findOrFail($id);
+        $data = Workerday::findOrFail($id);
         $data['id']=$id ;
-        $data['datum']=substr($data['datum'],5);
-        $data['daytype']=Daytype::get()->pluck('name','id');
         return view('crudbase.edit', compact('data'));
     }
 
@@ -134,14 +131,13 @@ class DaysController extends Controller
      */
     public function update($id, Request $request)
     {
-        $this->validate($request,$this->valT);
+        $this->validate($request,$this->valT );
         $requestData = $request->all();
-        $request->ev=$request->ev ?? '0000';
-        $requestData['datum']= $request->ev.'-'. $request->datum;
-        $day = Day::findOrFail($id);
-        $day->update($requestData);
+        
+        $workerday = Workerday::findOrFail($id);
+        $workerday->update($requestData);
 
-        Session::flash('flash_message', 'Day updated!');
+        Session::flash('flash_message', 'Workerday updated!');
 
         return redirect($this->paramT['baseroute']);
     }
@@ -155,9 +151,9 @@ class DaysController extends Controller
      */
     public function destroy($id)
     {
-        Day::destroy($id);
+        Workerday::destroy($id);
 
-        Session::flash('flash_message', 'Day deleted!');
+        Session::flash('flash_message', 'Workerday deleted!');
 
         return redirect($this->paramT['baseroute']);
     }

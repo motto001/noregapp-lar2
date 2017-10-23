@@ -7,10 +7,12 @@
     "require": {
         "php": ">=5.6.4",
         "appzcoder/laravel-admin": "^1.0",
+        "edofre/laravel-fullcalendar": "^1.2",
         "google/apiclient": "2.0",
         "laravel/framework": "5.4.*",
         "laravel/tinker": "~1.0",
-        "laravelcollective/html": "^5.4"
+        "laravelcollective/html": "^5.4",
+        "motto001/fullcalendar": "dev-master"
     },
     "require-dev": {
         "appzcoder/crud-generator": "^2.0",

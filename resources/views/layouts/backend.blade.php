@@ -28,7 +28,7 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
  <!-- CSRF Token -->
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -234,7 +234,8 @@
                 </div>
             </div>
         @endif 
-
+    <script src="/assets/js/jquery.js"></script>
+    <script src="/assets/js/jquery-1.8.3.min.js"></script>
      @yield('content')
 
       <!--main content end-->
@@ -242,8 +243,7 @@
   </section>
 
     <!-- js placed at the end of the document so the pages load faster -->
-    <script src="/assets/js/jquery.js"></script>
-    <script src="/assets/js/jquery-1.8.3.min.js"></script>
+
     <script src="/assets/js/bootstrap.min.js"></script>
     <script class="include" type="text/javascript" src="/assets/js/jquery.dcjqaccordion.2.7.js"></script>
     <script src="/assets/js/jquery.scrollTo.min.js"></script>
@@ -260,7 +260,24 @@
     <!--script for this page-->
     <script src="/assets/js/sparkline-chart.js"></script>    
 	<script src="/assets/js/zabuto_calendar.js"></script>	
-	
+	  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  
+        <script type="text/javascript">
+
+
+$( ".datepicker" ).datepicker({
+  dateFormat: "yy-mm-dd"
+});
+$( ".datepickernoyear" ).datepicker({
+  dateFormat: "mm-dd",setDate: "10-10" 
+});
+
+
+      $(function () {
+    //            // Navigation active
+     //          $('ul.navbar-nav a[href="{{ "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" }}"]').closest('li').addClass('active');
+           });
+        </script>
 	<script type="text/javascript">
         $(document).ready(function () {
         

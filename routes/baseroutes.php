@@ -28,6 +28,7 @@ Route::group(['prefix' => '/manager','middleware' => ['auth', 'roles'], 'roles' 
     Route::resource('/statuses', 'Manager\\StatusesController');
 
     Route::resource('/days', 'Manager\\DaysController');
+    Route::resource('/userdays', 'Manager\\UserdaysController');
     Route::resource('/daytypes', 'Manager\\DaytypesController');
     Route::resource('/timeframes', 'Manager\\TimeframesController');
     Route::resource('/timetypes', 'Manager\\TimetypesController');
@@ -52,7 +53,7 @@ Route::group(['prefix' => '/workadmin','middleware' => ['auth', 'roles'], 'roles
     Route::resource('/chworkerday', 'Workadmin\\ChworkerdayController');
     Route::resource('/chworkertimes', 'Workadmin\\ChworkertimesController');
    
-    Route::resource('/workerdays', 'Manager\\WorkerdaysController');
+    Route::resource('/workerdays', 'Manager\\WorkerdaysWAController');
     Route::resource('/workertimes', 'Manager\\WorkertimesController');
     
 });

@@ -5,23 +5,23 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
+use Carbon\Carbon;
 use App\Day;
 use App\Daytype;
 use Illuminate\Http\Request;
 use Session;
 
-class DaysController extends Controller
+class UserdaysController extends Controller
 {
 
     protected $paramT= [
-        'baseroute'=>'manager/days',
-        'baseview'=>'manager.days', 
+        'baseroute'=>'manager/userdays',
+        'baseview'=>'manager.userdays', 
         'cim'=>'Napok',
     ];
     protected $valT=[
         'worker_id' => 'integer',
-        //'datum' => 'required|date_format:mm-dd',
+        'datum' => 'required|date',
         'datum' => 'required|string',
         'note' => 'string'
     ];
@@ -43,7 +43,18 @@ class DaysController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function index(Request $request)
+    public function index()
+    {
+        $data['list']=$this->listData;
+        return view('crudbase.index', compact('data'));
+    }
+    public function list()
+    {
+        $data['list']=$this->listData;
+        return view('crudbase.index', compact('data'));
+    }
+
+    public function listData(Request $request)
     {
         $keyword = $request->get('search');
         $perPage = 25;
@@ -57,10 +68,10 @@ class DaysController extends Controller
             $days = Day::with('daytype')->paginate($perPage);
         }
 
-        $data['list']=$days;
-        return view('crudbase.index', compact('data'));
-    }
+        return $days;
 
+        
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -161,4 +172,67 @@ class DaysController extends Controller
 
         return redirect($this->paramT['baseroute']);
     }
+
+
+    /**
+     * @param Request $request
+     * @return string
+     */
+    public function ajaxEvents(Request $request)
+    {
+        // start and end dates will be sent automatically by fullcalendar, they can be obtained using:
+        // $request->get('start') & $request->get('end')
+        $events = $this->getEvents();
+        return json_encode($events);
+    }
+
+    /**
+     * @return array
+     */
+    private function getEvents()
+    {
+        $events = [];
+        $events[] = new \Edofre\Fullcalendar\Event([
+            'id'     => 0,
+            'title'  => 'Rest',
+            'allDay' => true,
+            'start'  => Carbon::create(2016, 11, 20),
+            'end'    => Carbon::create(2016, 11, 20),
+        ]);
+
+        $events[] = new \Edofre\Fullcalendar\Event([
+            'id'    => 1,
+            'title' => 'Appointment #' . rand(1, 999),
+            'start' => Carbon::create(2016, 11, 15, 13),
+            'end'   => Carbon::create(2016, 11, 15, 13)->addHour(2),
+        ]);
+
+        $events[] = new \Edofre\Fullcalendar\Event([
+            'id'               => 2,
+            'title'            => 'Appointment #' . rand(1, 999),
+            'editable'         => true,
+            'startEditable'    => true,
+            'durationEditable' => true,
+            'start'            => Carbon::create(2016, 11, 16, 10),
+            'end'              => Carbon::create(2016, 11, 16, 13),
+        ]);
+
+        $events[] = new \Edofre\Fullcalendar\Event([
+            'id'               => 3,
+            'title'            => 'Appointment #' . rand(1, 999),
+            'editable'         => true,
+            'startEditable'    => true,
+            'durationEditable' => true,
+            'start'            => Carbon::create(2016, 11, 14, 9),
+            'end'              => Carbon::create(2016, 11, 14, 10),
+            'backgroundColor'  => 'black',
+            'borderColor'      => 'red',
+            'textColor'        => 'green',
+        ]);
+        return $events;
+    }
+
+
+
+
 }

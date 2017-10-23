@@ -182,7 +182,7 @@ Appzcoder\LaravelAdmin\LaravelAdminServiceProvider::class,
     // For crud generator & html
  Appzcoder\CrudGenerator\CrudGeneratorServiceProvider::class,
    // Collective\Html\HtmlServiceProvider::class, crud generátorhoz már fel lett téve
-
+   Edofre\Fullcalendar\FullcalendarServiceProvider::class,
   // Jadjoubran\LaravelAngular\Provider\LaravelServiceProvider::class,
   // Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
   // Irazasyed\JwtAuthGuard\JwtAuthGuardServiceProvider::class,
@@ -236,7 +236,10 @@ Appzcoder\LaravelAdmin\LaravelAdminServiceProvider::class,
         'View' => Illuminate\Support\Facades\View::class,
  'Form' => Collective\Html\FormFacade::class,
  'HTML' => Collective\Html\HtmlFacade::class,
+ 'Fullcalendar' => Edofre\Fullcalendar\Facades\Fullcalendar::class,
+ 'Carbon' => 'Carbon\Carbon',
  'MoViewF' => App\Facades\MoView::class
+
     ],
 
 ];

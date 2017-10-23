@@ -100,6 +100,11 @@
                 <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/days' ? 'active' : '' }}" href="{{ url('/manager/days') }}">
                     Napok
                 </a>
+            </li>  
+            <li class="mt" style="margin:0px;">
+                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/userdays' ? 'active' : '' }}" href="{{ url('/manager/userdays') }}">
+                   Dolgozói napok
+                </a>
             </li>
             <li class="mt" style="margin:0px;">
                 <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/daytypes' ? 'active' : '' }}" href="{{ url('/manager/daytypes') }}">
@@ -148,7 +153,7 @@
                     <span style="color:red;font-size:18px;">Workadmin</span>
                 </a>
    </li>
-    
+  
        
             <li class="mt" style="margin:0px;">
                 <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/users' ? 'active' : '' }}" href="{{ url('/workadmin/workerdays') }}">
