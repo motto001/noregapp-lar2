@@ -1,4 +1,13 @@
 
+              
+                 @foreach($data['workers']  as $worker)
+                                  <a href="" title="Cancel"><button class="btn btn-warning btn-xs">
+                                {!!    $worker['name'] !!}
+                                    </a>
+                   @endforeach  
+                 
+                 
+                 
                         <div class="table-responsive">
                             <table class="table table-borderless">
                                 <thead>
@@ -12,11 +21,22 @@
                                         <td>{{ $item->id }}</td>
                                         <td>{{ $item->worker_id }}</td><td>{{ $item->daytype_id }}</td><td>{{ $item->datum }}</td>
                                         <td>
-                                          @include('crudbase.listbuttons')
+                                    {!! 
+                                        MoHandF::linkButton([
+                                        'link'=> MoHandF::url($param['baseroute'].'/'.$item->id.'/edit',$param['getT']),
+                                        'fa'=>'pencil-square-o']) 
+                                    !!}
+                                    {!!
+                                         MoHandF::delButton([
+                                        'tip'=>'del',
+                                        'link'=>MoHandF::url($param['baseroute'].'/'.$item->id,$param['getT']),
+                                        'fa'=>'trash-o']) 
+                                    !!}
                                         </td>
                                     </tr>
                                 @endforeach
                                 </tbody>
                             </table>
                          </div>
- @include('calendar.base')
+
+ @include('workadmin.workerdays.calendar')

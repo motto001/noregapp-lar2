@@ -1,4 +1,15 @@
 <!DOCTYPE html>
+ @if(isset($data['param']))
+    @php
+    $param=array_merge($param,$data['param']);
+    @endphp
+ @endif
+  @if(isset($param['getT']))
+    @php
+    $param['getT']=[];
+    @endphp
+ @endif
+
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -43,10 +54,7 @@
 <body>
 
     <section id="container" >
-      <!-- **********************************************************************************************************************************************************
-      TOP BAR CONTENT & NOTIFICATIONS
-      *********************************************************************************************************************************************************** -->
-      <!--header start-->
+   <!--header start-->
         <header class="header black-bg">
               <div class="sidebar-toggle-box">
                   <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>

@@ -7,6 +7,8 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Workerday;
+use App\Worker;
+use App\Daytype;
 use Illuminate\Http\Request;
 use Session;
 
@@ -15,8 +17,11 @@ class WorkerdaysController extends Controller
     protected $paramT= [
         'baseroute'=>'workadmin/workerdays',
         'baseview'=>'workadmin.workerdays', 
-        'cim'=>'Dolgozói napok',
+        'crudview'=>'crudbase_1', 
+        'cim'=>'Dolgozói napok'
+      
     ];
+
     protected $valT= [
         'worker_id' => 'integer',
         'daytype_id' => 'integer',
@@ -26,13 +31,9 @@ class WorkerdaysController extends Controller
     ];
     function __construct(Request $request){
     
-        $this->paramT['id']=$request->route('id') ;
-        $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
-        $this->paramT['daytype_id']=Input::get('daytype_id') ?? 0;
+        $this->paramT['id']=$request->route('id') ;//day id
+        $this->paramT['getT']['parrent_id']=Input::get('parrent_id') ?? 0; //worker id
 
-        $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id']
-        .'&parrentid='.$this->paramT['parrent_id'];
-      
         View::share('param',$this->paramT);
        }
     /**
@@ -40,13 +41,14 @@ class WorkerdaysController extends Controller
      *
      * @return \Illuminate\View\View
      */
+  
     public function index(Request $request)
     {
         $keyword = $request->get('search');
         $perPage = 25;
         $where[]= ['id', '<>','0']; //hogx mindenképpen legyen where
-        if($this->paramT['parrent_id']>0){$where[]= ['worker_id', '=', $this->paramT['parrent_id']];}
-        if($this->paramT['daytype_id']>0){$where[]= ['daytype_id', '=', $this->paramT['daytype_id']];}
+        if($this->paramT['getT']['parrent_id']>0){$where[]= ['worker_id', '=', $this->paramT['parrent_id']];}
+       // if($this->paramT['getT']['daytype_id']>0){$where[]= ['daytype_id', '=', $this->paramT['daytype_id']];}
 
         if (!empty($keyword)) {
             $workerdays = Workerday::where($where )
@@ -59,12 +61,14 @@ class WorkerdaysController extends Controller
             $workerdays = Workerday::where($where )
             ->paginate($perPage);
         } 
-
+   
         $data['list']=$workerdays;
         $calendar=new \App\Handler\Calendar;
+        $data['workers']=Worker::get()->pluck('name','id');
         $data['calendar']=$calendar->getDays(2017,8);
+        $data['daytype']=Daytype::get()->pluck('name','id');
         $data['userid']=0;
-        return view('crudbase.index', compact('data'));
+        return view($this->paramT['crudview'].'.index', compact('data'));
     }
 
     /**

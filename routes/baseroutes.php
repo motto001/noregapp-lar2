@@ -52,7 +52,6 @@ Route::group(['prefix' => '/workadmin','middleware' => ['auth', 'roles'], 'roles
 {
     Route::resource('/chworkerday', 'Workadmin\\ChworkerdayController');
     Route::resource('/chworkertimes', 'Workadmin\\ChworkertimesController');
-   
     Route::resource('/workerdays', 'Workadmin\\WorkerdaysController');
     Route::resource('/workertimes', 'Workadmin\\WorkertimesController');
     

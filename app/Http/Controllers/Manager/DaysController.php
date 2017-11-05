@@ -29,13 +29,9 @@ class DaysController extends Controller
     function __construct(Request $request){ 
  
         $this->paramT['id']=$request->route('id') ;
-        $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
-
-        if($this->paramT['parrent_id']>0){
-            $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
-        else{
-            $this->paramT['route_param']='';}
-
+        //$this->paramT['getT']['parrent_id']=Input::get('parrent_id') ?? 0;
+        $this->paramT['getT']['worker_id']=Input::get('worker_id') ?? 0;
+    
         View::share('param',$this->paramT);
        }
     /**

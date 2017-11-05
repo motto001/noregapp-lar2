@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\URL;
 
 use App\Workerday;
 use Illuminate\Http\Request;
@@ -22,11 +23,6 @@ class WorkerdaysController extends Controller
     
         $this->paramT['id']=$request->route('id') ;
         $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
-
-        if($this->paramT['parrent_id']>0){
-            $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
-        else{
-            $this->paramT['route_param']='';}
 
         View::share('param',$this->paramT);
        }
