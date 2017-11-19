@@ -7,31 +7,35 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use App\Day;
+use App\Worker;
 use App\Daytype;
 use Illuminate\Http\Request;
 use Session;
 
 class DaysController extends Controller
 {
-
     protected $paramT= [
         'baseroute'=>'manager/days',
         'baseview'=>'manager.days', 
-        'cim'=>'Napok',
+        'crudview'=>'crudbase_1', 
+        'cim'=>'Napok'
+      
     ];
-    protected $valT=[
-        'worker_id' => 'integer',
-        //'datum' => 'required|date_format:mm-dd',
-        'datum' => 'required|string',
-        'note' => 'string'
+
+    protected $valT= [
+       // 'worker_id' => 'required|integer',
+        'daytype_id' => 'integer',
+        'datum' => ['required','unique:days','regex:/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/'],
+        'note' => 'string|max:150',
+       // 'usernote' => 'string|max:150'
     ];
+    function __construct(Request $request){
     
-    function __construct(Request $request){ 
- 
-        $this->paramT['id']=$request->route('id') ;
-        //$this->paramT['getT']['parrent_id']=Input::get('parrent_id') ?? 0;
-        $this->paramT['getT']['worker_id']=Input::get('worker_id') ?? 0;
-    
+        $this->paramT['id']=$request->route('id') ;//day id
+        $t = \Carbon::now();
+        $this->paramT['getT']['ev']=Input::get('ev') ?? $t->year; 
+        $this->paramT['getT']['ho']=Input::get('ho') ?? $t->month; 
+
         View::share('param',$this->paramT);
        }
     /**
@@ -39,22 +43,35 @@ class DaysController extends Controller
      *
      * @return \Illuminate\View\View
      */
+  
     public function index(Request $request)
     {
         $keyword = $request->get('search');
         $perPage = 25;
-
+        $where[]= ['id', '<>','0']; //hogx mindenképpen legyen where
+        //$where[]= ['datum', 'like', '0000%']; 
+        if($this->paramT['getT']['ev']=='all'){}
+        else if($this->paramT['getT']['ev']=='0000'){$where[]= ['datum', 'like','0000%'];}
+        else{$where[]= ['datum', 'like', $this->paramT['getT']['ev'].'%'];}
         if (!empty($keyword)) {
-            $days = Day::with('daytype')->where('daytype_id', 'LIKE', "%$keyword%")
-				->orWhere('datum', 'LIKE', "%$keyword%")
+            $workerdays = Day::with('daytype')
+                ->where($where )
+				->orWhere('daytype_id', 'LIKE', "%$keyword%")
+                ->orWhere('datum', 'LIKE', "%$keyword%")
 				->orWhere('note', 'LIKE', "%$keyword%")
 				->paginate($perPage);
         } else {
-            $days = Day::with('daytype')->paginate($perPage);
-        }
-
-        $data['list']=$days;
-        return view('crudbase.index', compact('data'));
+            $workerdays = Day::with('daytype')
+            ->where($where )
+            ->paginate($perPage);
+        } 
+   
+        $data['list']=$workerdays;
+      //  $calendar=new \App\Handler\Calendar;
+      //  $data['calendar']=$calendar->getDays($this->paramT['getT']['ev'],$this->paramT['getT']['ho']);
+      // $data['daytype']=Daytype::get()->pluck('name','id');
+      $data['years']=['all','0000','2017'];
+        return view($this->paramT['crudview'].'.index', compact('data'));
     }
 
     /**
@@ -64,10 +81,9 @@ class DaysController extends Controller
      */
     public function create()
     {
-        //$data = Day::get();
+       // $data = Days::get();
         $data['daytype']=Daytype::get()->pluck('name','id');
-        $data['datum']='01-01';
-        return view('crudbase.create' ,compact('data'));
+        return view($this->paramT['crudview'].'.create',compact('data'));
     }
 
     /**
@@ -79,15 +95,14 @@ class DaysController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request,$this->valT);
+        $this->validate($request,$this->valT );
         $requestData = $request->all();
-        $request->ev=$request->ev ?? '0000';
-        $requestData['datum']= $request->ev.'-'. $request->datum;
+       
         Day::create($requestData);
-
-        Session::flash('flash_message', 'Day added!');
-
+        Session::flash('flash_message', 'Workerday added!');
         return redirect($this->paramT['baseroute']);
+        
+       
     }
 
     /**
@@ -115,9 +130,8 @@ class DaysController extends Controller
     {
         $data = Day::findOrFail($id);
         $data['id']=$id ;
-        $data['datum']=substr($data['datum'],5);
         $data['daytype']=Daytype::get()->pluck('name','id');
-        return view('crudbase.edit', compact('data'));
+        return view($this->paramT['crudview'].'.edit', compact('data'));
     }
 
     /**
@@ -130,14 +144,13 @@ class DaysController extends Controller
      */
     public function update($id, Request $request)
     {
-        $this->validate($request,$this->valT);
+        $this->validate($request,$this->valT );
         $requestData = $request->all();
-        $request->ev=$request->ev ?? '0000';
-        $requestData['datum']= $request->ev.'-'. $request->datum;
-        $day = Day::findOrFail($id);
-        $day->update($requestData);
+        
+        $workerday = Day::findOrFail($id);
+        $workerday->update($requestData);
 
-        Session::flash('flash_message', 'Day updated!');
+        Session::flash('flash_message', 'Workerday updated!');
 
         return redirect($this->paramT['baseroute']);
     }
@@ -153,7 +166,7 @@ class DaysController extends Controller
     {
         Day::destroy($id);
 
-        Session::flash('flash_message', 'Day deleted!');
+        Session::flash('flash_message', 'Workerday deleted!');
 
         return redirect($this->paramT['baseroute']);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Workadmin;
 use Illuminate\Support\Facades\View;
+//use pp\facades\MoHand;
 use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -23,7 +24,7 @@ class WorkerdaysController extends Controller
     ];
 
     protected $valT= [
-        'worker_id' => 'integer',
+        'worker_id' => 'required|integer',
         'daytype_id' => 'integer',
         'datum' => 'required|date',
         'managernote' => 'string|max:150',
@@ -32,7 +33,12 @@ class WorkerdaysController extends Controller
     function __construct(Request $request){
     
         $this->paramT['id']=$request->route('id') ;//day id
-        $this->paramT['getT']['parrent_id']=Input::get('parrent_id') ?? 0; //worker id
+
+        $this->paramT['getT']['w_id']=Input::get('w_id') ?? 0; //worker id
+        $this->paramT['getT']['w_id']= $request->input('worker_id', $this->paramT['getT']['w_id']) ;
+        $t = \Carbon::now();
+        $this->paramT['getT']['ev']=Input::get('ev') ?? $t->year; 
+        $this->paramT['getT']['ho']=Input::get('ho') ?? $t->month; 
 
         View::share('param',$this->paramT);
        }
@@ -45,28 +51,34 @@ class WorkerdaysController extends Controller
     public function index(Request $request)
     {
         $keyword = $request->get('search');
-        $perPage = 25;
+        $perPage = 2;
         $where[]= ['id', '<>','0']; //hogx mindenképpen legyen where
-        if($this->paramT['getT']['parrent_id']>0){$where[]= ['worker_id', '=', $this->paramT['parrent_id']];}
+        if($this->paramT['getT']['w_id']>0){$where[]= ['worker_id', '=', $this->paramT['getT']['w_id']];}
        // if($this->paramT['getT']['daytype_id']>0){$where[]= ['daytype_id', '=', $this->paramT['daytype_id']];}
 
         if (!empty($keyword)) {
-            $workerdays = Workerday::where($where )
+            $workerdays = Workerday::with('worker','daytype')
+                ->where($where )
 				->orWhere('daytype_id', 'LIKE', "%$keyword%")
 				->orWhere('datum', 'LIKE', "%$keyword%")
 				->orWhere('managernote', 'LIKE', "%$keyword%")
-				->orWhere('usernote', 'LIKE', "%$keyword%")
-				->paginate($perPage);
+                ->orWhere('usernote', 'LIKE', "%$keyword%")
+                ->orderBy('id', 'desc')
+				->paginate($perPage)->appends($this->paramT['getT']) ;
         } else {
-            $workerdays = Workerday::where($where )
-            ->paginate($perPage);
+            $workerdays = Workerday::with('worker','daytype')
+            ->where($where )
+            ->orderBy('id', 'desc')
+            ->paginate($perPage)->appends($this->paramT['getT']) ;
         } 
-   
+        $data['years']=['2017','2018'];
         $data['list']=$workerdays;
         $calendar=new \App\Handler\Calendar;
-        $data['workers']=Worker::get()->pluck('name','id');
-        $data['calendar']=$calendar->getDays(2017,8);
-        $data['daytype']=Daytype::get()->pluck('name','id');
+        $data['workers']=Worker::with('user')->get();
+        $data['workers'][]=['name'=>'osszes worker','id'=>0,'user'=>['name'=>'összes']];
+       // print_r( $data['workers']);
+        $data['calendar']=$calendar->getDays($this->paramT['getT']['ev'],$this->paramT['getT']['ho']);
+       // $data['daytype']=Daytype::get()->pluck('name','id');
         $data['userid']=0;
         return view($this->paramT['crudview'].'.index', compact('data'));
     }
@@ -78,9 +90,16 @@ class WorkerdaysController extends Controller
      */
     public function create()
     {
-         $data = Days::get();
-        $data['user']=Daytype::get()->pluck('name','id');
-        return view('crudbase.create');
+       // $data = Days::get();
+        $data['daytype']=Daytype::get()->pluck('name','id');
+        
+        $data['workers']=Worker::with('user')->get();
+        
+        $calendar=new \App\Handler\Calendar;
+        $data['calendar']=$calendar->getDays($this->paramT['getT']['ev'],$this->paramT['getT']['ho']);
+        
+      //  return view('crudbase.create');
+        return view($this->paramT['crudview'].'.create', compact('data'));
     }
 
     /**
@@ -94,12 +113,20 @@ class WorkerdaysController extends Controller
     {
         $this->validate($request,$this->valT );
         $requestData = $request->all();
-        
+        $days = Workerday::select('id')->where([['datum', '=', $requestData['datum']],['worker_id', '=', $requestData['worker_id']]])->first();
+        if(isset( $days->id) && $days->id>0){
+            //$request=new Requests();
+            $this->update($days->id,$request);
+        }
+        else{
         Workerday::create($requestData);
-
         Session::flash('flash_message', 'Workerday added!');
-
-        return redirect($this->paramT['baseroute']);
+       // echo 'store';
+        return redirect(\MoHandF::url($this->paramT['baseroute'].'/create', $this->paramT['getT']));
+        }
+       //return redirect($this->paramT['baseroute'].'/create');
+      // $this->create();
+      
     }
 
     /**
@@ -127,6 +154,7 @@ class WorkerdaysController extends Controller
     {
         $data = Workerday::findOrFail($id);
         $data['id']=$id ;
+        $data['daytype']=Daytype::get()->pluck('name','id');
         return view('crudbase.edit', compact('data'));
     }
 
@@ -148,7 +176,9 @@ class WorkerdaysController extends Controller
 
         Session::flash('flash_message', 'Workerday updated!');
 
-        return redirect($this->paramT['baseroute']);
+       // return redirect($this->paramT['baseroute']);
+       return redirect(\MoHandF::url($this->paramT['baseroute'].'/create', $this->paramT['getT']));
+//echo 'update';
     }
 
     /**

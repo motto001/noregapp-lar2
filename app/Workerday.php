@@ -37,8 +37,8 @@ class Workerday extends Model
     }
     public function worker()
     {
-        return $this->belongsTo('App\Worker');
-    } public function daytypee()
+        return $this->belongsTo('App\Worker')->with('user');
+    } public function daytype()
     {
         return $this->belongsTo('App\Daytype');
     }

@@ -10,7 +10,7 @@
  @if(isset($data['cancelurl']))
     @php $cancelurl='/'.$data['cancelurl']; @endphp
  @else
-    @php $cancelurl='/'.$param['baseroute'].$param['route_param']; @endphp   
+   @php $cancelurl=MoHandF::url($param['baseroute'],$param['getT']); @endphp   
  @endif
 <section id="main-content">  
     <section class="wrapper">
@@ -34,7 +34,7 @@
 
                         {!! Form::model($data, [
                             'method' => 'PATCH',
-                            'url' => $param['baseroute'].'/'.$data['id'].$param['route_param'],
+                            'url' => MoHandF::url($param['baseroute'].'/'.$data['id'],$param['getT']),
                             'class' => 'form-horizontal',
                             'files' => true
                         ]) !!}

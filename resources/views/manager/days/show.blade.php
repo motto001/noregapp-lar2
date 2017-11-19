@@ -7,20 +7,20 @@
 
             <div class="col-md-9">
                 <div class="panel panel-default">
-                    <div class="panel-heading">Day {{ $day->id }}</div>
+                    <div class="panel-heading">Workerday {{ $workerday->id }}</div>
                     <div class="panel-body">
 
-                        <a href="{{ url('/manager/days') }}" title="Back"><button class="btn btn-warning btn-xs"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button></a>
-                        <a href="{{ url('/manager/days/' . $day->id . '/edit') }}" title="Edit Day"><button class="btn btn-primary btn-xs"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button></a>
+                        <a href="{{ url('/manager/workerdays') }}" title="Back"><button class="btn btn-warning btn-xs"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button></a>
+                        <a href="{{ url('/manager/workerdays/' . $workerday->id . '/edit') }}" title="Edit Workerday"><button class="btn btn-primary btn-xs"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button></a>
                         {!! Form::open([
                             'method'=>'DELETE',
-                            'url' => ['manager/days', $day->id],
+                            'url' => ['manager/workerdays', $workerday->id],
                             'style' => 'display:inline'
                         ]) !!}
                             {!! Form::button('<i class="fa fa-trash-o" aria-hidden="true"></i> Delete', array(
                                     'type' => 'submit',
                                     'class' => 'btn btn-danger btn-xs',
-                                    'title' => 'Delete Day',
+                                    'title' => 'Delete Workerday',
                                     'onclick'=>'return confirm("Confirm delete?")'
                             ))!!}
                         {!! Form::close() !!}
@@ -31,9 +31,9 @@
                             <table class="table table-borderless">
                                 <tbody>
                                     <tr>
-                                        <th>ID</th><td>{{ $day->id }}</td>
+                                        <th>ID</th><td>{{ $workerday->id }}</td>
                                     </tr>
-                                    <tr><th> Daytype Id </th><td> {{ $day->daytype_id }} </td></tr><tr><th> Datum </th><td> {{ $day->datum }} </td></tr><tr><th> Note </th><td> {{ $day->note }} </td></tr>
+                                    <tr><th> Worker Id </th><td> {{ $workerday->worker_id }} </td></tr><tr><th> Daytype Id </th><td> {{ $workerday->daytype_id }} </td></tr><tr><th> Datum </th><td> {{ $workerday->datum }} </td></tr>
                                 </tbody>
                             </table>
                         </div>

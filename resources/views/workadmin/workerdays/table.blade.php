@@ -1,13 +1,18 @@
 
               
                  @foreach($data['workers']  as $worker)
-                                  <a href="" title="Cancel"><button class="btn btn-warning btn-xs">
-                                {!!    $worker['name'] !!}
-                                    </a>
+                                <a href=" {!! MoHandF::url($param['baseroute'],$param['getT'],['w_id'=>$worker['id']]) !!}" 
+                                title="worker választás">
+                          @if ($param['getT']['w_id']==$worker['id'])    
+                           <button class="btn btn-danger btn-xs">
+                          @else
+                          <button class="btn btn-warning btn-xs">
+                          @endif
+                                    {!!    $worker['user']['name'] !!}
+                                </button>
+                                </a>
                    @endforeach  
-                 
-                 
-                 
+             
                         <div class="table-responsive">
                             <table class="table table-borderless">
                                 <thead>
@@ -39,4 +44,4 @@
                             </table>
                          </div>
 
- @include('workadmin.workerdays.calendar')
+

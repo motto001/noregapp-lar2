@@ -12,7 +12,7 @@
  @if(isset($data['link_cancel']))
     @php $cancelurl='/'.$data['link_cancel']; @endphp
  @else
-    @php $cancelurl='/'.$param['baseroute'].$param['route_param']; @endphp   
+    @php $cancelurl=MoHandF::url($param['baseroute'],$param['getT']); @endphp   
  @endif
 <section id="main-content">  
     <section class="wrapper">
@@ -34,7 +34,8 @@
                             </ul>
                         @endif
 
-                        {!! Form::open(['url' => $param['baseroute'].$param['route_param'], 
+                        {!! Form::open([
+                            'url' => MoHandF::url($param['baseroute']), 
                         'class' => 'form-horizontal', 'files' => true]) !!}
 
                         @include ($param['baseview'].'.form')

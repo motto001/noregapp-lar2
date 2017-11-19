@@ -23,7 +23,7 @@
                     <div class="panel-heading">{{  $param['cim'] or ''  }} lista</div>
                     <div class="panel-body">
                  
-                  <div class="pagination-wrapper"> {!! $data['list']->appends(['search' => Request::get('search')])->render() !!} </div>  
+               
                       
                         <a href="{!! $createlink !!} " class="btn btn-success btn-sm" title="Add New Wroletime">
                             <i class="fa fa-plus" aria-hidden="true"></i> Új {{  $param['cim'] or ''  }}
@@ -51,7 +51,10 @@
                         </div>
 
                         {!! Form::close() !!}
+                      
 @include ($param['baseview'].'.table')
+
+     <div class="pagination-wrapper"> {!! $data['list']->appends(['search' => Request::get('search')])->render() !!} </div>  
                         <br/>
                         <br/>
  
