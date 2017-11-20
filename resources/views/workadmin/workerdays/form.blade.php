@@ -1,6 +1,6 @@
 
- 
- 
+@extends($param['crudview'].'.create')
+@section('form')
        @foreach($data['workers']  as $worker)
                         <a href=" {!! MoHandF::url($param['baseroute'].'/create',$param['getT'],['w_id'=>$worker['id']]) !!}" 
                                 title="worker választás" 
@@ -16,5 +16,6 @@
   @if($param['getT']['w_id']==0)
  <h3> Kérem jelöljön ki egy dolgozót!</h3>
   @else                 
- @include('workadmin.workerdays.calendar')
+ @include($param['baseview'].'.calendar')
 @endif
+@endsection

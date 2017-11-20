@@ -17,14 +17,16 @@
                             <table class="table table-borderless">
                                 <thead>
                                     <tr>
-                                        <th>ID</th><th>Worker Id</th><th>Daytype Id</th><th>Datum</th><th>Actions</th>
+                                        <th>Datum</th><th>User</th><th>Nap tipus</th><th>Megjegyzés</th><th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($data['list']  as $item)
                                     <tr>
-                                        <td>{{ $item->id }}</td>
-                                        <td>{{ $item->worker_id }}</td><td>{{ $item->daytype_id }}</td><td>{{ $item->datum }}</td>
+                                        <td>{{ $item->datum }}</td>
+                                        <td>{{ $item->worker->user->name }}</td><td>{{ $item->daytype->name }}</td>
+                                        <td>{{
+                                           str_limit($item->managernote, $limit = 30, $end = '...') }}</td>
                                         <td>
                                     {!! 
                                         MoHandF::linkButton([

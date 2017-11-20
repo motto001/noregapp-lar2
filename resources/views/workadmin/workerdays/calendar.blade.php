@@ -41,9 +41,11 @@ $years=$data['years'] ?? $yearnow;
 $years[]='all';
 $years[]='0000';
 $months=['Január','Február','Március','Április','Jájus','Június','Július','Augusztus','Szeptember','Október','November','Decenber'];
+
 @endphp
-             @foreach($years  as $year)
-                                <a href=" {!! MoHandF::url($param['baseroute'],$param['getT'],['ev'=>$year]) !!}" 
+ <br><br>        
+    @foreach($years  as $year)
+                                <a href=" {!! MoHandF::url($param['baseroute'].'/create',$param['getT'],['ev'=>$year]) !!}" 
                                 title="worker választás">
                           @if ($param['getT']['ev']==$year)    
                            <button class="btn btn-danger btn-xs">
@@ -56,7 +58,7 @@ $months=['Január','Február','Március','Április','Jájus','Június','Július'
              @endforeach  
 <br><br>
              @foreach($months  as $key=>$month)
-                                <a href=" {!! MoHandF::url($param['baseroute'],$param['getT'],['ho'=>$key+1]) !!}" 
+                                <a href=" {!! MoHandF::url($param['baseroute'].'/create',$param['getT'],['ho'=>$key+1]) !!}" 
                                 title="worker választás">
                    @if ($param['getT']['ho']==$key+1)    
                            <button class="btn btn-danger btn-xs">
@@ -101,9 +103,9 @@ $months=['Január','Február','Március','Április','Jájus','Június','Július'
             {!! Form::select('daytype_id',$data['daytype'],
            null, ['class' => 'form-control', 'required' => 'required']) !!}
  </div>  <div> 
-            <a href="{{ url('/manager/workerusers/') }}"  title="View Workeruser"><button class="btn btn-info btn-xs">
+           <button type="submit" class="btn btn-info btn-xs">
                 <i class="fa fa-save" aria-hidden="true"></i>Mentés </button>
-            </a>
+           
            {!! Form::close() !!}      
             </div> 
                     

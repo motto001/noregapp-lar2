@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Workerday;
 use App\Worker;
 use App\Daytype;
+use App\Day;
 use Illuminate\Http\Request;
 use Session;
 
@@ -18,7 +19,7 @@ class WorkerdaysController extends Controller
     protected $paramT= [
         'baseroute'=>'workadmin/workerdays',
         'baseview'=>'workadmin.workerdays', 
-        'crudview'=>'crudbase_1', 
+        'crudview'=>'crudbase_2', 
         'cim'=>'Dolgozói napok'
       
     ];
@@ -27,8 +28,8 @@ class WorkerdaysController extends Controller
         'worker_id' => 'required|integer',
         'daytype_id' => 'integer',
         'datum' => 'required|date',
-        'managernote' => 'string|max:150',
-        'usernote' => 'string|max:150'
+        'managernote' => 'string|max:150'
+      //  'usernote' => 'string|max:150'
     ];
     function __construct(Request $request){
     
@@ -40,6 +41,9 @@ class WorkerdaysController extends Controller
         $this->paramT['getT']['ev']=Input::get('ev') ?? $t->year; 
         $this->paramT['getT']['ho']=Input::get('ho') ?? $t->month; 
 
+        if(strlen($this->paramT['getT']['ho'])<2){
+            $this->paramT['getT']['ho']='0'.$this->paramT['getT']['ho'];
+        }
         View::share('param',$this->paramT);
        }
     /**
@@ -51,7 +55,7 @@ class WorkerdaysController extends Controller
     public function index(Request $request)
     {
         $keyword = $request->get('search');
-        $perPage = 2;
+        $perPage = 25;
         $where[]= ['id', '<>','0']; //hogx mindenképpen legyen where
         if($this->paramT['getT']['w_id']>0){$where[]= ['worker_id', '=', $this->paramT['getT']['w_id']];}
        // if($this->paramT['getT']['daytype_id']>0){$where[]= ['daytype_id', '=', $this->paramT['daytype_id']];}
@@ -90,16 +94,34 @@ class WorkerdaysController extends Controller
      */
     public function create()
     {
+        $workerdayT=[];
        // $data = Days::get();
         $data['daytype']=Daytype::get()->pluck('name','id');
         
         $data['workers']=Worker::with('user')->get();
         
         $calendar=new \App\Handler\Calendar;
-        $data['calendar']=$calendar->getDays($this->paramT['getT']['ev'],$this->paramT['getT']['ho']);
+        $dayT= Day::where([
+            ['datum',  'LIKE', $this->paramT['getT']['ev']."-".$this->paramT['getT']['ho']."%"],
+            ])->get();
+         $workerdayT3= Workerday::where([
+                ['worker_id', '=', $this->paramT['getT']['w_id']],
+                ['datum',  'LIKE', $this->paramT['getT']['ev']."-".$this->paramT['getT']['ho']."%"],
+                ])->get(); 
+$workerdayT2=$workerdayT3->toarray();
+ $daytypeT=$data['daytype']->toarray();
+                if(isset($workerdayT2[0]['datum'])) {
+
+                    foreach($workerdayT2 as $workerday){
+                    $workerdayT[]=[ 'type'=>$daytypeT[$workerday['daytype_id']],'color'=>'blue','datum'=>\MoCalF::datumTwoChar($workerday['datum'])];
+                    }
+                }
+               
+ 
+        $data['calendar']=$calendar->getDays($this->paramT['getT']['ev'],$this->paramT['getT']['ho'],$workerdayT);
         
       //  return view('crudbase.create');
-        return view($this->paramT['crudview'].'.create', compact('data'));
+        return view($this->paramT['baseview'].'.form', compact('data'));
     }
 
     /**
@@ -151,11 +173,11 @@ class WorkerdaysController extends Controller
      * @return \Illuminate\View\View
      */
     public function edit($id)
-    {
-        $data = Workerday::findOrFail($id);
+    {  
+        $data = Workerday::with('worker')->findOrFail($id);
         $data['id']=$id ;
         $data['daytype']=Daytype::get()->pluck('name','id');
-        return view('crudbase.edit', compact('data'));
+        return view($this->paramT['baseview'].'.edit_form', compact('data'));
     }
 
     /**
@@ -177,7 +199,7 @@ class WorkerdaysController extends Controller
         Session::flash('flash_message', 'Workerday updated!');
 
        // return redirect($this->paramT['baseroute']);
-       return redirect(\MoHandF::url($this->paramT['baseroute'].'/create', $this->paramT['getT']));
+       return redirect(\MoHandF::url($this->paramT['baseroute'], $this->paramT['getT']));
 //echo 'update';
     }
 

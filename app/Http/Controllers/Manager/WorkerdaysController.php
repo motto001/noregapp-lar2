@@ -16,6 +16,7 @@ class WorkerdaysController extends Controller
     protected $paramT= [
         'baseroute'=>'manager/workerdays',
         'baseview'=>'manager.workerdays', 
+        'crudbase'=>'crudbase_1', 
         'cim'=>'Dolgozói napok',
     ];
     
@@ -48,7 +49,7 @@ class WorkerdaysController extends Controller
         }
 
         $data['list']=$workerdays;
-        return view('crudbase.index', compact('data'));
+        return view($this->paramT['crucbase'].'.index', compact('data'));
     }
 
     /**
@@ -58,7 +59,7 @@ class WorkerdaysController extends Controller
      */
     public function create()
     {
-        return view('crudbase.create');
+        return view($this->paramT['crucbase'].'.create');
     }
 
     /**

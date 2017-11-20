@@ -27,6 +27,21 @@ class Calendar
             12=>['name'=>'December','id'=>'12']       
         ];    
     }
+    public function twoChar($num)
+    {
+        if(strlen($num)<2){
+            $num='0'.$num;
+        }
+      return  $num; 
+    }
+    public function datumTwoChar($datum,$sep='-')
+    {
+    $datumT= explode($sep,$datum);
+    $datumT[1]=$this->twoChar($datumT[1]);
+    $datumT[2]=$this->twoChar($datumT[2]);
+      return  implode($sep,$datumT); 
+    }
+
 
     public function getDate($year='0',$month='0')
     {
@@ -71,22 +86,25 @@ class Calendar
         $aktMonth=$date->month;
 
         while ($aktMonth == $date->month) { 
-            $datum=$year.'-'.$month.'-'.$date->day;
+            //$datum=$year.'-'.$month.'-'.$date->day;
+            $datum= \MoCalF::datumTwoChar($year.'-'.$month.'-'.$date->day);
             $ujdays= [
                 'name'=>$this->days[$date->dayOfWeek],
                 'day'=>$date->day,
                 'weeknum'=>$date->dayOfWeek,
                 'date'=>$datum,
-                'type'=>'workday',
-            ];
-            if( $date->dayOfWeek==0){$ujdays['color']='red';$ujdays['type']='weekend';}
-            if($date->dayOfWeek==6 ){$ujdays['color']='red';$ujdays['type']='restday';}
-            if(in_array($datum,$dayT)){
-                $ujdays['type']=$dayT[$datum]['type'] ?? '';
-                $ujdays['color']=$dayT[$datum]['color'] ?? '';
-                $ujdays['bgcolor']=$dayT[$datum]['bgcolor'] ?? '';
-                $ujdays['bordercolor']=$dayT[$datum]['bordercolor'] ?? '';
-            }
+                'type'=>'Munkanap',
+            ]; 
+            if( $date->dayOfWeek==0){$ujdays['color']='red';$ujdays['type']='Szabadnap';}
+            if($date->dayOfWeek==6 ){$ujdays['color']='red';$ujdays['type']='Pihenőnap';}
+          foreach($dayT as $d){
+
+            if($d['datum']==$datum){
+                $ujdays['type']=$d['type'] ?? '';
+                $ujdays['color']=$d['color'] ?? '';
+               // $ujdays['bgcolor']=$dayT[$datum]['bgcolor'] ?? '';
+              //  $ujdays['bordercolor']=$dayT[$datum]['bordercolor'] ?? '';
+            }}
             if(in_array($datum,$timeT)){$ujdays['times']=$timeT[$datum];}
             $days[]= $ujdays;
             $date->addDay();
