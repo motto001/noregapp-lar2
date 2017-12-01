@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
+use Route;
 use App\Day;
 use App\Worker;
 use App\Daytype;
@@ -18,6 +18,7 @@ class DaysController extends Controller
         'baseroute'=>'manager/days',
         'baseview'=>'manager.days', 
         'crudview'=>'crudbase_1', 
+        'ob'=>'\App\Day', 
         'cim'=>'Napok'
       
     ];
@@ -30,7 +31,7 @@ class DaysController extends Controller
        // 'usernote' => 'string|max:150'
     ];
     function __construct(Request $request){
-    
+  
         $this->paramT['id']=$request->route('id') ;//day id
         $t = \Carbon::now();
         $this->paramT['getT']['ev']=Input::get('ev') ?? $t->year; 
@@ -46,6 +47,7 @@ class DaysController extends Controller
   
     public function index(Request $request)
     {
+    
         $keyword = $request->get('search');
         $perPage = 25;
         $where[]= ['id', '<>','0']; //hogx mindenképpen legyen where
@@ -55,13 +57,13 @@ class DaysController extends Controller
         else{$where[]= ['datum', 'like', $this->paramT['getT']['ev'].'%'];}
         if (!empty($keyword)) {
             $workerdays = Day::with('daytype')
-                ->where($where )
+               // ->where($where )
 				->orWhere('daytype_id', 'LIKE', "%$keyword%")
                 ->orWhere('datum', 'LIKE', "%$keyword%")
 				->orWhere('note', 'LIKE', "%$keyword%")
 				->paginate($perPage);
         } else {
-            $workerdays = Day::with('daytype')
+            $workerdays = $this->paramT['ob']::with('daytype')
             ->where($where )
             ->paginate($perPage);
         } 

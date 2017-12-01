@@ -14,16 +14,19 @@ use App\Day;
 use Illuminate\Http\Request;
 use Session;
 
-class WorkerdaysController extends Controller
+class WorkerdaysController extends \App\Handler\MoController
 {
     protected $paramT= [
         'baseroute'=>'workadmin/workerdays',
         'baseview'=>'workadmin.workerdays', 
         'crudview'=>'crudbase_2', 
-        'cim'=>'Dolgozói napok'
-      
+        'cim'=>'Dolgozói napok',
+        'search_column'=>'daytype_id,datum,managernote,usernote',
+        'get'=>['w_id'],
+        'get_post'=>['ev','ho'],
+        'ob'=>'\App\Workerday',
     ];
-
+    protected $task_paramT= [];
     protected $valT= [
         'worker_id' => 'required|integer',
         'daytype_id' => 'integer',
@@ -31,28 +34,16 @@ class WorkerdaysController extends Controller
         'managernote' => 'string|max:150'
       //  'usernote' => 'string|max:150'
     ];
-    function __construct(Request $request){
-    
-        $this->paramT['id']=$request->route('id') ;//day id
+    protected $val_editT= [];
 
-        $this->paramT['getT']['w_id']=Input::get('w_id') ?? 0; //worker id
-        $this->paramT['getT']['w_id']= $request->input('worker_id', $this->paramT['getT']['w_id']) ;
-        $t = \Carbon::now();
-        $this->paramT['getT']['ev']=Input::get('ev') ?? $t->year; 
-        $this->paramT['getT']['ho']=Input::get('ho') ?? $t->month; 
+    function construct_baseval(){  $t = \Carbon::now();
+        $this->paramT['baseval']['ev']= $t->year; 
+        $this->paramT['baseval']['ho']=$t->month; 
+        if(strlen($this->paramT['baseval']['ho'])<2){
+            $this->paramT['baseval']['ho']='0'.$this->paramT['baseval']['ho'];
+        }}
 
-        if(strlen($this->paramT['getT']['ho'])<2){
-            $this->paramT['getT']['ho']='0'.$this->paramT['getT']['ho'];
-        }
-        View::share('param',$this->paramT);
-       }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
-  
-    public function index(Request $request)
+    public function index_data($request)
     {
         $keyword = $request->get('search');
         $perPage = 25;
@@ -62,11 +53,8 @@ class WorkerdaysController extends Controller
 
         if (!empty($keyword)) {
             $workerdays = Workerday::with('worker','daytype')
-                ->where($where )
-				->orWhere('daytype_id', 'LIKE', "%$keyword%")
-				->orWhere('datum', 'LIKE', "%$keyword%")
-				->orWhere('managernote', 'LIKE', "%$keyword%")
-                ->orWhere('usernote', 'LIKE', "%$keyword%")
+               // ->where($where )
+				->orWhere($this->get_orwhereT($keyword))
                 ->orderBy('id', 'desc')
 				->paginate($perPage)->appends($this->paramT['getT']) ;
         } else {
@@ -84,7 +72,7 @@ class WorkerdaysController extends Controller
         $data['calendar']=$calendar->getDays($this->paramT['getT']['ev'],$this->paramT['getT']['ho']);
        // $data['daytype']=Daytype::get()->pluck('name','id');
         $data['userid']=0;
-        return view($this->paramT['crudview'].'.index', compact('data'));
+        return $data;
     }
 
     /**
@@ -203,19 +191,4 @@ $workerdayT2=$workerdayT3->toarray();
 //echo 'update';
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
-    public function destroy($id)
-    {
-        Workerday::destroy($id);
-
-        Session::flash('flash_message', 'Workerday deleted!');
-
-        return redirect($this->paramT['baseroute']);
-    }
 }
