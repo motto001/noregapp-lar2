@@ -7,6 +7,8 @@ Route::get('admin','Admin\AdminController@index',function(){
 //root-----------------------------------------------------------
 Route::group(['prefix' => '/admin','middleware' => ['auth', 'roles'], 'roles' => 'admin'],function()
 {
+     Route::resource('/proba', 'Admin\ProbaController');
+   
     Route::resource('/users', 'Admin\UsersController');
     
     Route::resource('/conf', 'Admin\ConfController');  

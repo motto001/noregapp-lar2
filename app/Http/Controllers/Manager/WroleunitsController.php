@@ -171,7 +171,7 @@ protected $paramT= [
     {
         Wroleunit::destroy($id);
         //->timetype()->detach('timetype_id');
-        DB::table('wroleunit_daytype')->where('wroleunit_id', '=', $id)->delete();
+        \DB::table('wroleunit_daytype')->where('wroleunit_id', '=', $id)->delete();
         Session::flash('flash_message', 'Wroleunit deleted!');
 
         return redirect($this->paramT['baseroute']);

@@ -85,24 +85,28 @@ $months=['Január','Február','Március','Április','Jájus','Június','Július'
 </ul>
 
     @foreach($data['calendar'] as $dt) 
-     @if($dt['weeknum']==0) 
+
+     @if($dt['weeknum']==0 or $dt['day']==1) 
           <ul class="flex-container nowrap" style="justify-content:flex-start"> 
+            @if ($dt['day']==1 && $dt['weeknum']>0 ) 
+                @for ($i = 0; $i < $dt['weeknum']; $i++)
+                   <li class="flex-item" style="border: 1px solid silver;"> </li>
+                @endfor
+
+            @endif
      @endif
-        @if($dt['type']=='empty')
+                
         <li class="flex-item" style="border: 1px solid silver;">
-                   
-        </li>
-        @else          
-        <li class="flex-item" style="border: 1px solid silver;">
-        <div>{{ $dt['day'] }}.,  {{ $dt['type'] }}</div>
+        <div>{{ $dt['day'] }}.,</div>
         <div style="display: flex;width:100%;justify-content:flex-end;border: 1px solid silver; ">            
-            {!! Form::model($data, [
+         {!! Form::open([
                             'method' => 'POST',
-                            'url' =>  MoHandF::url($param['baseroute'], $param['getT'],['w_id'=>$param['getT']['w_id'],'date'=>$dt['date']]),
+                            //'url' =>  MoHandF::url($param['baseroute'], $param['getT'],['w_id'=>$param['getT']['w_id'],'date'=>$dt['datum']]),
+                            'url' =>  MoHandF::url($param['baseroute'], $param['getT']),
                             'class' => 'form-horizontal',
                             'files' => true
                         ]) !!}
-            {!! Form::hidden('datum',$dt['date']) !!}            
+            {!! Form::hidden('day',$dt['day']) !!}    
            {!! Form::hidden('worker_id',$param['getT']['w_id']) !!}
             {!! Form::select('daytype_id',$data['daytype'],
            $dt['daytype_id'], ['class' => 'form-control', 'required' => 'required']) !!}
@@ -110,15 +114,18 @@ $months=['Január','Február','Március','Április','Jájus','Június','Július'
            <button type="submit" class="btn btn-info btn-xs">
                 <i class="fa fa-save" aria-hidden="true"></i>Mentés </button>
            
-           {!! Form::close() !!}      
+           {!! Form::close() !!}   
             </div> 
                     
         </li>
-             
-       
-        @endif 
+ 
     @if($dt['weeknum']==6) 
     </ul > 
     @endif 
     @endforeach
-    
+    @if($dt['weeknum']<6) 
+            @for ($i = $dt['weeknum']; $i < 6; $i++)
+                   <li class="flex-item" style="border: 1px solid silver;"> </li>
+            @endfor
+    </ul > 
+    @endif 

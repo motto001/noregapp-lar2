@@ -4,6 +4,26 @@ use Collective\Html\Form;
 
 class MoHand
 {
+//tömbkezelő------------------------------------------------------
+
+public function setIndexFromKey($T,$key)
+{
+$res=[];    
+foreach($T as $row){
+$res[$row[$key]]=$row;
+}
+return $res;
+}
+public function mergeAssoc($T1,$T2)
+{
+$res=[];    
+foreach($T1 as $key=>$Val){
+    if(isset($T2[$key]))
+    {$res[$key]=array_merge($T1[$key],$T2[$key]);}
+    else{$res[$key]=$T1[$key];}
+}
+return $res;
+}
 /*
 public  $request;
 
@@ -11,6 +31,8 @@ function __construct(Request $request) {
     $this->request=$request;
 }
 */
+
+//gombok--------------------------------------------------------------------------------------
 public function buttons($buttonT=[])
 {
     
@@ -71,6 +93,9 @@ public function delButton($button=[])
 
 return $res;
 }
+
+
+//url manipulation--------------------------------------------------------------------
 /**
  * $pargetT=param[getT] : ebből generálja a link get részét
  * $getT:az a tömb amivel felül kell írni a param[getT]-et (új érték adás)

@@ -52,6 +52,7 @@ class Calendar
         else{                         $dt = Carbon::create($year, $month , 1, 0);}
         return $dt;
     }
+  /*  
     public function getFirstEmptyDays($daysnumber,$days=[])
     {
         for ($i=0; $i <= $daysnumber; $i++) { 
@@ -76,6 +77,31 @@ class Calendar
         }
         return $days;
     }
+ */  
+public function getMonthDays($year='0',$month='0')
+{
+    $date=$this->getDate($year,$month);
+    $aktMonth=$date->month;
+    
+            while ($aktMonth == $date->month) { 
+                //$datum=$year.'-'.$month.'-'.$date->day;
+                $datum= \MoCalF::datumTwoChar($year.'-'.$month.'-'.$date->day);
+                $ujdays= [
+                    'name'=>$this->days[$date->dayOfWeek],
+                    'day'=>$date->day,
+                    'weeknum'=>$date->dayOfWeek,
+                    'datum'=>$datum,
+                    'daytype_id'=>0,
+                    'type'=>'Munkanap',
+                ]; 
+                if( $date->dayOfWeek==0){$ujdays['color']='red';$ujdays['type']='Szabadnap';$ujdays['daytype_id']=2;}
+                if($date->dayOfWeek==6 ){$ujdays['color']='red';$ujdays['type']='Pihenőnap';$ujdays['daytype_id']=3;}
+                $days[$datum]= $ujdays;
+                $date->addDay();
+            }  
+     return $days;       
+}
+/*
     public function getDays($year='0',$month='0',$dayT=[],$timeT=[])
     {
         $date=$this->getDate($year,$month);
@@ -115,5 +141,5 @@ class Calendar
         
         return $days;
     }
- 
+ */
 }

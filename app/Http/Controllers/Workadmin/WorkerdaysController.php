@@ -22,15 +22,16 @@ class WorkerdaysController extends \App\Handler\MoController
         'crudview'=>'crudbase_2', 
         'cim'=>'Dolgozói napok',
         'search_column'=>'daytype_id,datum,managernote,usernote',
-        'get'=>['w_id'],
-        'get_post'=>['ev','ho'],
+        'get'=>['w_id'], //a mocontroller automatikusan feltölti a getből a $this->paramT['getT']-be
+        'get_post'=>['ev','ho'],//a mocontroller automatikusan feltölti a getből a $this->paramT['getT']-be ha van ilyen kulcs a postban azzal felülírja
         'ob'=>'\App\Workerday',
     ];
     protected $task_paramT= [];
     protected $valT= [
         'worker_id' => 'required|integer',
         'daytype_id' => 'integer',
-        'datum' => 'required|date',
+        'day' => 'integer|max:31',
+        'datum' => 'date',
         'managernote' => 'string|max:150'
       //  'usernote' => 'string|max:150'
     ];
@@ -53,8 +54,8 @@ class WorkerdaysController extends \App\Handler\MoController
 
         if (!empty($keyword)) {
             $workerdays = Workerday::with('worker','daytype')
-               // ->where($where )
-				->orWhere($this->get_orwhereT($keyword))
+                ->where($where )
+				//->orWhere($this->get_orwhereT($keyword))
                 ->orderBy('id', 'desc')
 				->paginate($perPage)->appends($this->paramT['getT']) ;
         } else {
@@ -69,12 +70,32 @@ class WorkerdaysController extends \App\Handler\MoController
         $data['workers']=Worker::with('user')->get();
         $data['workers'][]=['name'=>'osszes worker','id'=>0,'user'=>['name'=>'összes']];
        // print_r( $data['workers']);
-        $data['calendar']=$calendar->getDays($this->paramT['getT']['ev'],$this->paramT['getT']['ho']);
+       // $data['calendar']=$calendar->getMonthDays($this->paramT['getT']['ev'],$this->paramT['getT']['ho']);
        // $data['daytype']=Daytype::get()->pluck('name','id');
         $data['userid']=0;
         return $data;
     }
+    public function getWorkerday($worker_id,$ev,$ho)
+    {
+        $res=[];
+        $dayT= Day::where('datum',  'LIKE', $ev."-".$ho."%")
+            ->orwhere('datum',  'LIKE', "0000-".$ho."%")
+            ->get();
 
+        foreach($dayT as $day) 
+        {$res[$day->datum]=['datum'=>$day->datum,'id'=>$day->id,'daytype_id'=>$day->daytype_id,];}  
+
+        $workerdayT= Workerday::where([
+            ['worker_id', '=', $worker_id],
+            ['datum',  'LIKE', $ev."-".$ho."%"],
+            ])->get(); 
+            foreach($workerdayT as $day) 
+            {$res[$day->datum]=['datum'=>$day->datum,'id'=>$day->id,'daytype_id'=>$day->daytype_id,];}  
+         
+     return $res;    
+
+
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -82,32 +103,19 @@ class WorkerdaysController extends \App\Handler\MoController
      */
     public function create()
     {
+       
         $workerdayT=[];
-       // $data = Days::get();
-        $data['daytype']=Daytype::get()->pluck('name','id');
-        
+        $data['daytype']=Daytype::get()->pluck('name','id');    
         $data['workers']=Worker::with('user')->get();
-        
-        $calendar=new \App\Handler\Calendar;
-        $dayT= Day::where([
-            ['datum',  'LIKE', $this->paramT['getT']['ev']."-".$this->paramT['getT']['ho']."%"],
-            ])->get();
-         $workerdayT3= Workerday::where([
-                ['worker_id', '=', $this->paramT['getT']['w_id']],
-                ['datum',  'LIKE', $this->paramT['getT']['ev']."-".$this->paramT['getT']['ho']."%"],
-                ])->get(); 
-$workerdayT2=$workerdayT3->toarray();
- $daytypeT=$data['daytype']->toarray();
-                if(isset($workerdayT2[0]['datum'])) {
-
-                    foreach($workerdayT2 as $workerday){
-                    $workerdayT[]=[ 'type'=>$daytypeT[$workerday['daytype_id']],'color'=>'blue','datum'=>\MoCalF::datumTwoChar($workerday['datum'])];
-                    }
-                }
-               
- 
-        $data['calendar']=$calendar->getDays($this->paramT['getT']['ev'],$this->paramT['getT']['ho'],$workerdayT);
-        
+       // $dayT= Day::where([['datum',  'LIKE', $this->paramT['getT']['ev']."-".$this->paramT['getT']['ho']."%"],])->get();
+        if(isset($this->paramT['getT']['w_id']) && $this->paramT['getT']['w_id']>0)
+        {
+            $workerdayT=$this->getWorkerday($this->paramT['getT']['w_id'],$this->paramT['getT']['ev'],$this->paramT['getT']['ho']);
+            $calendar=new \App\Handler\Calendar;
+            $calT=$calendar->getMonthDays($this->paramT['getT']['ev'],$this->paramT['getT']['ho']);
+            $data['calendar']=\MoHandF::mergeAssoc($calT,$workerdayT);
+        }
+       // print_r($dayT);
       //  return view('crudbase.create');
         return view($this->paramT['baseview'].'.form', compact('data'));
     }
@@ -123,6 +131,7 @@ $workerdayT2=$workerdayT3->toarray();
     {
         $this->validate($request,$this->valT );
         $requestData = $request->all();
+        $requestData['datum']=$this->paramT['getT']['ev'].'-'.$this->paramT['getT']['ho'].'-'.$requestData['day'];
         $days = Workerday::select('id')->where([['datum', '=', $requestData['datum']],['worker_id', '=', $requestData['worker_id']]])->first();
         if(isset( $days->id) && $days->id>0){
             //$request=new Requests();
@@ -180,6 +189,9 @@ $workerdayT2=$workerdayT3->toarray();
     {
         $this->validate($request,$this->valT );
         $requestData = $request->all();
+        if(isset($requestData['day'])){
+            $requestData['datum']=$this->paramT['getT']['ev'].'-'.$this->paramT['getT']['ho'].'-'.$requestData['day'];
+        }
         
         $workerday = Workerday::findOrFail($id);
         $workerday->update($requestData);

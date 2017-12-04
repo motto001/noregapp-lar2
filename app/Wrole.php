@@ -26,7 +26,14 @@ class Wrole extends Model
      * @var array
      */
     protected $fillable = ['name', 'note', 'start', 'pub'];
-
+    public function workerwrole()
+	{
+		return $this->hasMany('App\WorkerWrole');
+    } 
+    public function full()
+	{
+		return $this->hasMany('App\WorkerWrole');
+    } 
     public function wroleunit()
 	{
 		return $this->belongsToMany('App\Wroleunit','wroleunit_wrole');

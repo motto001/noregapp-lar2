@@ -35,7 +35,11 @@
                     <span style="color:red;font-size:18px;">Admin</span>
                 </a>
    </li>
-      
+            <li class="sub-menu">
+                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'admin/proba' ? 'active' : '' }}" href="{{ url('/admin/proba') }}">
+                  <span> proba</span>
+                </a>
+            </li>
             <li class="sub-menu">
                 <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'admin/conf' ? 'active' : '' }}" href="{{ url('/admin/conf') }}">
                   <span> Config</span>
