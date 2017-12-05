@@ -1,5 +1,5 @@
 <?php
-
+//nem használt amezőit átvette a wrole-------------------------
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;

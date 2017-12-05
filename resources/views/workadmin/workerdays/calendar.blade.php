@@ -95,7 +95,7 @@ $months=['Január','Február','Március','Április','Jájus','Június','Július'
 
             @endif
      @endif
-                
+        
         <li class="flex-item" style="border: 1px solid silver;">
         <div>{{ $dt['day'] }}.,</div>
         <div style="display: flex;width:100%;justify-content:flex-end;border: 1px solid silver; ">            
@@ -110,12 +110,13 @@ $months=['Január','Február','Március','Április','Jájus','Június','Július'
            {!! Form::hidden('worker_id',$param['getT']['w_id']) !!}
             {!! Form::select('daytype_id',$data['daytype'],
            $dt['daytype_id'], ['class' => 'form-control', 'required' => 'required']) !!}
- </div>  <div> 
+        </div>  
+        <div> 
            <button type="submit" class="btn btn-info btn-xs">
                 <i class="fa fa-save" aria-hidden="true"></i>Mentés </button>
            
            {!! Form::close() !!}   
-            </div> 
+        </div> 
                     
         </li>
  

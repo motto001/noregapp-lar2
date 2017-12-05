@@ -55,7 +55,7 @@ class WorkerdaysController extends \App\Handler\MoController
         if (!empty($keyword)) {
             $workerdays = Workerday::with('worker','daytype')
                 ->where($where )
-				//->orWhere($this->get_orwhereT($keyword))
+                //->orWhere($this->get_orwhereT($keyword))
                 ->orderBy('id', 'desc')
 				->paginate($perPage)->appends($this->paramT['getT']) ;
         } else {

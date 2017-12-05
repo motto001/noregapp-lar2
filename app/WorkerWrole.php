@@ -38,7 +38,7 @@ class WorkerWrole extends Model
     }
     public function wroleFull()
     {
-        return $this->belongsTo('App\Wrole')->with('full');
+        return $this->belongsTo('App\Wrole')->with('wroletime','daytype');
     }
     
 }

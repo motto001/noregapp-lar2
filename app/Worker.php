@@ -25,7 +25,7 @@ class Worker extends Model
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'wrole_id', 'status_id', 'workertype_id','workergroup_id', 'salary', 'salary_type', 'position', 'foto', 'fullname','cim', 'tel', 'birth', 'ado', 'tb', 'start', 'end', 'note', 'pub'];
+    protected $fillable = ['user_id', 'status_id', 'workertype_id','workergroup_id', 'salary', 'salary_type', 'position', 'foto', 'fullname','cim', 'tel', 'birth', 'ado', 'tb', 'start', 'end', 'note', 'pub'];
     //protected $guarded = [];
    
     public function timeframe()
@@ -37,9 +37,13 @@ class Worker extends Model
     {
         return $this->belongsTo('App\User');
     }
-    public function wrole()
+    public function workerWrole()
     {
-        return $this->belongsTo('App\Wrole');
+        return $this->hasMany('App\WorkerWrole')->with('wrole');
+    }
+    public function workerWroleFull()
+    {
+        return $this->hasMany('App\WorkerWrole')->with('wrolefull');
     }
     public function status()
     {

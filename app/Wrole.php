@@ -30,13 +30,14 @@ class Wrole extends Model
 	{
 		return $this->hasMany('App\WorkerWrole');
     } 
-    public function full()
+  
+    public function daytype()
 	{
-		return $this->hasMany('App\WorkerWrole');
+		return $this->belongsToMany('App\Daytype','wrole_daytype');
     } 
-    public function wroleunit()
+    public function wroletime()
 	{
-		return $this->belongsToMany('App\Wroleunit','wroleunit_wrole');
+		return $this->belongsToMany('App\Wroletime','wrole_wroletime');
     }  
     public function worker()
 	{

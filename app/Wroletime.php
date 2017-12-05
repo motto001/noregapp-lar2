@@ -27,9 +27,9 @@ class Wroletime extends Model
      */
     protected $fillable = ['wroleunit_id', 'timetype_id', 'start', 'end', 'hour', 'managernote', 'workernote'];
 
-    public function wroleunit()
+    public function wrole()
     {
-        return $this->belongsTo('App\wroleunit');
+         return $this->belongsToMany('App\wrole','wrole_wroletime'); 
     }
     public function timetype()
     {
