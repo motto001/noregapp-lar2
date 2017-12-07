@@ -39,5 +39,10 @@ class Proba2 extends Model
     {
         return $this->hasMany('App\Proba4');
     }
-   
+    public function proba4_hasone()
+    {
+        return $this->hasOne('App\Proba4');
+        //return $this->hasOne('App\Proba4')->select( 'proba2_id');
+       // return $this->hasOne('App\Proba4')->pluck('sss', 'proba2_id');
+    }
 }

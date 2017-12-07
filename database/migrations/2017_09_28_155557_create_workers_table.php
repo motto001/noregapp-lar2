@@ -16,8 +16,8 @@ class CreateWorkersTable extends Migration
             $table->increments('id');
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
-            $table->integer('wrole_id')->unsigned();
-            $table->foreign('wrole_id')->references('id')->on('wroles');
+            $table->integer('worker_wrole_id')->unsigned();
+            $table->foreign('worker_wrole_id')->references('id')->on('worker_wroles');
             $table->integer('status_id')->unsigned();
             $table->foreign('status_id')->references('id')->on('statuses');
             $table->integer('workertype_id')->unsigned();
@@ -39,6 +39,7 @@ class CreateWorkersTable extends Migration
             $table->string('note')->nullable();
             $table->integer('pub');       
             $table->timestamps();
+
         });
     }
 

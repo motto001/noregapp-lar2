@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Proba2;
 use App\Proba;
 use Illuminate\Http\Request;
 use Session;
@@ -17,11 +18,15 @@ class ProbaController extends Controller
     public function index(Request $request)
     {
        
-         //   $roles = Role::where('name', 'LIKE', "%$keyword%")->orWhere('label', 'LIKE', "%$keyword%")->paginate($perPage);
-                
-         $proba = Proba::with('proba23')->get();
-        print_r($proba[0]->toarray());
-
+    //  $roles = Role::where('name', 'LIKE', "%$keyword%")->orWhere('label', 'LIKE', "%$keyword%")->paginate($perPage);            
+    //  $proba = Proba::with('proba23')->get();
+    //  $proba = Proba2::with('proba4_hasone')->select('id')->first();
+    $proba = Proba2::with('proba4_hasone:proba2_id,name')->get()->pluck('proba4_hasone.name', 'id'); //lehet hogy a with mezőkbe be kellírni az id-et
+  // $proba2= \MoHandF::subArrMerge($proba->toarray(),'proba4_hasone');
+   // print_r($proba2);
+   //print_r($proba->toarray());
+    print_r($proba);
+        //echo $proba->proba4_hasone->proba2_id;
         //return view('admin.roles.index', compact('roles'));
 
     }

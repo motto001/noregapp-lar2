@@ -18,7 +18,6 @@ class CreateWrolesTable extends Migration
             $table->string('note')->nullable();
             $table->date('start')->nullable();
             $table->integer('pub')->default(0);
-            $table->timestamps();
         });
     }
 

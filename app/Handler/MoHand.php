@@ -5,7 +5,35 @@ use Collective\Html\Form;
 class MoHand
 {
 //tömbkezelő------------------------------------------------------
-
+/**
+ * kapcsolt táblák mezőinek beemelédse a főtábla mezői közé
+ *  a $key kulcsú sub array-t mergeli a $T tömbbel, A $T elemeit nemírja felül. Ha subdel false nem törli a sub arrayt
+ */
+public function subArrMerge($T,$key,$subdel=true)
+{
+    $res=[];  
+    if(isset($T[1]))
+    {
+      foreach($T as $row){ 
+        if(isseT($row[$key]) && is_array($row[$key]))
+        {
+            $temp=array_merge($row[$key],$row);
+            if($subdel){unset($temp[$key]);}
+            $res[]=$temp;
+            
+        }  
+        }     
+    }
+    else
+    {
+        $res=array_merge($T[$key],$T);
+        if($subdel){unset($res[$key]);}
+    }  
+    return $res;
+}
+/**
+ * nem assoc tömb egy mezőjének($key) értékéből kulcsot készít. A mezőt is benn hagjy
+ */
 public function setIndexFromKey($T,$key)
 {
 $res=[];    
@@ -14,6 +42,9 @@ $res[$row[$key]]=$row;
 }
 return $res;
 }
+/**
+*két assoc tmb azonos kulcsait mergeli. Az alap merge simán felülírja!
+ */
 public function mergeAssoc($T1,$T2)
 {
 $res=[];    
