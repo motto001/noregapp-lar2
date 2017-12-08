@@ -20,12 +20,13 @@ class ProbaController extends Controller
        
     //  $roles = Role::where('name', 'LIKE', "%$keyword%")->orWhere('label', 'LIKE', "%$keyword%")->paginate($perPage);            
     //  $proba = Proba::with('proba23')->get();
-    //  $proba = Proba2::with('proba4_hasone')->select('id')->first();
-    $proba = Proba2::with('proba4_hasone:proba2_id,name')->get()->pluck('proba4_hasone.name', 'id'); //lehet hogy a with mezőkbe be kellírni az id-et
+    $with='proba4_hasone';
+     $proba = Proba2::with($with)->select('id')->first();
+  //  $proba = Proba2::with('proba4_hasone:proba2_id,name')->get()->pluck('proba4_hasone.name', 'id'); //lehet hogy a with mezőkbe be kellírni az id-et
   // $proba2= \MoHandF::subArrMerge($proba->toarray(),'proba4_hasone');
    // print_r($proba2);
    //print_r($proba->toarray());
-    print_r($proba);
+    print_r($proba->toarray()); 
         //echo $proba->proba4_hasone->proba2_id;
         //return view('admin.roles.index', compact('roles'));
 
