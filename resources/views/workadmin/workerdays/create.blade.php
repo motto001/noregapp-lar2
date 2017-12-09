@@ -16,6 +16,6 @@
   @if($param['getT']['w_id']==0)
  <h3> Kérem jelöljön ki egy dolgozót!</h3>
   @else                 
- @include($param['baseview'].'.calendar')
+ @include($param['view'].'.calendar')
 @endif
 @endsection

@@ -1,4 +1,5 @@
-
+@extends($param['crudview'].'.index')
+@section('table')
               
                  @foreach($data['workers']  as $worker)
                                 <a href=" {!! MoHandF::url($param['baseroute'],$param['getT'],['w_id'=>$worker['id']]) !!}" 
@@ -46,4 +47,4 @@
                             </table>
                          </div>
 
-
+@endsection

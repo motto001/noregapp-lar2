@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Handler\trt;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Http\Request;
 /**
  * function: set_getT($request)---------------
  * bejövő adat:$BASE['get'],$BASE['get_post'] /lehet üres,nemlétező
@@ -10,7 +12,7 @@ namespace App\Handler\trt;
  * ir:PAR,BASE
  * létrehoz:PAR['task']
  */
-Trait setController
+Trait SetController
 {
 /**
  * PAR['getT'] tömböt állítja be, 
@@ -18,7 +20,7 @@ Trait setController
  * BASE['get_post'] kulcsai a get ben és a postban is. Ha mindkettőben van  a get-et tartja meg.
  * BASE['get'],BASE['get_post'] értékei az alapértelmezett értékek ha null és nincs más érték,nem kerül be a PAR['getT']-be
  */
-    function set_getT(Request $request){
+function set_getT(Request $request){
 
         foreach($this->BASE['get'] as $key=>$val){
             $this->PAR['getT'][$key]=Input::get($key) ?? $val;

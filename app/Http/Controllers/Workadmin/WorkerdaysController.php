@@ -14,20 +14,30 @@ use App\Day;
 use Illuminate\Http\Request;
 use Session;
 
-class WorkerdaysController extends \App\Handler\MoController
+class WorkerdaysController extends Controller
 {
-    protected $paramT= [
+    use \App\Handler\trt\crud\CrudWithSetfunc;
+    use  \App\Handler\trt\SetController;
+    protected $PAR= [
         'baseroute'=>'workadmin/workerdays',
-        'baseview'=>'workadmin.workerdays', 
-        'crudview'=>'crudbase_2', 
+        //'baseview'=>'workadmin.workerdays', //nem használt a view helyettesíti
+        'crudview'=>'crudbase_2', //ha tud majd formot és táblát generálni ez lesz a view
+        'view'=>'workadmin.workerdays', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
         'cim'=>'Dolgozói napok',
-        'search_column'=>'daytype_id,datum,managernote,usernote',
-        'get'=>['w_id'], //a mocontroller automatikusan feltölti a getből a $this->paramT['getT']-be
-        'get_post'=>['ev','ho'],//a mocontroller automatikusan feltölti a getből a $this->paramT['getT']-be ha van ilyen kulcs a postban azzal felülírja
-        'ob'=>'\App\Workerday',
+        'getT'=>[],       
     ];
-    protected $task_paramT= [];
-    protected $valT= [
+   
+    protected $TPAR= [];
+    protected $BASE= [
+        'search_column'=>'daytype_id,datum,managernote,usernote',
+        'get'=>['w_id'=>null], //a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be
+        'get_post'=>['ev'=>null,'ho'=>null],//a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be ha van ilyen kulcs a postban azzal felülírja
+        'obname'=>'\App\Workerday',
+        'ob'=>null,
+        
+    ];
+    protected $TBASE= [];
+    protected $val= [
         'worker_id' => 'required|integer',
         'daytype_id' => 'integer',
         'day' => 'integer|max:31',
@@ -35,43 +45,46 @@ class WorkerdaysController extends \App\Handler\MoController
         'managernote' => 'string|max:150'
       //  'usernote' => 'string|max:150'
     ];
-    protected $val_editT= [];
+    protected $val_edit= [];
 
-    function construct_baseval(){  $t = \Carbon::now();
-        $this->paramT['baseval']['ev']= $t->year; 
-        $this->paramT['baseval']['ho']=$t->month; 
-        if(strlen($this->paramT['baseval']['ho'])<2){
-            $this->paramT['baseval']['ho']='0'.$this->paramT['baseval']['ho'];
-        }}
+    function __construct(Request $request){
 
-    public function index_data($request)
+            $t = \Carbon::now();
+            $this->BASE['get_post']['ev']= $t->year; 
+            $this->BASE['get_post']['ho']=$t->month; 
+            if(strlen($this->BASE['get_post']['ho'])<2){
+                $this->BASE['get_post']['ho']='0'.$this->BASE['get_post']['ho'];
+            }
+           // $this->$PAR['view']=  $this->$PAR['baseview']; //a setTask() felülírja ha a $TPAR['task']['view'] meg van adva
+            $this->setTask();
+            $this->set_getT($request);
+            $obname=$this->BASE['obname'];
+            $this->BASE['ob']=new $obname();
+            View::share('param',$this->PAR);
+           }
+    public function index_set($ob,$keyword,$getT,$perPage)
     {
-        $keyword = $request->get('search');
-        $perPage = 25;
-        $where[]= ['id', '<>','0']; //hogx mindenképpen legyen where
-        if($this->paramT['getT']['w_id']>0){$where[]= ['worker_id', '=', $this->paramT['getT']['w_id']];}
-       // if($this->paramT['getT']['daytype_id']>0){$where[]= ['daytype_id', '=', $this->paramT['daytype_id']];}
-
-        if (!empty($keyword)) {
-            $workerdays = Workerday::with('worker','daytype')
-                ->where($where )
-                //->orWhere($this->get_orwhereT($keyword))
-                ->orderBy('id', 'desc')
-				->paginate($perPage)->appends($this->paramT['getT']) ;
+          
+        if($this->PAR['getT']['w_id']>0){$where[]= ['worker_id', '=', $this->PAR['getT']['w_id']];}
+        else{$where[]= ['id', '<>','0']; }//hogx mindenképpen legyen where
+    
+        if (empty($keyword)) {  
+            $list =$ob->with('worker','daytype')
+                    ->where($where )
+                    ->orderBy('id', 'desc')
+                    ->paginate($perPage)->appends($getT) ;   
         } else {
-            $workerdays = Workerday::with('worker','daytype')
-            ->where($where )
-            ->orderBy('id', 'desc')
-            ->paginate($perPage)->appends($this->paramT['getT']) ;
-        } 
+            $list = $ob->where($this->get_searchT($keyword,'first'))
+                        ->orWhere($this->get_searchT($keyword,'firstno'))
+                        ->orderBy('id', 'desc')
+			            ->paginate($perPage)->appends($getT) ;
+        }  
+ 
         $data['years']=['2017','2018'];
-        $data['list']=$workerdays;
+        $data['list']=$list;
         $calendar=new \App\Handler\Calendar;
         $data['workers']=Worker::with('user')->get();
         $data['workers'][]=['name'=>'osszes worker','id'=>0,'user'=>['name'=>'összes']];
-       // print_r( $data['workers']);
-       // $data['calendar']=$calendar->getMonthDays($this->paramT['getT']['ev'],$this->paramT['getT']['ho']);
-       // $data['daytype']=Daytype::get()->pluck('name','id');
         $data['userid']=0;
         return $data;
     }
@@ -94,113 +107,68 @@ class WorkerdaysController extends \App\Handler\MoController
          
      return $res;    
 
-
     }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function create()
+
+    public function create_set()
     {
        
         $workerdayT=[];
         $data['daytype']=Daytype::get()->pluck('name','id');    
         $data['workers']=Worker::with('user')->get();
-       // $dayT= Day::where([['datum',  'LIKE', $this->paramT['getT']['ev']."-".$this->paramT['getT']['ho']."%"],])->get();
-        if(isset($this->paramT['getT']['w_id']) && $this->paramT['getT']['w_id']>0)
+     
+        if(isset($this->PAR['getT']['w_id']) && $this->PAR['getT']['w_id']>0)
         {
-            $workerdayT=$this->getWorkerday($this->paramT['getT']['w_id'],$this->paramT['getT']['ev'],$this->paramT['getT']['ho']);
+            $workerdayT=$this->getWorkerday($this->PAR['getT']['w_id'],$this->PAR['getT']['ev'],$this->PAR['getT']['ho']);
             $calendar=new \App\Handler\Calendar;
-            $calT=$calendar->getMonthDays($this->paramT['getT']['ev'],$this->paramT['getT']['ho']);
+            $calT=$calendar->getMonthDays($this->PAR['getT']['ev'],$this->PAR['getT']['ho']);
             $data['calendar']=\MoHandF::mergeAssoc($calT,$workerdayT);
         }
-       // print_r($dayT);
-      //  return view('crudbase.create');
-        return view($this->paramT['baseview'].'.form', compact('data'));
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
+        return $data;
+    }
+//az egész store-t felül kell írni 
     public function store(Request $request)
     {
-        $this->validate($request,$this->valT );
+        $this->validate($request,$this->val );
         $requestData = $request->all();
-        $requestData['datum']=$this->paramT['getT']['ev'].'-'.$this->paramT['getT']['ho'].'-'.$requestData['day'];
+        $requestData['datum']=$this->PAR['getT']['ev'].'-'.$this->PAR['getT']['ho'].'-'.$requestData['day'];
         $days = Workerday::select('id')->where([['datum', '=', $requestData['datum']],['worker_id', '=', $requestData['worker_id']]])->first();
         if(isset( $days->id) && $days->id>0){
-            //$request=new Requests();
             $this->update($days->id,$request);
         }
         else{
         Workerday::create($requestData);
         Session::flash('flash_message', 'Workerday added!');
        // echo 'store';
-        return redirect(\MoHandF::url($this->paramT['baseroute'].'/create', $this->paramT['getT']));
+        return redirect(\MoHandF::url($this->PAR['baseroute'].'/create', $this->PAR['getT']));
         }
-       //return redirect($this->paramT['baseroute'].'/create');
-      // $this->create();
-      
+  
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     *
-     * @return \Illuminate\View\View
-     */
-    public function show($id)
+
+    public function show_set($id)
     {
         $data = Workerday::findOrFail($id);
 
-        return view($this->paramT['baseview'].'.show', compact('data'));
+        return $data;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit($id)
+
+    public function edit_set($id)
     {  
         $data = Workerday::with('worker')->findOrFail($id);
         $data['id']=$id ;
         $data['daytype']=Daytype::get()->pluck('name','id');
-        return view($this->paramT['baseview'].'.edit_form', compact('data'));
+        return $data;
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
-    public function update($id, Request $request)
-    {
-        $this->validate($request,$this->valT );
+    public function update_set($id,$valT,$request)
+    { 
+        $this->validate($request,$valT );
         $requestData = $request->all();
         if(isset($requestData['day'])){
-            $requestData['datum']=$this->paramT['getT']['ev'].'-'.$this->paramT['getT']['ho'].'-'.$requestData['day'];
+            $requestData['datum']=$this->PAR['getT']['ev'].'-'.$this->PAR['getT']['ho'].'-'.$requestData['day'];
         }
-        
-        $workerday = Workerday::findOrFail($id);
-        $workerday->update($requestData);
-
-        Session::flash('flash_message', 'Workerday updated!');
-
-       // return redirect($this->paramT['baseroute']);
-       return redirect(\MoHandF::url($this->paramT['baseroute'], $this->paramT['getT']));
-//echo 'update';
+        return $requestData;
     }
-
 }

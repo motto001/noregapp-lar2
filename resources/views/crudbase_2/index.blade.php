@@ -52,7 +52,7 @@
 
                         {!! Form::close() !!}
                       
-@include ($param['baseview'].'.table')
+@yield('table')
 
      <div class="pagination-wrapper"> {!! $data['list']->appends(['search' => Request::get('search')])->render() !!} </div>  
                         <br/>

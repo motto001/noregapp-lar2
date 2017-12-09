@@ -1,21 +1,22 @@
 <?php
 
 namespace App\Handler\trt\crud;
-
+use Illuminate\Http\Request;
+use Session;
+//use App\Http\Requests;
 /*
 use Illuminate\Support\Facades\View;
 //use pp\facades\MoHand;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Http\Request;
-use App\Http\Requests;
+
 use App\Http\Controllers\Controller;
 
-use Session;
+
 */
-Trait Crud
+Trait CrudWithSetfunc
 {
 
- /* a  construktor által minden  view-el megosztott adatok
+     /* a  construktor által minden  view-el megosztott adatok
     protected $PAR= [
       
         'baseroute'=>'workadmin/workerdays',
@@ -26,7 +27,6 @@ Trait Crud
         'getT'=>[]; //index_data használja, pagernek kell, beállítja ha nincs. Ha máshova is kell . Használjuk a Handlr\trt\setControllert
        
     ];
- // alap értékek   
     protected $BASE= [
     /* 
         'view'=>'', //controler állítja be a $PAR alapján. Task függvények ezt használják!.
@@ -86,34 +86,50 @@ Trait Crud
         
     }
   
+    public function create_set()
+    { $data=[]; return $data;}
+
     public function create()
     {
-        $data=[];
+        $data=$this->create_set();
         return view($this->PAR['view'].'.create', compact('data'));
     }
 
-
-    public function store(Request $request)
-    {      
-        $this->validate($request,$this->val );
+    public function store_set($request)
+    { 
+        $this->validate($request,$this->valT );
         $requestData = $request->all();
+        return $requestData;
+    }
+    public function store(Request $request)
+    {
+        
+        $requestData =$this->store_set($request);
         $this->BASE['ob']->create($requestData);
         Session::flash('flash_message', trans('mo.itemadded'));
         return redirect(\MoHandF::url($this->PAR['baseroute'].'/create', $this->PAR['getT']));
     }
- 
+    public function edit_set($id)
+    { 
+        $data =$this->BASE['ob']->findOrFail($id);
+        return $data;
+    }
     public function edit($id)
     {  
-        $data =$this->BASE['ob']->findOrFail($id);
+        $data =$this->edit_set($id);
         return view($this->PAR['view'].'.edit', compact('data'));
     }
 
-
+    public function update_set($id,$valT,$request)
+    { 
+        $this->validate($request,$valT );
+        $requestData = $request->all();
+        return $requestData;
+    }
     public function update($id, Request $request)
     {
         $valT=$this->val_update ?? $this->val;
-        $this->validate($request,$valT );
-        $requestData = $request->all();
+        $requestData = $this->update_set($id,$valT,$request);
        
         $this->BASE['ob']->update($requestData);
         Session::flash('flash_message',  trans('mo.item_updated'));
@@ -121,16 +137,23 @@ Trait Crud
 
     }
 
+    public function destroy_set($id)
+    { $this->BASE['ob']->destroy($id);}
+
     public function destroy($id)
     { 
-        $this->BASE['ob']->destroy($id);
+        $this->destroy_set($id);
         Session::flash('flash_message', trans('mo.deleted'));
         return redirect(\MoHandF::url($this->PAR['baseroute'], $this->PAR['getT']));
     }
- 
+    public function show_set($id)
+    {  
+        $data =$this->BASE['ob']->findOrFail($id);
+        return $data;
+    }
     public function show($id)
     {     
-        $data =$this->BASE['ob']->findOrFail($id);
+        $data =$this->show_set($id);
         return view($this->PAR['view'].'.show', compact('data'));
     } 
 }
