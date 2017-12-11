@@ -2,186 +2,145 @@
 
 namespace App\Http\Controllers\Manager;
 use Illuminate\Support\Facades\View;
+//use pp\facades\MoHand;
 use Illuminate\Support\Facades\Input;
-//use Illuminate\Support\Facades\DB;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+
 use App\Timetype;
 use App\Wroletime;
+use App\Wroleunit;
 use Illuminate\Http\Request;
 use Session;
 
 class WroletimesController extends Controller
 {
-        protected $paramT= [
-            'baseroute'=>'manager/wroletimes',
-            'baseview'=>'manager.wroletimes', 
-            'cim'=>'Munkarendidők',
+    use \App\Handler\trt\crud\CrudWithSetfunc;
+    use  \App\Handler\trt\SetController;
+    protected $PAR= [
+        'baseroute'=>'manager/wroletimes',
+        'view'=>'manager.wrunit_times', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
+        'crudview'=>'crudbase_2', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
+        'cim'=>'Műszak idők',
+        'getT'=>['wru'=>'0'],   
+        'search'=>false,   
     ];
-    
+   
+    protected $TPAR= [];
+    protected $BASE= [
+        //'search_column'=>'daytype_id,datum,managernote,usernote',
+        'get'=>['wru'=>'0','wruvissza'=>null], //Ha a wrolunitból hvjuk a wruvissza true lesz, a store az update és a delete visszaírányít az aktuális wroleunitra.mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be
+        'get_post'=>[],//a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be ha van ilyen kulcs a postban azzal felülírja
+        'obname'=>'\App\Wroletime',
+        'ob'=>null,
+        
+    ];
+    protected $TBASE= [];
+    protected $val= [
+        'wroleunit_id' => 'required|integer',
+        'timetype_id' => 'required|integer',
+        'start' => 'required|date_format:H:i',
+        'end' => 'date_format:H:i',
+        'hour' => 'required|integer|max:24',
+        'managernote' => 'string|max:200|nullable',
+        'workernote' => 'string|max:200|nullable',
+        'pub' => 'integer'
+    ];
+    protected $val_edit= [];
     function __construct(Request $request){
-        $this->paramT['id']=$request->route('id') ;
-        $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+        
+                $this->setTask();
+                $this->set_getT($request);
+                $obname=$this->BASE['obname'];
+                $this->BASE['ob']=new $obname();
+                View::share('param',$this->PAR);
+               }
 
-        if($this->paramT['parrent_id']>0){
-            $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
-        else{
-            $this->paramT['route_param']='';}
-
-        View::share('param',$this->paramT);
-           }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function index(Request $request)
+    public function index_set($ob,$keyword,$getT,$perPage)
     {
-        $keyword = $request->get('search');
-        $perPage = 25;
-
-        if (!empty($keyword)) {
-            $wroletimes = Wroletime::where('wroleunit_id', 'LIKE', "%$keyword%")
-				->orWhere('timetype_id', 'LIKE', "%$keyword%")
-				->orWhere('start', 'LIKE', "%$keyword%")
-				->orWhere('end', 'LIKE', "%$keyword%")
-				->orWhere('hour', 'LIKE', "%$keyword%")
-				->orWhere('managernote', 'LIKE', "%$keyword%")
-				->orWhere('workernote', 'LIKE', "%$keyword%")
-				->paginate($perPage);
-        } else {
-            $wroletimes = Wroletime::with('timetype')->paginate($perPage);
-        }
-        $data['list']=$wroletimes;
-        return view('crudbase.index', compact('data'));
+        if(isset($this->PAR['task']) && !empty($this->PAR['task']) )
+        {
+            $task=$this->PAR['task'];
+            return $this->$task();
+         }
+          
+        if($this->PAR['getT']['wru']>0){$where[]= ['wroleunit_id', '=', $this->PAR['getT']['wru']];}
+        else{$where[]= ['id', '<>','0']; }//hogx mindenképpen legyen where
+    
+            $list =$ob->with('timetype','wroleunit')
+                    ->where($where )
+                    ->orderBy('id', 'desc')
+                    ->paginate($perPage)->appends($getT) ;   
+         
+      // print_r($this->PAR['getT']);
+        $data['list']=$list;
+        $data['wroleunit']=Wroleunit::get();
+        return $data;
     }
+  
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function create()
+    public function create_set()
     {
+       
         $wroletime = Wroletime::get();
+        $wroletime['wroleunit']= Wroleunit::get();
         $wroletime['timetype']= Timetype::pluck('name','id');
         $wroletime['wroleunit_id']= 0;
-        return view('manager.wroletimes.create',compact('wroletime'));
+
+        return $wroletime;
     }
-    public function create2($id)
-    {
-        $wroletime = Wroletime::get();
-        $wroletime['timetype']= Timetype::pluck('name','id');
-        $wroletime['wroleunit_id']= $id;
-        return view('manager.wroletimes.create',compact('wroletime'));
-    }
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
+
     public function store(Request $request)
     {
-        $this->validate($request, [
-			'wroleunit_id' => 'required|integer',
-			'timetype_id' => 'required|integer',
-			'start' => 'required|date_format:H:i',
-			'end' => 'date_format:H:i',
-			'hour' => 'required|integer|max:24',
-			'managernote' => 'string|max:200|nullable',
-			'workernote' => 'string|max:200|nullable',
-			'pub' => 'integer'
-		]);
-        $requestData = $request->all();
         
-        Wroletime::create($requestData);
-
-        Session::flash('flash_message', 'Wroletime added!');
-
-        return redirect($this->paramT['baseroute']);
+        $requestData =$this->store_set($request);
+        $this->BASE['ob']->create($requestData);
+        Session::flash('flash_message', trans('mo.itemadded'));
+        if($this->PAR['getT']['wruvissza']){
+            return redirect('/manager/wroleunits/'.$this->PAR['getT']['wru'].'/edit');
+        }else{
+            return redirect(\MoHandF::url($this->PAR['baseroute'].'/create', $this->PAR['getT']));
+        }
+        
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     *
-     * @return \Illuminate\View\View
-     */
-    public function show($id)
-    {
-        $data = Wroletime::findOrFail($id);
 
-        return view($this->paramT['baseview'].'.show', compact('data'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     *
-     * @return \Illuminate\View\View
-     */
-    public function edit($id)
-    {
+    public function edit_set($id)
+    {  
         $data = Wroletime::findOrFail($id);
         $data['timetype']= Timetype::pluck('name','id');
         $data['id']=$id ;
-        return view('crudbase.edit', compact('data'));
+        return $data;
     }
-    /*
-    public function edit2($id,$wroleunit_id)
-    {
-        $wroletime = Wroletime::findOrFail($id);
-        $wroletime['timetype']= Timetype::pluck('name','id');
-        $wroletime['wroleunit_id']= $wroleunit_id;
-        return view('manager.wroletimes.edit', compact('wroletime'));
-    }*/
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @param \Illuminate\Http\Request $request
-     *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
     public function update($id, Request $request)
     {
-        $this->validate($request, [
-            'wroleunit_id' => 'required|integer',
-			'timetype_id' => 'required|integer',
-			'start' => 'required|date_format:H:i',
-			'end' => 'date_format:H:i',
-			'hour' => 'required|integer|max:24',
-			'managernote' => 'string|max:200|nullable',
-			'workernote' => 'string|max:200|nullable',
-			'pub' => 'integer'
-		]);
-        $requestData = $request->all();
-        
-        $wroletime = Wroletime::findOrFail($id);
-        $wroletime->update($requestData);
-
-        Session::flash('flash_message', 'Wroletime updated!');
-
-        return redirect($this->paramT['baseroute']);
+        $valT=$this->val_update ?? $this->val;
+        $requestData = $this->update_set($id,$valT,$request);
+        $ob = $this->BASE['ob']->findOrFail($id);
+        $ob->update($requestData);
+        Session::flash('flash_message',  trans('mo.item_updated'));
+        if($this->PAR['getT']['wruvissza']){
+            return redirect('/manager/wroleunits/'.$this->PAR['getT']['wru'].'/edit');
+        }else{   
+            return redirect(\MoHandF::url($this->PAR['baseroute'], $this->PAR['getT']));
+        }
+    }
+    public function del()
+    { 
+        $id=Input::get('id');
+        $this->destroy_set($id);
+        Session::flash('flash_message', trans('mo.deleted'));
+        return redirect('/manager/wroleunits/'.$this->PAR['getT']['wru'].'/edit');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
-     */
     public function destroy($id)
-    {
-        Wroletime::destroy($id);
-
-        Session::flash('flash_message', 'Wroletime deleted!');
-
-        return redirect($this->paramT['baseroute']);
+    { 
+        $this->destroy_set($id);
+        Session::flash('flash_message', trans('mo.deleted'));
+        if($this->PAR['getT']['wruvissza']){
+            return redirect('/manager/wroleunits/'.$this->PAR['getT']['wru'].'/edit');
+        }else{  
+        return redirect(\MoHandF::url($this->PAR['baseroute'], $this->PAR['getT']));
+        }
     }
 }

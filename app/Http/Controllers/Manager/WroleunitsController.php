@@ -15,53 +15,49 @@ use Session;
 
 class WroleunitsController extends Controller
 {
-/**
- * validációs szabályok 
- */
-protected $valT=[
+    use \App\Handler\trt\crud\CrudWithSetfunc;
+    use  \App\Handler\trt\SetController;
+    protected $PAR= [
+        'baseroute'=>'manager/wroleunits',
+        //'baseview'=>'workadmin.workerdays', //nem használt a view helyettesíti
+        'view'=>'manager.wroleunits', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
+        'crudview'=>'crudbase_2', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
+        'cim'=>'Műszakok',
+        'getT'=>[],       
+    ];
+   
+protected $val=[
 	'name' => 'required|string',
     'unit' => 'required|string',
     'long' => 'required|integer',
     'note' => 'string|max:200|nullable',
     'pub' => 'integer'
 ];
-/**
- * minden viewnwk megosztott paraméterek
- */
-protected $paramT= [
-    'baseroute'=>'manager/wroleunits',
-    'baseview'=>'manager.wroleunits', 
-    'cim'=>'Munkarend egység',
-];
-
-   function __construct(Request $request){ 
-    $this->paramT['id']=$request->route('id') ?? 0; ;
-    $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
+protected $TPAR= [];
+protected $BASE= [
+    'search'=>false,
+    'get'=>[], //pl:'w_id'=>null a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be
+    'get_post'=>[],//a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be ha van ilyen kulcs a postban azzal felülírja
+    'obname'=>'\App\Wroleunit',
+    'ob'=>null,
     
-    if($this->paramT['parrent_id']>0){
-        $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
-    else{
-        $this->paramT['route_param']='';}
+];
+protected $TBASE= [];
 
-    View::share('param',$this->paramT);
+protected $val_edit= [];
+   function __construct(Request $request){
+
+    $this->setTask();
+    $this->set_getT($request);
+    $obname=$this->BASE['obname'];
+    $this->BASE['ob']=new $obname();
+    View::share('param',$this->PAR);
    }
-    public function index(Request $request)
+    public function index_set($ob,$keyword,$getT,$perPage)
     {
-        $keyword = $request->get('search');
-        $perPage = 25;
-
-        if (!empty($keyword)) {
-            $wroleunits = Wroleunit::where('name', 'LIKE', "%$keyword%")
-				->orWhere('unit', 'LIKE', "%$keyword%")
-				->orWhere('long', 'LIKE', "%$keyword%")
-				->orWhere('note', 'LIKE', "%$keyword%")
-				->orWhere('pub', 'LIKE', "%$keyword%")
-				->paginate($perPage);
-        } else {
-            $wroleunits = Wroleunit::paginate($perPage);
-        }
-        $data['list']=$wroleunits;
-        return view('crudbase.index', compact('data'));
+    
+        $data['list'] = Wroleunit::with('wroletime')->paginate($perPage);
+        return $data;
     }
 
     /**
@@ -69,12 +65,12 @@ protected $paramT= [
      *
      * @return \Illuminate\View\View
      */
-    public function create()
+    public function create_set()
     {
 
         $data['basedaytype']=Daytype::get();
         $data['checked_daytype']=[5];
-        return view('crudbase.create', compact('data'));
+        return $data;
     }
 
     /**
@@ -86,30 +82,18 @@ protected $paramT= [
      */
     public function store(Request $request)
     {
-        $this->validate($request,$this->valT);
+        $this->validate($request,$this->val);
         $requestData = $request->all();
         
         $wroleunit= Wroleunit::create($requestData);
         $wroleunit->daytype()->sync($request->daytype_id);
-        Session::flash('flash_message', 'Wroleunit added!');
-
-        return redirect($this->paramT['baseroute']);
+        Session::flash('flash_message', 'Workerday added!');
+        // echo 'store';
+         return redirect(\MoHandF::url($this->PAR['baseroute'], $this->PAR['getT']));
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     *
-     * @return \Illuminate\View\View
-     */
-    public function show($id)
-    {
-        $data = Wroleunit::findOrFail($id);
 
-        return view($this->paramT['baseview'].'.show', compact('data'));
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -118,9 +102,9 @@ protected $paramT= [
      *
      * @return \Illuminate\View\View
      */
-    public function edit($id)
+    public function edit_set($id)
     {
-              
+        $checked_daytype=[];      
         $data = Wroleunit::with(['daytype','wroletime','wroletime.timetype'])->findOrFail($id);
         $data['basedaytype']=Daytype::get();
     
@@ -131,7 +115,7 @@ protected $paramT= [
         $data['checked_daytype']=$checked_daytype;
         $data['list']=$data->wroletime;
         $data['id']=$id ;
-        return view('crudbase.edit', compact('data'));
+        return $data;
     }
 
     /**
@@ -144,9 +128,7 @@ protected $paramT= [
      */
     public function update($id, Request $request)
     {
-        $this->validate($request, [
-		
-		]);
+        $this->validate($request,$this->val);
         $requestData = $request->all();
         
         $wroleunit = Wroleunit::findOrFail($id);
@@ -157,7 +139,7 @@ protected $paramT= [
 
         Session::flash('flash_message', 'Wroleunit updated!');
 
-        return redirect($this->paramT['baseroute']);
+        return redirect(\MoHandF::url($this->PAR['baseroute'], $this->PAR['getT']));
     }
 
     /**
@@ -174,36 +156,10 @@ protected $paramT= [
         \DB::table('wroleunit_daytype')->where('wroleunit_id', '=', $id)->delete();
         Session::flash('flash_message', 'Wroleunit deleted!');
 
-        return redirect($this->paramT['baseroute']);
+        return redirect(\MoHandF::url($this->PAR['baseroute'], $this->PAR['getT']));
     }
 
 
-
-    
-     public function wroleunitToModal($wroleid)
-    {
-        $wroleunits2 = Wroleunit::get();
-       // print_r($wroleunits);
-       $wroleunits['wroleunits']=$wroleunits2;
-        $wroleunits['wrole_id']=$wroleid;
-        return view('manager.wroleunits.wroleunit-to-selectmodal', compact('wroleunits'));
-    }
-    public function showToModal($id)
-    {
-        $wroleunit = Wroleunit::with(['daytype','wroletime','wroletime.timetype'])->findOrFail($id);
-        $wroleunit['basedaytype']=Daytype::get();
-    
-        foreach($wroleunit->daytype as $role){
-            
-            $checked_daytype[] =  $role->id;
-        }
-        $wroleunit['checked_daytype']=$checked_daytype;
-        return view('manager.wroleunits.show-to-modal', compact('wroleunit'));
-    }
-    public function timedel($id)
-    {
-        Wroletime::destroy($id);
-        return redirect($this->paramT['basroute']);
-    }
+ 
 
 }

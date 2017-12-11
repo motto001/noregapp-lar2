@@ -26,18 +26,18 @@ class Wrole extends Model
      * @var array
      */
     protected $fillable = ['name', 'note', 'start', 'pub'];
-    public function workerwrole()
+  /*  public function workerwrole()
 	{
 		return $this->hasMany('App\WorkerWrole');
-    } 
+    } */
   
     public function daytype()
 	{
 		return $this->belongsToMany('App\Daytype','wrole_daytype');
     } 
-    public function wroletime()
+    public function wroleunit()
 	{
-		return $this->belongsToMany('App\Wroletime','wrole_wroletime');
+		return $this->belongsToMany('App\Wroleunit','wrole_wroleunit');
     }  
     public function worker()
 	{

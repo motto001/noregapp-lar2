@@ -30,8 +30,8 @@ class MoController extends Controller
         $this->setTask();
         $this->set_getT($request);
         $this->construct_handler();
-        $obname=$this->$BASE['obname'];
-        $this->$BASE['ob']=new $obname();
+        $obname=$this->BASE['obname'];
+        $this->BASE['ob']=new $obname();
         View::share('param',$this->PAR);
        }
 

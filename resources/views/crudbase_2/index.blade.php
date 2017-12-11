@@ -14,6 +14,10 @@
     @endphp
  @endif
 
+    @php
+     if(!isset($param['search'])){$param['search']=true;}
+    @endphp
+
 
 <section id="main-content">  
     <section class="wrapper">
@@ -38,7 +42,7 @@
                         
                         <br />
                         <br />
-     
+      @if($param['search'])
                         {!! Form::open(['method' => 'GET', 'url' =>  MoHandF::url($param['baseroute'],$param['getT']) , 
                         'class' => 'navbar-form navbar-right', 'role' => 'search'])  !!}
                         <div class="input-group">
@@ -51,7 +55,7 @@
                         </div>
 
                         {!! Form::close() !!}
-                      
+         @endif            
 @yield('table')
 
      <div class="pagination-wrapper"> {!! $data['list']->appends(['search' => Request::get('search')])->render() !!} </div>  

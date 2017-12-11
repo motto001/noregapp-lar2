@@ -21,8 +21,8 @@ class WorkerdaysController extends Controller
     protected $PAR= [
         'baseroute'=>'workadmin/workerdays',
         //'baseview'=>'workadmin.workerdays', //nem használt a view helyettesíti
-        'crudview'=>'crudbase_2', //ha tud majd formot és táblát generálni ez lesz a view
         'view'=>'workadmin.workerdays', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
+        'crudview'=>'crudbase_2', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
         'cim'=>'Dolgozói napok',
         'getT'=>[],       
     ];
@@ -166,7 +166,7 @@ class WorkerdaysController extends Controller
     { 
         $this->validate($request,$valT );
         $requestData = $request->all();
-        if(isset($requestData['day'])){
+        if(isset($requestData['day']) && !isset($requestData['datum'])){
             $requestData['datum']=$this->PAR['getT']['ev'].'-'.$this->PAR['getT']['ho'].'-'.$requestData['day'];
         }
         return $requestData;

@@ -97,7 +97,7 @@ Trait CrudWithSetfunc
 
     public function store_set($request)
     { 
-        $this->validate($request,$this->valT );
+        $this->validate($request,$this->val );
         $requestData = $request->all();
         return $requestData;
     }
@@ -117,6 +117,7 @@ Trait CrudWithSetfunc
     public function edit($id)
     {  
         $data =$this->edit_set($id);
+       // print_r($data);
         return view($this->PAR['view'].'.edit', compact('data'));
     }
 
@@ -130,10 +131,10 @@ Trait CrudWithSetfunc
     {
         $valT=$this->val_update ?? $this->val;
         $requestData = $this->update_set($id,$valT,$request);
-       
-        $this->BASE['ob']->update($requestData);
+        $ob = $this->BASE['ob']->findOrFail($id);
+        $ob->update($requestData);
         Session::flash('flash_message',  trans('mo.item_updated'));
-       return redirect(\MoHandF::url($this->PAR['baseroute'], $this->PAR['getT']));
+      return redirect(\MoHandF::url($this->PAR['baseroute'], $this->PAR['getT']));
 
     }
 

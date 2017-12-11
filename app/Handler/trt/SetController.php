@@ -23,15 +23,16 @@ Trait SetController
 function set_getT(Request $request){
 
         foreach($this->BASE['get'] as $key=>$val){
-            $this->PAR['getT'][$key]=Input::get($key) ?? $val;
+            $val=Input::get($key) ?? $val;
             if($val!=null){
                 $this->PAR['getT'][$key]= $val; 
             }  
         }
         foreach($this->BASE['get_post'] as $key=>$val){
-
-            $val=Input::get($key) ?? $val;
+            
             $val= $request->input($key, $val) ;
+            $val=Input::get($key) ?? $val;
+           
             if($val!=null){
                $this->PAR['getT'][$key]= $val; 
             }   
