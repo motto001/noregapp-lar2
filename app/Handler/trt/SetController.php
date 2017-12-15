@@ -14,6 +14,11 @@ use Illuminate\Http\Request;
  */
 Trait SetController
 {
+
+function set_ob(Request $request){
+
+ }
+
 /**
  * PAR['getT'] tömböt állítja be, 
  * BASE['get'] kulcsait csak a getben nézi

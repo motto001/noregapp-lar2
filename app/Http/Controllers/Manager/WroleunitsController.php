@@ -18,7 +18,9 @@ class WroleunitsController extends Controller
     use \App\Handler\trt\crud\CrudWithSetfunc;
     use  \App\Handler\trt\SetController;
     protected $PAR= [
-        'baseroute'=>'manager/wroleunits',
+     
+        'get_key'=>'wru', //láncnál ezzel az előtaggal azonosítja a rávonatkozó get tagokat
+        'redirect'=>['base'=>'manager/wroleunits','wrole'=>'manager/wrole'],//A _GET ben ['get_key']._ret ben érkező értéket fordítja le routra pl.: wrtime_ret=wru esetén a route  manager/wroleunit lesz
         //'baseview'=>'workadmin.workerdays', //nem használt a view helyettesíti
         'view'=>'manager.wroleunits', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
         'crudview'=>'crudbase_2', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
@@ -36,7 +38,7 @@ protected $val=[
 protected $TPAR= [];
 protected $BASE= [
     'search'=>false,
-    'get'=>[], //pl:'w_id'=>null a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be
+    'get'=>['wrole_id'=>null,'wrole_ret'=>null,'worker_id'=>null], //pl:'w_id'=>null a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be
     'get_post'=>[],//a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be ha van ilyen kulcs a postban azzal felülírja
     'obname'=>'\App\Wroleunit',
     'ob'=>null,

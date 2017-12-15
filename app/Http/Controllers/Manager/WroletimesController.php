@@ -18,7 +18,9 @@ class WroletimesController extends Controller
     use \App\Handler\trt\crud\CrudWithSetfunc;
     use  \App\Handler\trt\SetController;
     protected $PAR= [
-        'baseroute'=>'manager/wroletimes',
+       // 'baseroute'=>'manager/wroletimes', // a redirect-be kerüt (base)
+       'get_key'=>'wrtime', //láncnál ezzel az előtaggal azonosítja a rávonatkozó get tagokat
+       'redirect'=>['base'=>'manager/wroletimes','wru'=>'manager/wroleunits'], //A _GET ben ['get_key']._ret ben érkező értéket fordítja le routra pl.: wrtime_ret=wru esetén a route  manager/wroleunit lesz
         'view'=>'manager.wrunit_times', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
         'crudview'=>'crudbase_2', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
         'cim'=>'Műszak idők',
@@ -29,7 +31,7 @@ class WroletimesController extends Controller
     protected $TPAR= [];
     protected $BASE= [
         //'search_column'=>'daytype_id,datum,managernote,usernote',
-        'get'=>['wru'=>'0','wruvissza'=>null], //Ha a wrolunitból hvjuk a wruvissza true lesz, a store az update és a delete visszaírányít az aktuális wroleunitra.mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be
+        'get'=>['wru_id'=>'0','wru_ret'=>null,'wrole_id'=>null,'wrole_ret'=>null,'worker_id'=>null], //Ha a wrolunitból hvjuk a wruvissza true lesz, a store az update és a delete visszaírányít az aktuális wroleunitra.mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be
         'get_post'=>[],//a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be ha van ilyen kulcs a postban azzal felülírja
         'obname'=>'\App\Wroletime',
         'ob'=>null,

@@ -13,14 +13,14 @@ use Session;
 
 class WrolesController extends Controller
 {
- protected $valT = [
+ protected $val = [
         'name' => 'required|string|max:200',
         'note' => 'string|max:200|nullable',
         'start' => 'string|max:200|nullable',
         'pub' => 'integer'
  ];
 
-  protected $paramT= [
+  protected $PAR= [
         'baseroute'=>'manager/wroles',
         'baseview'=>'manager.wroles', 
         'cim'=>'Munkarendek',

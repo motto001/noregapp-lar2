@@ -19,7 +19,8 @@ class WorkerdaysController extends Controller
     use \App\Handler\trt\crud\CrudWithSetfunc;
     use  \App\Handler\trt\SetController;
     protected $PAR= [
-        'baseroute'=>'workadmin/workerdays',
+        //'baseroute'=>'workadmin/workerdays',
+        'redirect'=>['base'=>'workadmin/workerdays','worker'=>'manager/worker'],
         //'baseview'=>'workadmin.workerdays', //nem használt a view helyettesíti
         'view'=>'workadmin.workerdays', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
         'crudview'=>'crudbase_2', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
