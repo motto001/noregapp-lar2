@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Handler;
+use App\Http\Controllers\Controller;
 /*
 use Illuminate\Support\Facades\View;
 //use pp\facades\MoHand;
 use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Session;
 */
@@ -58,10 +58,16 @@ protected $BASE= [
     //Ha az url-ben nem szerepel és az érték null nem kerül bea PAR['getT']-be.
     'get_post'=>[],//ugyanaz mint a 'get' csak  ha van ilyen kulcs a postban azzal felülírja
     'obname'=>'\App\Wroletime',
-     //ha becsatoljuk és futtatjuk a Handler\trt\SetController->set_ob() funkciót ez alapján készíti el az aktuális objektumot aZ 'ob' kulcsra
+     //a $this->set_ob() funkció ( acontroller tartalmazza csak a 'func'-tömbbe szerepelnie kell) 
+     //ez alapján készíti el az aktuális objektumot aZ 'ob' kulcsra
     'ob'=>null, 
     'data'=>[], // az aktuális viewnek átadott adatok
-    'func'=>[], // a constructor által lefuttatni kívánt funkciók  
+    'func'=>[ // a constructor által lefuttatni kívánt funkciók  
+    'set_base', //Az alap értékek beállítása ($PAR,$BASE stb)minden childnél definiállni kell   
+    'set_task', //\App\Handler\trt\SetController
+    'set_getT', //\App\Handler\trt\SetController
+    'set_ob'   //$this 
+    ],
 ];
 /**
  * taskok base értékei, a Handler\trt\SetController->set_task() az aktuális task kulcsa alatt szereplő értékekkel felül írja a $BASE értékeit
@@ -78,29 +84,31 @@ protected $val= [];//pl.:['wroleunit_id' => 'required|integer','end' => 'date_fo
  */
 protected $val_update= [];
 
-   // function __construct(){ //le kell tesztelni hogy request nélkülis működik-e
+function set_ob(){
+    $obname=$this->BASE['obname'];
+    $this->BASE['ob']=new $obname();  
+}
+function call_func($funcT){
+        foreach($funcT as $func){
+            if(is_callable([$this, $func])) {$this->$func();}  
+            else{
+                Log::error('Hiányzó controller funkció', ['func' => $func]);
+                //error_log('Some message:Hiányzó controller funkció.');
+                //$output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
+                //$output->writeln('hello');
+        }       
+}
+
+   // function __construct(){ //le kell tesztelni hogy request nélkül is jól működik-e
     function __construct(Request $request){
+    
+        $this->call_func($this->BASE['func']);       
+        $share_param_name=$this->PAR['varname'] ?? 'param';
+        View::share($share_param_name,$this->PAR);
+      
+        $task=$this->PAR['task'] ?? \Route::getCurrentRoute()->getActionMethod();
+        if($task!=\Route::getCurrentRoute()->getActionMethod()) {return $this->$task();}
 
-        if(is_callable([$this, "set_base"])) {$this->base();} 
-        if(is_callable([$this, "set_task"])) {$this->set_task();} 
-        if(is_callable([$this, "set_getT"])) {$this->set_getT();} 
-        if(is_callable([$this, "set_route"])) {$this->set_route();} 
-
-        $create_OB=$this->BASE['create_OB'] ?? true;
-        if($create_OB){
-            $obname=$this->BASE['obname'];
-            $this->BASE['ob']=new $obname(); 
-        }
-        $share_param=$this->BASE['share_param'] ?? true;
-        $share_param_name=$this->BASE['share_param_name'] ?? 'param';
-        if($share_param){
-            View::share($share_param_name,$this->PAR);
-        }
-        $task=$this->PAR['task'] ?? '';
-        if($task!='')
-        {
-            return $this->$task();
-        }
 
        }
 
