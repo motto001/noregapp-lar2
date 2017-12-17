@@ -1,4 +1,5 @@
-
+ @extends($param['crudview'].'.index')
+@section('table')
                         <div class="table-responsive">
                             <table class="table table-borderless">
                                 <thead>
@@ -12,11 +13,21 @@
                                         <td>{{ $item->id }}</td>
                                         <td>{{ $item->name }}</td><td>{{ $item->note }}</td><td>{{ $item->start }}</td>
                                         <td>
-                                        @include('crudbase.listbuttons')
+                                             {!! 
+                                        MoHandF::linkButton([
+                                        'link'=> MoHandF::url($param['route'].'/'.$item->id.'/edit',$param['getT']),
+                                        'fa'=>'pencil-square-o']) 
+                                    !!}
+                                    {!!
+                                         MoHandF::delButton([
+                                        'tip'=>'del',
+                                        'link'=>MoHandF::url($param['route'].'/'.$item->id,$param['getT']),
+                                        'fa'=>'trash-o']) 
+                                    !!} 
                                         </td>
                                     </tr>
                                 @endforeach
                                 </tbody>
                             </table>
                     </div>
- 
+ @endsection

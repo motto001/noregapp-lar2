@@ -25,23 +25,25 @@ class Wrole extends Model
      *
      * @var array
      */
-    protected $fillable = ['name', 'note', 'start', 'pub'];
-  /*  public function workerwrole()
+  protected $fillable = ['name', 'note', 'start', 'pub'];
+
+  public function workerwrole()
 	{
-		return $this->hasMany('App\WorkerWrole');
-    } */
-  
+		return $this->hasOne('App\WorkerWrole');
+  } 
+  /*
     public function daytype()
 	{
 		return $this->belongsToMany('App\Daytype','wrole_daytype');
-    } 
-    public function wroleunit()
+    } */
+  public function wroleunit()
 	{
 		return $this->belongsToMany('App\Wroleunit','wrole_wroleunit');
-    }  
+  } 
+    /* 
     public function worker()
 	{
 		return $this->hasMany('App\Worker');
-	}
+	}*/
 	
 }

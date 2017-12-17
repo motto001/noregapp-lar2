@@ -35,6 +35,7 @@ class WroletimesController extends Controller
         'get_post'=>[],//a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be ha van ilyen kulcs a postban azzal felülírja
         'obname'=>'\App\Wroletime',
         'ob'=>null,
+        'request'=>null,
         
     ];
     protected $TBASE= [];

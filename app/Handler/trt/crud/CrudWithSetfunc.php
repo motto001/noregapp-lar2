@@ -37,7 +37,7 @@ Trait CrudWithSetfunc
                                 //->orderBy('id', 'desc')
                                 ->paginate($perPage)->appends($getT) ;
             }  
-            $funcT=$this->TBASE['index']['func'] ?? ['index_set'];
+            $funcT=$this->TBASE['index']['task_func'] ?? ['index_set'];
             $this->call_func($funcT);
             $data= $this->BASE['data'];
             return view($this->PAR['view'].'.index', compact('data'));
@@ -47,7 +47,7 @@ Trait CrudWithSetfunc
     public function create_set() {}
     public function create()
     {    
-        $funcT=$this->TBASE['create']['func'] ?? ['create_set'];
+        $funcT=$this->TBASE['create']['task_func'] ?? ['create_set'];
         $this->call_func($funcT);
         $data=$this->BASE['data'];
         return view($this->PAR['view'].'.create', compact('data'));
@@ -59,21 +59,23 @@ Trait CrudWithSetfunc
         
         $this->validate($request,$this->val );
         $this->BASE['data'] = $request->all();
-        $funcT=$this->TBASE['store']['func'] ?? ['store_set'];
+        $funcT=$this->TBASE['store']['task_func'] ?? ['store_set'];
         $this->call_func($funcT);
         $this->BASE['ob']->create($this->BASE['data']);
         Session::flash('flash_message', trans('mo.itemadded'));
         return redirect(\MoHandF::url($this->PAR['route'].'/create', $this->PAR['getT']));
     }
 
-    public function edit_set($id) {}
+    public function edit_set() {}
     public function edit($id)
     {  
         $this->BASE['id']=$id;
         $this->BASE['data'] =$this->BASE['ob']->findOrFail($id);
-        $funcT=$this->TBASE['edit']['func'] ?? ['edit_set'];
+
+        $funcT=$this->TBASE['edit']['task_func'] ?? ['edit_set'];
         $this->call_func($funcT);
         $data=$this->BASE['data'];
+       // print_r($data);
         return view($this->PAR['view'].'.edit', compact('data'));
     }
 
@@ -87,7 +89,7 @@ Trait CrudWithSetfunc
         $requestData = $request->all();
         $this->BASE['data'] = $request->all();
 
-        $funcT=$this->TBASE['update']['func'] ?? ['update_set'];
+        $funcT=$this->TBASE['update']['task_func'] ?? ['update_set'];
         $this->call_func($funcT);
 
         $ob = $this->BASE['ob']->findOrFail($id);
@@ -97,24 +99,24 @@ Trait CrudWithSetfunc
 
     }
 
-    public function destroy_set($id){}
+    public function destroy_set(){}
     public function destroy($id)
     { 
         $this->BASE['id']=$id;
         $this->BASE['ob']->destroy($id);
-        $funcT=$this->TBASE['destroy']['func'] ?? ['destroy_set'];
+        $funcT=$this->TBASE['destroy']['task_func'] ?? ['destroy_set'];
         $this->call_func($funcT);
         Session::flash('flash_message', trans('mo.deleted'));
         return redirect(\MoHandF::url($this->PAR['route'], $this->PAR['getT']));
     }
 
-    public function show_set($id){}
+    public function show_set(){}
     public function show($id)
     {   
         $this->BASE['id']=$id;  
         $this->BASE['data'] =$this->BASE['ob']->findOrFail($id);
 
-        $funcT=$this->TBASE['show']['func'] ?? ['show_set'];
+        $funcT=$this->TBASE['show']['task_func'] ?? ['show_set'];
         $this->call_func($funcT);
 
         $data=$this->BASE['data'];

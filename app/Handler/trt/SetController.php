@@ -14,30 +14,52 @@ use Illuminate\Http\Request;
  */
 Trait SetController
 {
-/**
- * PAR['getT'] tömböt állítja be, 
- * BASE['get'] kulcsait csak a getben nézi
- * BASE['get_post'] kulcsai a get ben és a postban is. Ha mindkettőben van  a get-et tartja meg.
- * BASE['get'],BASE['get_post'] értékei az alapértelmezett értékek ha null és nincs más érték,nem kerül be a PAR['getT']-be
- */
-function set_getT(Request $request){
 
-        foreach($this->BASE['get'] as $key=>$val){
+/**
+ * PAR['getT'] tölti fel az url get paramétereiből, ha a BASE['get'] aqlapján
+ * BASE['get'] értékei az alapértelmezett értékek. Ha null és nincs más érték,nem kerül be a PAR['getT']-be
+ */
+function set_getT($parkey='get'){
+    $request=$this->BASE['request'];
+        foreach($this->BASE[$parkey] as $key=>$val){
             $val=Input::get($key) ?? $val;
             if($val!=null){
                 $this->PAR['getT'][$key]= $val; 
             }  
         }
-        foreach($this->BASE['get_post'] as $key=>$val){
+    }
+/**
+ * az url osszes get paraméterét bemásolja a PAR['getT']
+ */
+function set_getT_all(){
+    //$this->BASE['get'] =Input::get();
+    $this->PAR['getT'] =$_GET;
+    }
+
+function set_getT_frompost($parkey='post'){
+    $request=$this->BASE['request'];
+        foreach($this->BASE[$parkey] as $key=>$val){
             
             $val= $request->input($key, $val) ;
-            $val=Input::get($key) ?? $val;
+          //  $val=Input::get($key) ?? $val;
            
             if($val!=null){
                $this->PAR['getT'][$key]= $val; 
             }   
         }
+    } 
+/**
+ * PAR['getT'] kulcsai elol távolítja el a controller sajtá get kulcsát,(PAR['get_key'])
+ */        
+function getT_honosit(){
+    foreach($this->PAR['getT'] as $key=>$val){
+
+        if(stristr($key, '_', true)==$this->PAR['get_key'])
+        {
+            $this->PAR['getT'][stristr($key, '_')]=$val;
+        }
     }
+}
 /**
  * A PAR['task']-oz állítja be. A PAR-t a TPAR['task']-al a BASE-t TBASE['task']-al mergeli
  */
