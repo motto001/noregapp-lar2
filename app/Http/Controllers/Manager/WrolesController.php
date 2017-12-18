@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Manager;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
+//use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use App\Wrole;
 use App\Wroleunit;

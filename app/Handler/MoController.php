@@ -24,9 +24,12 @@ class MoController extends Controller
  * minden view-el megosztott adatok
  */
 protected $PAR= [ 
-    'varname'=>'param', // ezen a néven kapják meg a view-ek
+    'varname'=>'param', // ezen a néven kapják meg a view-ek a $PAR-t
     'get_key'=>'', //pl.:'wrtime' Láncnál ezzel az előtaggal azonosítja a a controller a rávonatkozó get tagokat
-    'route'=>'',//pl.:'manager/wroletimes' A controller base routja
+    'route'=>'',//nem használjuk! helyette a ['redir']['base'] van 
+    'redir'=>[],//láncnál ezt használjuk route helyett
+    //pl.:['base'=>'manager/wroletimes','wru'=>'manager/wroleunits']
+    //A _GET ben ['get_key']._ret ben érkező értéket fordítja le routra pl.: wrtime_ret=wru esetén a route  manager/wroleunit lesz 
     'ret'=>'',
     // lánc esetén a hívő controller routja. Ide irányt vissza az ktuzális feladat elvégzése után
     //setController->set_getT() állítja be az url PAR['get_key'].'_ret" kulcsa alapján
@@ -50,9 +53,7 @@ protected $TPAR= [];
  * a controlleráltal használt alap adatok, paraméterek 
  */
 protected $BASE= [
-    'redirect'=>[],
-    //pl.:['base'=>'manager/wroletimes','wru'=>'manager/wroleunits']
-    //A _GET ben ['get_key']._ret ben érkező értéket fordítja le routra pl.: wrtime_ret=wru esetén a route  manager/wroleunit lesz
+    'perpage'=>50, //táblázat ennyi elemet listáz
     'search_column'=>'',
     //pl.:'daytype_id,datum,managernote,usernote'
     // ha a search be van kapcsolva ezekben a mezőkben keres
@@ -112,7 +113,24 @@ function call_func($funcT){
                 //$output->writeln('hello');
         }       
 }}
-
+/**
+ * ha a controller azonosítójával redir érték érkezik (BASE['get_key']_redir)
+ * akkor a redir tömb annak megfelelő kulcsú routjára irányít 
+ * ha nincs akkor a $this->BASE['redir']['base'] kulcs alatt lévő routra
+ */
+public function   base_redirect(){
+    if(isset($this->PAR['getT'][$this->BASE['get_key'].'_redir']))
+    {$redir=$this->BASE['redir'][$this->PAR['getT'][$this->BASE['get_key'].'_redir']];}
+    else{$redir=$this->BASE['redir']['base'];}
+   return  redirect(\MoHandF::url($redir, $this->PAR['getT']));  
+ }
+/**
+ * trait-el felülírható ha pl json kimenetet akarunk
+ */
+ public function   base_view($task='index'){
+    $data=$this->BASE['data'];
+    return view($this->PAR['view'].'.'.$task, compact('data')); 
+ }
     function __construct(Request $request){
 
         $this->BASE['request']=$request;
@@ -122,8 +140,6 @@ function call_func($funcT){
         View::share($share_param_name,$this->PAR);     
         $task=$this->PAR['task'] ?? \Route::getCurrentRoute()->getActionMethod();
         if($task!=\Route::getCurrentRoute()->getActionMethod()) {return $this->$task();}
-
-
        }
 
 }

@@ -22,25 +22,28 @@ Trait CrudWithSetfunc
     return $res;
     }
 
-    public function index_set(){}
+    public function index_set(){
+        $ob=$this->BASE['ob'];
+        $perPage=$this->PAR['perpage'] ?? 50;
+        $getT=$this->PAR['getT'] ?? ['a'=>'a'];
+        $keyword = $this->BASE['request']->get('search') ?? '';
+        if (empty($keyword)) {  
+            $this->BASE['data'] =$ob->paginate($perPage)->appends($getT) ;   
+        } else {
+            $this->BASE['data'] = $ob->where($this->get_searchT($keyword,'first'))
+                            ->orWhere($this->get_searchT($keyword,'firstno'))
+                            //->orderBy('id', 'desc')
+                            ->paginate($perPage)->appends($getT) ;
+        }  
+    }
     public function index(Request $request)
     {
-            $ob=$this->BASE['ob'];
-            $perPage=$this->PAR['perpage'] ?? 50;
-            $getT=$this->PAR['getT'] ?? ['a'=>'a'];
-            $keyword = $request->get('search') ?? '';
-            if (empty($keyword)) {  
-                $this->BASE['data'] =$ob->paginate($perPage)->appends($getT) ;   
-            } else {
-                $this->BASE['data'] = $ob->where($this->get_searchT($keyword,'first'))
-                                ->orWhere($this->get_searchT($keyword,'firstno'))
-                                //->orderBy('id', 'desc')
-                                ->paginate($perPage)->appends($getT) ;
-            }  
+      
             $funcT=$this->TBASE['index']['task_func'] ?? ['index_set'];
             $this->call_func($funcT);
             $data= $this->BASE['data'];
-            return view($this->PAR['view'].'.index', compact('data'));
+            if(is_callable([$this, 'index_view'])) { $this->index_view();}  
+            else{ $this->base_view('index');}
         
     }
   
@@ -49,8 +52,9 @@ Trait CrudWithSetfunc
     {    
         $funcT=$this->TBASE['create']['task_func'] ?? ['create_set'];
         $this->call_func($funcT);
-        $data=$this->BASE['data'];
-        return view($this->PAR['view'].'.create', compact('data'));
+       
+        if(is_callable([$this, 'create_view'])) { $this->create_view();}  
+        else{$this->base_view('create');}
     }
 
     public function store_set(){ }
@@ -63,7 +67,8 @@ Trait CrudWithSetfunc
         $this->call_func($funcT);
         $this->BASE['ob']->create($this->BASE['data']);
         Session::flash('flash_message', trans('mo.itemadded'));
-        return redirect(\MoHandF::url($this->PAR['route'].'/create', $this->PAR['getT']));
+        if(is_callable([$this, 'store_redirect'])) {$this->store_redirect();}  
+        else{ $this->base_redirect();}
     }
 
     public function edit_set() {}
@@ -75,8 +80,8 @@ Trait CrudWithSetfunc
         $funcT=$this->TBASE['edit']['task_func'] ?? ['edit_set'];
         $this->call_func($funcT);
         $data=$this->BASE['data'];
-       // print_r($data);
-        return view($this->PAR['view'].'.edit', compact('data'));
+        if(is_callable([$this, 'edit_view'])) {$this->edit_view();}  
+        else{ $this->base_view('edit');}
     }
 
     public function update_set(){}
@@ -95,7 +100,8 @@ Trait CrudWithSetfunc
         $ob = $this->BASE['ob']->findOrFail($id);
         $ob->update($this->BASE['data']);
         Session::flash('flash_message',  trans('mo.item_updated'));
-      return redirect(\MoHandF::url($this->PAR['route'], $this->PAR['getT']));
+        if(is_callable([$this, 'update_redirect'])) {$this->update_redirect();}  
+        else{ $this->base_redirect();}
 
     }
 
@@ -107,7 +113,9 @@ Trait CrudWithSetfunc
         $funcT=$this->TBASE['destroy']['task_func'] ?? ['destroy_set'];
         $this->call_func($funcT);
         Session::flash('flash_message', trans('mo.deleted'));
-        return redirect(\MoHandF::url($this->PAR['route'], $this->PAR['getT']));
+        if(is_callable([$this, 'destroy_redirect'])) {$this->destroy_redirect();}  
+        else{ $this->base_redirect();}
+       // return redirect(\MoHandF::url($this->PAR['route'], $this->PAR['getT']));
     }
 
     public function show_set(){}
@@ -120,6 +128,8 @@ Trait CrudWithSetfunc
         $this->call_func($funcT);
 
         $data=$this->BASE['data'];
-        return view($this->PAR['view'].'.show', compact('data'));
+        if(is_callable([$this, 'destroy_view'])) {$this->destroy_view();}  
+        else{$this->base_view('show');}
+        //return view($this->PAR['view'].'.show', compact('data'));
     } 
 }
