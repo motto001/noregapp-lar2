@@ -5,14 +5,22 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
 
-
 /*
-
-//use pp\facades\MoHand;
-use Illuminate\Support\Facades\Input;
-use App\Http\Requests;
-
-use Session;
+CRUD lánc késztíés:
+ a  crud hívó linkjébe beletesszük a hívott crud viszarérő route azonosítóját 
+ pl hívó crud: 'Wrole' azonosítója(PAR['get_key']): 'wr' base routja: 'manager/wrole'
+  hívott crud: 'Wroleunit' azonosítója: 'wrunit'
+  a crud hívó linkbe (közvtlenül vagy a getT-el) be kell tenni a 'wrunit_redir=wr' értéket
+  a hívott crud PAR['routes'] tömbjébe be kell állítani a 'wr'=>'manager/wrole' értéket
+  valamint ha a lánc foltatódik akkor a hívott crud PAR['get']-be: 'wrunit_redir'=>null hogy tovább tudja adni
+  és így tovább...
+  -----------------------------
+  minden hívó crud-nak ell kkell küldenie GET-ben aa saját redir route azonosítóját. Ami hagyományosan a PAR['get_key'];
+  a GET kulcs a hívott crud azonosítójából és a '_redir' stringből áll
+ ----------------------------
+  minden hívott crudnak tovább kell adnia az összes elző crud redir azonosítóját. 
+  valamint tartalmaznia kell a PAR['routes'] tömbben azon crud-ok routjait
+  amik őt hívhatják a redir azonosítójuk kulcsával.
 */
 
 class MoController extends Controller
@@ -24,16 +32,14 @@ class MoController extends Controller
  * minden view-el megosztott adatok
  */
 protected $PAR= [ 
-    'varname'=>'param', // ezen a néven kapják meg a view-ek a $PAR-t
-    'get_key'=>'', //pl.:'wrtime' Láncnál ezzel az előtaggal azonosítja a a controller a rávonatkozó get tagokat
-    'route'=>'',//nem használjuk! helyette a ['redir']['base'] van 
-    'redir'=>[],//láncnál ezt használjuk route helyett
+    'view_varname'=>'param', // ezen a néven kapják meg a view-ek a $PAR-t
+    'get_key'=>'', //pl.:'wrtime' Láncnál ezzel az előtaggal azonosítja  a controller a rávonatkozó get tagokat
+    'routes'=>[],
     //pl.:['base'=>'manager/wroletimes','wru'=>'manager/wroleunits']
-    //A _GET ben ['get_key']._ret ben érkező értéket fordítja le routra pl.: wrtime_ret=wru esetén a route  manager/wroleunit lesz 
-    'ret'=>'',
-    // lánc esetén a hívő controller routja. Ide irányt vissza az ktuzális feladat elvégzése után
-    //setController->set_getT() állítja be az url PAR['get_key'].'_ret" kulcsa alapján
-    'view'=>'', 
+    //Láncnál a _GET ben érkező ['get_key'].'_redir'  értéket fordítja le routra 
+    //pl.: a writme 'get_key'-el rendelkező conroller esetén, a fenti példa routes-el
+    //ha a 'getT'-ben: wrtime_redir=wru szrepel, a base_redirect()  a manager/wroleunits -ra irányít
+    'views'=>'', 
     //pl.:'manager.wrunit_times'
     //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
     'crudview'=>'crudbase_2', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
@@ -50,7 +56,7 @@ protected $PAR= [
 protected $TPAR= [];
 
 /**
- * a controlleráltal használt alap adatok, paraméterek 
+ * a controller által használt alap adatok, paraméterek 
  */
 protected $BASE= [
     'perpage'=>50, //táblázat ennyi elemet listáz
@@ -58,7 +64,7 @@ protected $BASE= [
     //pl.:'daytype_id,datum,managernote,usernote'
     // ha a search be van kapcsolva ezekben a mezőkben keres
     'get'=>[],
-    //pl.:['wru_id'=>'0','wru_ret'=>null,'wrole_id'=>null,'wrole_ret'=>null,'worker_id'=>null], //többszörös lánc!
+    //pl.:['wru_id'=>'0','wru_redir'=>null,'wrole_id'=>null,'wrole_ret'=>null,'worker_id'=>null], //többszörös lánc!
     //a trait setController->set_getT() ez alapján tölti fel a PAR['getT']-t.
     //Ha az aktuális url get paraméterei Között szerepel a tömb kulcsai közül valamelyik, akor azt  az url ben szereplő értékkell, bemásolja a PAR['getT']-be.
     //Ha az url-ben nem szerepel  akkor az itt szereplő értékkel kerül be a PAR['getT']-be
@@ -99,6 +105,10 @@ protected $val= [];//pl.:['wroleunit_id' => 'required|integer','end' => 'date_fo
  */
 protected $val_update= [];
 
+function set_redir(){
+    $obname=$this->BASE['obname'];
+    $this->BASE['ob']=new $obname();  
+}
 function set_ob(){
     $obname=$this->BASE['obname'];
     $this->BASE['ob']=new $obname();  
@@ -114,14 +124,25 @@ function call_func($funcT){
         }       
 }}
 /**
- * ha a controller azonosítójával redir érték érkezik (BASE['get_key']_redir)
- * akkor a redir tömb annak megfelelő kulcsú routjára irányít 
+ * ha a controller azonosítójával redir érték érkezik (PAR['get_key']_redir)
+ *  a $this->BASE['rutes']['base']-t felül írja vele
+ */
+public function   set_baserout(){
+    if(isset($this->PAR['getT'][$this->PAR['get_key'].'_redir']))
+    {$this->PAR['routes']['base']=$this->PAR['routes'][$this->PAR['getT'][$this->BASE['get_key'].'_redir']];}
+    
+ }
+
+
+/**
+ * ha a controller azonosítójával redir érték érkezik (PAR['get_key']_redir)
+ * akkor a routes tömb annak megfelelő kulcsú routjára irányít 
  * ha nincs akkor a $this->BASE['redir']['base'] kulcs alatt lévő routra
  */
 public function   base_redirect(){
     if(isset($this->PAR['getT'][$this->BASE['get_key'].'_redir']))
-    {$redir=$this->BASE['redir'][$this->PAR['getT'][$this->BASE['get_key'].'_redir']];}
-    else{$redir=$this->BASE['redir']['base'];}
+    {$redir=$this->PAR['routes'][$this->PAR['getT'][$this->PAR['get_key'].'_redir']];}
+    else{$redir=$this->PAR['routes']['base'];}
    return  redirect(\MoHandF::url($redir, $this->PAR['getT']));  
  }
 /**
