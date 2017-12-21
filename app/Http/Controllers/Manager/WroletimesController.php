@@ -6,30 +6,34 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
+use Illuminate\Http\Request;
 use App\Timetype;
 use App\Wroletime;
 use App\Wroleunit;
-use Illuminate\Http\Request;
+use App\Handler\MoController;
+
 use Session;
 
-class WroletimesController extends Controller
+//TODO megoldani hogy ha a wroleunitot törlik 
+//a hozzátartozó wroleimes-okat is törölje (cascade?)
+//különben ha nem valós wrolunit_id-ek vannak 
+//a wroleimes listázásnál 'try to get non object' hibát dob 
+
+class WroletimesController extends MoController
 {
     use \App\Handler\trt\crud\CrudWithSetfunc;
     use  \App\Handler\trt\SetController;
-    protected $PAR= [
+    protected $par= [
        // 'baseroute'=>'manager/wroletimes', // a redirect-be kerüt (base)
        'get_key'=>'wrtime', //láncnál ezzel az előtaggal azonosítja a rávonatkozó get tagokat
-       'redirect'=>['base'=>'manager/wroletimes','wru'=>'manager/wroleunits'], //A _GET ben ['get_key']._ret ben érkező értéket fordítja le routra pl.: wrtime_ret=wru esetén a route  manager/wroleunit lesz
+       'routes'=>['base'=>'manager/wroletimes','wru'=>'manager/wroleunits'], //A _GET ben ['get_key']._ret ben érkező értéket fordítja le routra pl.: wrtime_ret=wru esetén a route  manager/wroleunit lesz
         'view'=>'manager.wrunit_times', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
-        'crudview'=>'crudbase_2', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
+        'crudview'=>'crudbase_3', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
         'cim'=>'Műszak idők',
         'getT'=>['wru'=>'0'],   
         'search'=>false,   
     ];
-   
-    protected $TPAR= [];
-    protected $BASE= [
+    protected $bas= [
         //'search_column'=>'daytype_id,datum,managernote,usernote',
         'get'=>['wru_id'=>'0','wru_ret'=>null,'wrole_id'=>null,'wrole_ret'=>null,'worker_id'=>null], //Ha a wrolunitból hvjuk a wruvissza true lesz, a store az update és a delete visszaírányít az aktuális wroleunitra.mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be
         'get_post'=>[],//a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be ha van ilyen kulcs a postban azzal felülírja
@@ -38,7 +42,7 @@ class WroletimesController extends Controller
         'request'=>null,
         
     ];
-    protected $TBASE= [];
+
     protected $val= [
         'wroleunit_id' => 'required|integer',
         'timetype_id' => 'required|integer',
@@ -50,35 +54,23 @@ class WroletimesController extends Controller
         'pub' => 'integer'
     ];
     protected $val_edit= [];
-    function __construct(Request $request){
-        
-                $this->setTask();
-                $this->set_getT($request);
-                $obname=$this->BASE['obname'];
-                $this->BASE['ob']=new $obname();
-                View::share('param',$this->PAR);
-               }
 
-    public function index_set($ob,$keyword,$getT,$perPage)
+
+    public function index_set()
     {
-        if(isset($this->PAR['task']) && !empty($this->PAR['task']) )
-        {
-            $task=$this->PAR['task'];
-            return $this->$task();
-         }
-          
-        if($this->PAR['getT']['wru']>0){$where[]= ['wroleunit_id', '=', $this->PAR['getT']['wru']];}
+
+        if($this->PAR['getT']['wru_id']>0){$where[]= ['wroleunit_id', '=', $this->PAR['getT']['wru_id']];}
         else{$where[]= ['id', '<>','0']; }//hogx mindenképpen legyen where
     
-            $list =$ob->with('timetype','wroleunit')
+            $list =$this->BASE['ob']->with('wroleunit','timetype')
                     ->where($where )
                     ->orderBy('id', 'desc')
-                    ->paginate($perPage)->appends($getT) ;   
+                    ->paginate($this->BASE['perpage'])->appends($this->PAR['getT']) ;   
          
       // print_r($this->PAR['getT']);
         $data['list']=$list;
-        $data['wroleunit']=Wroleunit::get();
-        return $data;
+        $data['wroleunit']=Wroleunit::get()->toarray();
+        $this->BASE['data'] =$data;
     }
   
 
@@ -128,6 +120,7 @@ class WroletimesController extends Controller
             return redirect(\MoHandF::url($this->PAR['baseroute'], $this->PAR['getT']));
         }
     }
+ /*    
     public function del()
     { 
         $id=Input::get('id');
@@ -136,7 +129,7 @@ class WroletimesController extends Controller
         return redirect('/manager/wroleunits/'.$this->PAR['getT']['wru'].'/edit');
     }
 
-    public function destroy($id)
+   public function destroy($id)
     { 
         $this->destroy_set($id);
         Session::flash('flash_message', trans('mo.deleted'));
@@ -145,5 +138,5 @@ class WroletimesController extends Controller
         }else{  
         return redirect(\MoHandF::url($this->PAR['baseroute'], $this->PAR['getT']));
         }
-    }
+    }*/
 }

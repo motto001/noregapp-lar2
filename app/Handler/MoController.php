@@ -39,7 +39,7 @@ protected $PAR= [
     //Láncnál a _GET ben érkező ['get_key'].'_redir'  értéket fordítja le routra 
     //pl.: a writme 'get_key'-el rendelkező conroller esetén, a fenti példa routes-el
     //ha a 'getT'-ben: wrtime_redir=wru szrepel, a base_redirect()  a manager/wroleunits -ra irányít
-    'views'=>'', 
+    'view'=>'', 
     //pl.:'manager.wrunit_times'
     //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
     'crudview'=>'crudbase_2', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
@@ -63,7 +63,7 @@ protected $BASE= [
     'search_column'=>'',
     //pl.:'daytype_id,datum,managernote,usernote'
     // ha a search be van kapcsolva ezekben a mezőkben keres
-    'get'=>[],
+    'get'=>['wru_redir'=>null],
     //pl.:['wru_id'=>'0','wru_redir'=>null,'wrole_id'=>null,'wrole_ret'=>null,'worker_id'=>null], //többszörös lánc!
     //a trait setController->set_getT() ez alapján tölti fel a PAR['getT']-t.
     //Ha az aktuális url get paraméterei Között szerepel a tömb kulcsai közül valamelyik, akor azt  az url ben szereplő értékkell, bemásolja a PAR['getT']-be.
@@ -105,6 +105,11 @@ protected $val= [];//pl.:['wroleunit_id' => 'required|integer','end' => 'date_fo
  */
 protected $val_update= [];
 
+public function set_base()
+{
+$this->PAR= array_merge($this->PAR, $this->par);
+$this->BASE= array_merge($this->BASE, $this->bas);
+}
 function set_redir(){
     $obname=$this->BASE['obname'];
     $this->BASE['ob']=new $obname();  
@@ -151,6 +156,8 @@ public function   base_redirect(){
  public function   base_view($task='index'){
     $data=$this->BASE['data'];
     return view($this->PAR['view'].'.'.$task, compact('data')); 
+   //return \MoViewF::view( $this->PAR['view'].'.index',$data);
+
  }
     function __construct(Request $request){
 

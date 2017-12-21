@@ -20,15 +20,15 @@ class WroleunitsController extends \App\Handler\MoController
 
 protected $par= [    
     'get_key'=>'wru', //láncnál ezzel az előtaggal azonosítja a rávonatkozó get tagokat
-    'redirect'=>['base'=>'manager/wroleunits','wrole'=>'manager/wrole'],//A _GET ben ['get_key']._ret ben érkező értéket fordítja le routra pl.: wrtime_ret=wru esetén a route  manager/wroleunit lesz
+    'route'=>['base'=>'manager/wroleunits','wrole'=>'manager/wrole'],//A _GET ben ['get_key']._ret ben érkező értéket fordítja le routra pl.: wrtime_ret=wru esetén a route  manager/wroleunit lesz
     //'baseview'=>'workadmin.workerdays', //nem használt a view helyettesíti
     'view'=>'manager.wroleunits', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
-    'crudview'=>'crudbase_2', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
+    'crudview'=>'crudbase_3', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
     'cim'=>'Műszakok',       
 ];
 protected $bas= [
     'search'=>false,
-    'get'=>['wrole_id'=>null,'wrole_ret'=>null,'worker_id'=>null], //pl:'w_id'=>null a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be 
+    'get'=>['wrole_id'=>null,'worker_redir'=>null,'worker_id'=>null], //pl:'w_id'=>null a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be 
     'obname'=>'\App\Wroleunit',   
 ];
 protected $val=[
@@ -38,11 +38,7 @@ protected $val=[
     'note' => 'string|max:200|nullable',
     'pub' => 'integer'
 ];
-public function set_base()
-{
-$this->PAR= array_merge($this->PAR, $this->par);
-$this->BASE= array_merge($this->PAR, $this->bas);
-}
+
 public function index_set($ob,$keyword,$getT,$perPage)
 {
 

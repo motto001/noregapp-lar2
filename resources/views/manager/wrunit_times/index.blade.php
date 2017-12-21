@@ -1,8 +1,8 @@
 @extends($param['crudview'].'.index')
 @section('table')
               
-                 @foreach($data['wroleunit'] as $unit)
-                                <a href=" {!! MoHandF::url($param['baseroute'],$param['getT'],['wru'=>$unit['id']]) !!}" 
+                  @foreach($data['wroleunit'] as $unit)
+                                <a href=" {!! MoHandF::url($param['routes']['base'],$param['getT'],['wru'=>$unit['id']]) !!}" 
                                 title="Munkareng ciklus választás">
                           @if ($param['getT']['wru']==$unit['id'])    
                            <button class="btn btn-danger btn-xs">
@@ -12,7 +12,7 @@
                                     {!!    $unit['name'] !!}
                                 </button>
                                 </a>
-                   @endforeach  
+                   @endforeach 
              
 
       <div class="table-responsive">
@@ -34,13 +34,13 @@
                                         <td>
                                     {!! 
                                         MoHandF::linkButton([
-                                        'link'=> MoHandF::url($param['baseroute'].'/'.$item->id.'/edit',$param['getT']),
+                                        'link'=> MoHandF::url($param['routes']['base'].'/'.$item->id.'/edit',$param['getT']),
                                         'fa'=>'pencil-square-o']) 
                                     !!}
                                     {!!
                                          MoHandF::delButton([
                                         'tip'=>'del',
-                                        'link'=>MoHandF::url($param['baseroute'].'/'.$item->id,$param['getT']),
+                                        'link'=>MoHandF::url($param['routes']['base'].'/'.$item->id,$param['getT']),
                                         'fa'=>'trash-o']) 
                                     !!}
                                         </td>

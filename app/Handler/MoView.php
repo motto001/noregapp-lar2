@@ -10,7 +10,7 @@ static public $message='';
 function __construct(Request $request) {
     $this->request=$request;
 }
-    public function view( $view,$data,$dataname)
+    public function view( $view,$data,$dataname='data')
     {  
       //példa a conrollerben: 
       // use App\Facades\MoView; 

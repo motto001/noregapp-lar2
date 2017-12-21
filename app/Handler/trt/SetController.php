@@ -16,11 +16,11 @@ Trait SetController
 {
 
 /**
- * PAR['getT'] tölti fel az url get paramétereiből, ha a BASE['get'] aqlapján
+ * PAR['getT'] tölti fel az url get paramétereiből, ha a BASE['get'] aqlapján (ha ninc más $parkey megadva)
  * BASE['get'] értékei az alapértelmezett értékek. Ha null és nincs más érték,nem kerül be a PAR['getT']-be
  */
 function set_getT($parkey='get'){
-    $request=$this->BASE['request'];
+    //$request=$this->BASE['request'];
         foreach($this->BASE[$parkey] as $key=>$val){
             $val=Input::get($key) ?? $val;
             if($val!=null){
@@ -63,7 +63,7 @@ function getT_honosit(){
 /**
  * A PAR['task']-oz állítja be. A PAR-t a TPAR['task']-al a BASE-t TBASE['task']-al mergeli
  */
-    function setTask(){
+    function set_task(){
 
         $task=Input::get('task') ?? '';
 

@@ -42,9 +42,10 @@ Trait CrudWithSetfunc
             $funcT=$this->TBASE['index']['task_func'] ?? ['index_set'];
             $this->call_func($funcT);
             $data= $this->BASE['data'];
-            if(is_callable([$this, 'index_view'])) { $this->index_view();}  
-            else{ $this->base_view('index');}
-        
+           if(method_exists($this, 'index_view')) {return  $this->index_view();}  
+            else{return $this->base_view('index');}
+       // return  \MoViewF::view( $this->PAR['view'].'.index',$data);
+            
     }
   
     public function create_set() {}
@@ -53,8 +54,8 @@ Trait CrudWithSetfunc
         $funcT=$this->TBASE['create']['task_func'] ?? ['create_set'];
         $this->call_func($funcT);
        
-        if(is_callable([$this, 'create_view'])) { $this->create_view();}  
-        else{$this->base_view('create');}
+        if(method_exists($this, 'create_view')) {return  $this->create_view();}  
+        else{return $this->base_view('create');}
     }
 
     public function store_set(){ }
@@ -67,7 +68,7 @@ Trait CrudWithSetfunc
         $this->call_func($funcT);
         $this->BASE['ob']->create($this->BASE['data']);
         Session::flash('flash_message', trans('mo.itemadded'));
-        if(is_callable([$this, 'store_redirect'])) {$this->store_redirect();}  
+        if(method_exists($this, 'store_redirect')) {$this->store_redirect();}  
         else{ $this->base_redirect();}
     }
 
@@ -80,8 +81,8 @@ Trait CrudWithSetfunc
         $funcT=$this->TBASE['edit']['task_func'] ?? ['edit_set'];
         $this->call_func($funcT);
         $data=$this->BASE['data'];
-        if(is_callable([$this, 'edit_view'])) {$this->edit_view();}  
-        else{ $this->base_view('edit');}
+        if(method_exists($this, 'edit_view')) {return $this->edit_view();}  
+        else{return  $this->base_view('edit');}
     }
 
     public function update_set(){}
@@ -100,7 +101,7 @@ Trait CrudWithSetfunc
         $ob = $this->BASE['ob']->findOrFail($id);
         $ob->update($this->BASE['data']);
         Session::flash('flash_message',  trans('mo.item_updated'));
-        if(is_callable([$this, 'update_redirect'])) {$this->update_redirect();}  
+        if(method_exists($this, 'update_redirect')) {$this->update_redirect();}  
         else{ $this->base_redirect();}
 
     }
@@ -113,7 +114,7 @@ Trait CrudWithSetfunc
         $funcT=$this->TBASE['destroy']['task_func'] ?? ['destroy_set'];
         $this->call_func($funcT);
         Session::flash('flash_message', trans('mo.deleted'));
-        if(is_callable([$this, 'destroy_redirect'])) {$this->destroy_redirect();}  
+        if(method_exists($this, 'destroy_redirect')) {$this->destroy_redirect();}  
         else{ $this->base_redirect();}
        // return redirect(\MoHandF::url($this->PAR['route'], $this->PAR['getT']));
     }
@@ -128,8 +129,8 @@ Trait CrudWithSetfunc
         $this->call_func($funcT);
 
         $data=$this->BASE['data'];
-        if(is_callable([$this, 'destroy_view'])) {$this->destroy_view();}  
-        else{$this->base_view('show');}
+        if(method_exists($this, 'destroy_view')) {return $this->destroy_view();}  
+        else{return $this->base_view('show');}
         //return view($this->PAR['view'].'.show', compact('data'));
     } 
 }

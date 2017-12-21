@@ -17,10 +17,10 @@ use  \App\Handler\trt\crud\CrudWithSetfunc;
 use  \App\Handler\trt\SetController;
 
 public function set_base(){
- $this->PAR['route']= 'manager/wroles';
- $this->PAR['baseroute']= 'manager/wroles';
+ $this->PAR['routes']['base']= 'manager/wroles';
+ $this->PAR['routes']['worker']= 'manager/worker';
  $this->PAR['view']= 'manager.wroles';
- $this->PAR['crudview']= 'crudbase_2';    
+ $this->PAR['crudview']= 'crudbase_3';    
  $this->PAR['cim']= 'Munkarendek';
 // $this->PAR['search']= false;
  $this->BASE['obname']= '\App\Wrole'; 
