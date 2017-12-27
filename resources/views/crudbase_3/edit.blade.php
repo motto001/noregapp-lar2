@@ -6,9 +6,9 @@
            
 @endif   
  @if(isset($data['cancelurl']))
-    @php $cancelurl='/'.$data['cancelurl']; @endphp
+    @php $cancelurl='/'.$param['cancelurl']; @endphp
  @else
-   @php $cancelurl=MoHandF::url($param['baseroute'],$param['getT']); @endphp   
+   @php $cancelurl=MoHandF::url($param['routes']['base'],$param['getT']); @endphp   
  @endif
 <section id="main-content">  
     <section class="wrapper">

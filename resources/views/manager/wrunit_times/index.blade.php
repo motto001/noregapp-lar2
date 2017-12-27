@@ -1,10 +1,19 @@
 @extends($param['crudview'].'.index')
 @section('table')
-              
+<a href=" {!! MoHandF::url($param['routes']['base'],$param['getT'],['wru_id'=>0]) !!}" 
+    title="Munkarend ciklus választás">
+@if ($param['getT']['wru_id']==0)    
+<button class="btn btn-danger btn-xs">
+@else
+<button class="btn btn-warning btn-xs">
+@endif
+    Mind
+    </button>
+    </a>        
                   @foreach($data['wroleunit'] as $unit)
-                                <a href=" {!! MoHandF::url($param['routes']['base'],$param['getT'],['wru'=>$unit['id']]) !!}" 
+                                <a href=" {!! MoHandF::url($param['routes']['base'],$param['getT'],['wru_id'=>$unit['id']]) !!}" 
                                 title="Munkareng ciklus választás">
-                          @if ($param['getT']['wru']==$unit['id'])    
+                          @if ($param['getT']['wru_id']==$unit['id'])    
                            <button class="btn btn-danger btn-xs">
                           @else
                           <button class="btn btn-warning btn-xs">

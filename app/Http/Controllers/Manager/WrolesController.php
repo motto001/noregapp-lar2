@@ -56,26 +56,9 @@ public function set_base(){
         }
         $this->BASE['data']['list']=$wroles;
     }
-
-
-
-    public function wroleunitSelectToSave($wroleunit_id,$wrole_id)
+    public function edit_set()
     {
-        DB::table('wroleunit_wrole')->insert(
-            ['wroleunit_id' =>$wroleunit_id , 'wrole_id' => $wrole_id]
-        );
-        return redirect('manager/wroles/'.$wrole_id.'/edit');
+        $this->BASE['data']['wroleunits']=[];
+        $this->BASE['data']['wroleunits_all']=Wrole::get();
     }
-    public function wroleunitToDel($wroleunit_id,$wrole_id)
-    {
-      DB::table('wroleunit_wrole')
-        ->where('wroleunit_id', '=', $wroleunit_id)
-        ->where('wrole_id', '=', $wrole_id)
-        ->delete();;
-        return redirect('manager/wroles/'.$wrole_id.'/edit');
-    }
-
-
-
-
 }

@@ -145,9 +145,10 @@ public function   set_baserout(){
  * ha nincs akkor a $this->BASE['redir']['base'] kulcs alatt lévő routra
  */
 public function   base_redirect(){
-    if(isset($this->PAR['getT'][$this->BASE['get_key'].'_redir']))
+    if(isset($this->PAR['getT'][$this->PAR['get_key'].'_redir']))
     {$redir=$this->PAR['routes'][$this->PAR['getT'][$this->PAR['get_key'].'_redir']];}
     else{$redir=$this->PAR['routes']['base'];}
+   // echo 'nnnnnnnnnnn'.$redir;
    return  redirect(\MoHandF::url($redir, $this->PAR['getT']));  
  }
 /**

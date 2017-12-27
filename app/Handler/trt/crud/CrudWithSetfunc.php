@@ -68,8 +68,8 @@ Trait CrudWithSetfunc
         $this->call_func($funcT);
         $this->BASE['ob']->create($this->BASE['data']);
         Session::flash('flash_message', trans('mo.itemadded'));
-        if(method_exists($this, 'store_redirect')) {$this->store_redirect();}  
-        else{ $this->base_redirect();}
+        if(method_exists($this, 'store_redirect')) {return $this->store_redirect();}  
+        else{return $this->base_redirect();}
     }
 
     public function edit_set() {}
@@ -101,8 +101,8 @@ Trait CrudWithSetfunc
         $ob = $this->BASE['ob']->findOrFail($id);
         $ob->update($this->BASE['data']);
         Session::flash('flash_message',  trans('mo.item_updated'));
-        if(method_exists($this, 'update_redirect')) {$this->update_redirect();}  
-        else{ $this->base_redirect();}
+        if(method_exists($this, 'update_redirect')) {return $this->update_redirect();}  
+        else{return $this->base_redirect();}
 
     }
 
@@ -114,8 +114,8 @@ Trait CrudWithSetfunc
         $funcT=$this->TBASE['destroy']['task_func'] ?? ['destroy_set'];
         $this->call_func($funcT);
         Session::flash('flash_message', trans('mo.deleted'));
-        if(method_exists($this, 'destroy_redirect')) {$this->destroy_redirect();}  
-        else{ $this->base_redirect();}
+        if(method_exists($this, 'destroy_redirect')) {return $this->destroy_redirect();}  
+        else{return $this->base_redirect();}
        // return redirect(\MoHandF::url($this->PAR['route'], $this->PAR['getT']));
     }
 

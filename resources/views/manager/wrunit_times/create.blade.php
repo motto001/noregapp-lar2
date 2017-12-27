@@ -1,11 +1,11 @@
 @extends($param['crudview'].'.create')
 @section('form')
 
-@if($param['getT']['wru']<1)
+@if($param['getT']['wru_id']<1)
       @foreach($data['wroleunit']  as $unit)
-                                <a href=" {!! MoHandF::url($param['baseroute'].'/create',$param['getT'],['wru'=>$unit['id']]) !!}" 
+                                <a href=" {!! MoHandF::url($param['routes']['base'].'/create',$param['getT'],['wru_id'=>$unit['id']]) !!}" 
                                 title="Munkareng ciklus választás"
-                          @if ($param['getT']['wru']==$unit['id'])    
+                          @if ($param['getT']['wru_id']==$unit['id'])    
                            class="btn btn-danger btn-xs">
                           @else
                           class="btn btn-warning btn-xs">
@@ -15,7 +15,7 @@
                                 </a>
                    @endforeach  
 @else
- {!! Form::hidden('wroleunit_id', $param['getT']['wru']) !!}
+ {!! Form::hidden('wroleunit_id', $param['getT']['wru_id']) !!}
 
 
 
