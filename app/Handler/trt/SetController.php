@@ -65,9 +65,7 @@ function getT_honosit(){
  */
     function set_task(){
 
-        $task=Input::get('task') ?? '';
-
-        if($task==''){$task= \Route::getCurrentRoute()->getActionMethod();}
+        $task=Input::get('task') ?? \Route::getCurrentRoute()->getActionMethod();
         $this->PAR['task'] =$task;
 
         if(isset($this->TPAR) && isset($this->TPAR[$task]))

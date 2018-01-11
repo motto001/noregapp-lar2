@@ -24,7 +24,8 @@ public function set_base(){
  $this->PAR['cim']= 'Munkarendek';
 // $this->PAR['search']= false;
  $this->BASE['obname']= '\App\Wrole'; 
- $this->BASE['func']= ['set_ob']; 
+ $this->BASE['func']= ['set_ob','set_getT','set_task']; 
+ $this->BASE['get']= ['unitid'=>null,'wroleid'=>null]; 
 
 }
  protected $val = [
@@ -58,7 +59,41 @@ public function set_base(){
     }
     public function edit_set()
     {
-        $this->BASE['data']['wroleunits']=[];
-        $this->BASE['data']['wroleunits_all']=Wrole::get();
+
+            $id=$this->BASE['id'];
+            $data = Wrole::with('wroleunit')->findOrFail($id);
+            //$data['wroleunits']=
+            $data['id']=$id ;
+            $this->BASE['data'] = $data;
+
+      //  $this->BASE['data']['wroleunits']=[];
+        $this->BASE['data']['wroleunits_all']=Wroleunit::get();
+    }
+    public function addunit()
+    {
+       // $this->BASE['getT']['unitid']; $this->BASE['getT']['wroleid'];
+       DB::table('wrole_wroleunit')->insert(
+        ['wrole_id' => $this->PAR['getT']['wroleid'], 'wroleunit_id' => $this->PAR['getT']['unitid']]);
+    //  return  redirect(\MoHandF::url('manager/wroles/'.$this->PAR['getT']['wroleid'].'/edit', $this->PAR['getT']));  
+   
+   $url=\MoHandF::url('manager/wroles/'.$this->PAR['getT']['wroleid'].'/edit', $this->PAR['getT']);
+   //echo $url;
+   header("Location:$url");
+    die();
+  
+    // return  redirect('http://localhost:8000/manager/wroles/4/edit');
+    //die();
+    // echo '--wroleid:'.$this->PAR['getT']['wroleid'].'--unitid:'.$this->PAR['getT']['unitid'].'-basetask:'.\Route::getCurrentRoute()->getActionMethod().'-task:'.\Route::getCurrentRoute()->getActionMethod();
+ // echo \MoHandF::url('manager/wroles/'.$this->PAR['getT']['wroleid'].'/edit', $this->PAR['getT']);
+    }
+    public function delunit()
+    {
+       // $this->BASE['getT']['unitid']; $this->BASE['getT']['wroleid'];
+       DB::table('wrole_wroleunit')->where([
+           ['wrole_id', '=', $this->PAR['getT']['wroleid']],['wroleunit_id', '=', $this->PAR['getT']['unitid']]])
+           ->delete(); 
+           $url=\MoHandF::url('manager/wroles/'.$this->PAR['getT']['wroleid'].'/edit', $this->PAR['getT']);
+           header("Location:$url");
+           die();  
     }
 }

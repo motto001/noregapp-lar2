@@ -4,7 +4,7 @@ namespace App\Handler;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\View;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Input;
 /*
 CRUD lánc késztíés:
  a  crud hívó linkjébe beletesszük a hívott crud viszarérő route azonosítóját 
@@ -88,7 +88,7 @@ protected $BASE= [
  * taskok base értékei, a Handler\trt\SetController->set_task() az aktuális task kulcsa alatt szereplő értékekkel felül írja a $BASE értékeit
  */
 protected $TBASE= [
-    'index'=> ['task_func'=>['index_set']], // az aktuális task (index) által lefuttatni kívánt funkciók 
+    'index'=> ['task_func'=>['index_base','index_set']], // az aktuális task (index) által lefuttatni kívánt funkciók 
     'create'=> ['task_func'=>['create_set']],
     'store'=> ['task_func'=>['store_set']],
     'edit'=> ['task_func'=>['edit_set']],
@@ -166,9 +166,11 @@ public function   base_redirect(){
         $this->set_base();  
         $this->call_func($this->BASE['func']);       
         $share_param_name=$this->PAR['varname'] ?? 'param';
-        View::share($share_param_name,$this->PAR);     
-        $task=$this->PAR['task'] ?? \Route::getCurrentRoute()->getActionMethod();
-        if($task!=\Route::getCurrentRoute()->getActionMethod()) {return $this->$task();}
+        View::share($share_param_name,$this->PAR); 
+    //ÁTKERÜLT AZ INDEXBE MERT AZ INDEX MINDENKÉPPEN LEFUT HA NEM ÉRVÉNYES AZ URL
+      //  $task=Input::get('task') ?? \Route::getCurrentRoute()->getActionMethod();
+       // echo $task;
+      //  if($task!= \Route::getCurrentRoute()->getActionMethod()) {return $this->$task();}
        }
 
 }

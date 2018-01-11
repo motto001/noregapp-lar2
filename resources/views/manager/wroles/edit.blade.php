@@ -9,17 +9,14 @@
     </div>
 </div>
 <div class="form-group ">    
-        {!! Form::label('muszak', 'Műszak hozzáadása:', ['class' => 'col-md-3 control-label']) !!}   
+        {!! Form::label('muszak', 'Műszak hozzáadása:', ['class' => 'col-md-3 control-label']) !!} 
+     
 <div class="col-md-7">    
-
+   
 @foreach($data['wroleunits_all'] as $unit)
-    <a href=" {!! MoHandF::url($param['routes']['base'],$param['getT'],['wroleunit_id'=>$unit['id'],'task'=>'add_wroleunit']) !!}" 
-    title="">
-
-<button class="btn btn-warning btn-xs">
-
-        {!!    $unit['name'] !!}
-    </button>
+    <a href=" {!! MoHandF::url($param['routes']['base'],$param['getT'],['wroleid'=>$data['id'],'unitid'=>$unit['id'],'task'=>'addunit']) !!}" 
+    title="" class="btn btn-warning btn-xs">
+        {!!  $unit['name'] !!}
     </a>
 @endforeach
 
@@ -35,7 +32,7 @@
                 </tr>
             </thead>
             <tbody>
-            @foreach($data['wroleunits'] as $item)
+            @foreach($data->wroleunit as $item)
                 <tr>
                     <td>{{ $item->name }}</td><td>{{ $item->unit }}</td><td>{{ $item->long }}</td>
                     <td>
@@ -44,13 +41,10 @@
                     @endforeach
                     </td>
                     <td>
-         
-                {!!
-                     MoHandF::delButton([
-                    'tip'=>'del',
-                    'link'=>MoHandF::url($param['routes']['base'],$param['getT'],['wroleunit_id'=>$item->id,'task'=>'del_wroleunit']),
-                    'fa'=>'trash-o']) 
-                !!}
+                        <a href=" {!! MoHandF::url($param['routes']['base'],$param['getT'],['wroleid'=>$data['id'],'unitid'=>$unit['id'],'task'=>'delunit']) !!}" 
+                            title="" class="btn btn-danger btn-xs" ><i class="fa fa-trash-o" aria-hidden="true"></i>
+                            
+                        </a>
                     </td>
                 </tr>
             @endforeach

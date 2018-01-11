@@ -3,7 +3,7 @@
 namespace App\Handler\trt\crud;
 use Illuminate\Http\Request;
 use Session;
-
+use Illuminate\Support\Facades\Input;
 Trait CrudWithSetfunc
 {
 
@@ -21,27 +21,40 @@ Trait CrudWithSetfunc
             if(empty($res)){$res[]=['id', '>', "0"];} 
     return $res;
     }
-
-    public function index_set(){
+    public function index_set(){ 
+      //  
+     }
+    public function index_base(){
         $ob=$this->BASE['ob'];
         $perPage=$this->PAR['perpage'] ?? 50;
         $getT=$this->PAR['getT'] ?? ['a'=>'a'];
         $keyword = $this->BASE['request']->get('search') ?? '';
-        if (empty($keyword)) {  
-            $this->BASE['data'] =$ob->paginate($perPage)->appends($getT) ;   
+        $with=$this->BASE['with'] ?? '';
+        if ($with=='') {  
+            $ob_base =$ob ;   
         } else {
-            $this->BASE['data'] = $ob->where($this->get_searchT($keyword,'first'))
+            $ob_base = $ob->with($with);
+        } 
+
+        if (empty($keyword)) {  
+            $this->BASE['data']['list'] =$ob_base->paginate($perPage)->appends($getT) ;   
+        } else {
+            $this->BASE['data']['list'] = $ob_base->where($this->get_searchT($keyword,'first'))
                             ->orWhere($this->get_searchT($keyword,'firstno'))
                             //->orderBy('id', 'desc')
                             ->paginate($perPage)->appends($getT) ;
-        }  
+        }
+        
     }
     public function index(Request $request)
     {
-      
-            $funcT=$this->TBASE['index']['task_func'] ?? ['index_set'];
+        $task=Input::get('task') ?? \Route::getCurrentRoute()->getActionMethod();
+        if($task!= \Route::getCurrentRoute()->getActionMethod()) {return $this->$task();}
+
+            $funcT=$this->TBASE['index']['task_func'] ?? ['index_set','index_base'];
             $this->call_func($funcT);
-            $data= $this->BASE['data'];
+          //  $data= $this->BASE['data'];
+
            if(method_exists($this, 'index_view')) {return  $this->index_view();}  
             else{return $this->base_view('index');}
        // return  \MoViewF::view( $this->PAR['view'].'.index',$data);

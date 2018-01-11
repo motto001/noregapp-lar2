@@ -24,7 +24,7 @@ class WroletimesController extends MoController
     use \App\Handler\trt\crud\CrudWithSetfunc;
     use  \App\Handler\trt\SetController;
     protected $par= [
-       // 'baseroute'=>'manager/wroletimes', // a redirect-be kerüt (base)
+       // 'baseroute'=>'manager/wroletimes', // a routes-be kerüt (base)
        'get_key'=>'wrtime', //láncnál ezzel az előtaggal azonosítja a rávonatkozó get tagokat
        'routes'=>['base'=>'manager/wroletimes','wru'=>'manager/wroleunits'], //A _GET ben ['get_key']._ret ben érkező értéket fordítja le routra pl.: wrtime_ret=wru esetén a route  manager/wroleunit lesz
         'view'=>'manager.wrunit_times', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
