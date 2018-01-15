@@ -28,7 +28,9 @@ Trait CrudWithSetfunc
         $ob=$this->BASE['ob'];
         $perPage=$this->PAR['perpage'] ?? 50;
         $getT=$this->PAR['getT'] ?? ['a'=>'a'];
-        $keyword = $this->BASE['request']->get('search') ?? '';
+
+        if(is_callable([$this->BASE['request'], 'get'])) {$keyword = $this->BASE['request']->get('search') ?? '';} 
+        else{$keyword = '';}
         $with=$this->BASE['with'] ?? '';
         if ($with=='') {  
             $ob_base =$ob ;   
@@ -48,9 +50,7 @@ Trait CrudWithSetfunc
     }
     public function index(Request $request)
     {
-        $task=Input::get('task') ?? \Route::getCurrentRoute()->getActionMethod();
-        if($task!= \Route::getCurrentRoute()->getActionMethod()) {return $this->$task();}
-
+    
             $funcT=$this->TBASE['index']['task_func'] ?? ['index_set','index_base'];
             $this->call_func($funcT);
           //  $data= $this->BASE['data'];
@@ -77,9 +77,12 @@ Trait CrudWithSetfunc
         
         $this->validate($request,$this->val );
         $this->BASE['data'] = $request->all();
+       
+        $this->BASE['ob_res']= $this->BASE['ob']->create($this->BASE['data']);
+ 
         $funcT=$this->TBASE['store']['task_func'] ?? ['store_set'];
         $this->call_func($funcT);
-        $this->BASE['ob']->create($this->BASE['data']);
+
         Session::flash('flash_message', trans('mo.itemadded'));
         if(method_exists($this, 'store_redirect')) {return $this->store_redirect();}  
         else{return $this->base_redirect();}
@@ -102,17 +105,19 @@ Trait CrudWithSetfunc
     public function update($id, Request $request)
     {
         $this->BASE['id']=$id;
+        
         $valT=$this->val_update ?? $this->val;
 
         $this->validate($request,$valT );
         $requestData = $request->all();
         $this->BASE['data'] = $request->all();
 
+        $this->BASE['ob_res']=$this->BASE['ob']->findOrFail($id);
+        $this->BASE['ob_res']->update($this->BASE['data']);
+
         $funcT=$this->TBASE['update']['task_func'] ?? ['update_set'];
         $this->call_func($funcT);
 
-        $ob = $this->BASE['ob']->findOrFail($id);
-        $ob->update($this->BASE['data']);
         Session::flash('flash_message',  trans('mo.item_updated'));
         if(method_exists($this, 'update_redirect')) {return $this->update_redirect();}  
         else{return $this->base_redirect();}
@@ -123,9 +128,11 @@ Trait CrudWithSetfunc
     public function destroy($id)
     { 
         $this->BASE['id']=$id;
-        $this->BASE['ob']->destroy($id);
+        $this->BASE['ob_res']= $this->BASE['ob']->destroy($id);
+
         $funcT=$this->TBASE['destroy']['task_func'] ?? ['destroy_set'];
         $this->call_func($funcT);
+
         Session::flash('flash_message', trans('mo.deleted'));
         if(method_exists($this, 'destroy_redirect')) {return $this->destroy_redirect();}  
         else{return $this->base_redirect();}

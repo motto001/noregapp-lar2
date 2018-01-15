@@ -4,14 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Workerwrole extends Model
+class Workertimeframe extends Model
 {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'worker_wroles';
+    protected $table = 'worker_timeframes';
 
     /**
     * The database primary key value.
@@ -25,7 +25,7 @@ class Workerwrole extends Model
      *
      * @var array
      */
-    protected $fillable = ['worker_id', 'wrole_id', 'start', 'end'];
+    protected $fillable = ['worker_id', 'timeframe_id', 'start', 'end'];
     //protected $guarded = [];
     public function worker_with_user()
     {
@@ -36,9 +36,9 @@ class Workerwrole extends Model
     {
         return $this->belongsTo('App\Worker');
     }
-    public function wrole()
+    public function timeframe()
     {
-        return $this->belongsTo('App\Wrole');
+        return $this->belongsTo('App\Timeframe');
     }
     public function wroleFull()
     {

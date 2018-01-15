@@ -25,25 +25,20 @@ class Worker extends Model
      *
      * @var array
      */
-    protected $fillable = ['user_id', 'status_id', 'workertype_id','workergroup_id', 'salary', 'salary_type', 'position', 'foto', 'fullname','cim', 'tel', 'birth', 'ado', 'tb', 'start', 'end', 'note', 'pub'];
-    //protected $guarded = [];
-   
-    public function timeframe()
+    protected $fillable = ['user_id', 'wrole_id', 'status_id', 'workertype_id', 'workergroup_id', 'salary', 'salary_type', 'position', 'foto', 'fullname', 'cim', 'tel', 'birth', 'ado', 'tb', 'start', 'end', 'note', 'pub'];
+
+    public function workertimeframe()
     {
-        return $this->belongsToMany('App\Timeframe','worker_timeframe');
+        return $this->hasMany('App\Workertimeframe');
     }
 
     public function user()
     {
         return $this->belongsTo('App\User');
     }
-    public function workerWrole()
+    public function workerwrole()
     {
-        return $this->hasMany('App\WorkerWrole')->with('wrole');
-    }
-    public function workerWroleFull()
-    {
-        return $this->hasMany('App\WorkerWrole')->with('wrolefull');
+        return $this->hasMany('App\Workerwrole');
     }
     public function status()
     {
@@ -69,6 +64,5 @@ class Worker extends Model
     {
         return $this->hasMany('App\Chworkertime');
     }
-   
     
 }

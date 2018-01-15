@@ -4,19 +4,15 @@
 @section('content')
             @include('admin.sidebar')          
 @endif 
- @if(isset($param['linkT']['create']))
-    @php
-    $createlink=$param['linkT']['create'];
-    @endphp
- @else 
-    @php
-     $createlink=MoHandF::url($param['routes']['base'].'/create',$param['getT']);
-    @endphp
- @endif
 
-    @php
-     if(!isset($param['search'])){$param['search']=true;}
-    @endphp
+@php 
+$createlink=$param['routes']['create'] ?? MoHandF::url($param['routes']['base'].'/create',$param['getT']);
+$cim=$param['cim'] ?? '';
+$addbutton_label=$param['addbutton_label'] ?? 'Új '.$cim;
+if(!isset($param['search'])){$param['search']=true;}
+$create_button=$param['create_button'] ?? true;
+@endphp
+
 
 
 <section id="main-content">  
@@ -27,21 +23,14 @@
                     <div class="panel-heading">{{  $param['cim'] or ''  }} lista</div>
                     <div class="panel-body">
                  
-               
+                @if($create_button)
                       
                         <a href="{!! $createlink !!} " class="btn btn-success btn-sm" title="Add New Wroletime">
-                            <i class="fa fa-plus" aria-hidden="true"></i> Új {{  $param['cim'] or ''  }}
+                            <i class="fa fa-plus" aria-hidden="true"></i>  {{  $addbutton_label  }}
                         </a>
- @if(isset($param['linkT']['cancel']))
- 
-    <a href="{{ '/'.$param['linkT']['cancel'] }}" title="Cancel"><button class="btn btn-warning btn-sm">
-    <i class="fa fa-arrow-left" aria-hidden="true"></i> Vissza</button></a>
-
- @endif
-
+                @endif     
+                        <br />
                         
-                        <br />
-                        <br />
       @if($param['search'])
                         {!! Form::open(['method' => 'GET', 'url' =>  MoHandF::url($param['routes']['base'],$param['getT']) , 
                         'class' => 'navbar-form navbar-right', 'role' => 'search'])  !!}

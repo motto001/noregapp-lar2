@@ -27,13 +27,14 @@
                     {{ str_limit($item->managernote, 20,  '...') }}
                 </td>  
                 <td>
-      <a href="{{'/manager/wroletimes/'.$item->id.'/edit?wru=3&amp;wruvissza=true'}}" class="btn btn-primary btn-xs">
-      <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-       </a>
-   
-    <a href="{{'/manager/wroletimes/?task=del&amp;id='.$item->id.'&amp;wru=3&amp;wruvissza=true'}}"class="btn btn-danger btn-xs">
-    <i class="fa fa-trash-o" aria-hidden="true"></i>
-    </a>
+                    <a href="{{ MoHandF::url('manager/wroletimes/'.$item->id.'/edit',$param['getT'],['wru_id'=>$data['id'],'wrtime_redir'=>'wru']) }} "
+                        class="btn btn-primary btn-xs">
+                       <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                        </a>
+                        <a href="{{ MoHandF::url('manager/wroletimes/',$param['getT'],['task'=>'del','wru_id'=>$data['id'],'wrtime_redir'=>'wru']) }} "
+                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                        </a>
+  
                 </td>
             </tr>
         @endforeach
@@ -41,7 +42,8 @@
     </table>
     </div>
 
-<a href="{{ '/manager/wroletimes/create?wru='.$data->id.'&wruvissza=true' }}" class="btn btn-success btn-sm" title="Add New Wroletime">
+<a href="{{ MoHandF::url('manager/wroletimes/create',$param['getT'],['wru_id'=>$data['id'],'wrtime_redir'=>'wru']) }}" 
+    class="btn btn-success btn-sm" title="Add New Wroletime">
     <i class="fa fa-plus" aria-hidden="true"></i> Idő hozzáadása
 </a>
 

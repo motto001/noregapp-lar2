@@ -16,30 +16,39 @@ class WrolesController extends \App\Handler\MoController
 use  \App\Handler\trt\crud\CrudWithSetfunc;
 use  \App\Handler\trt\SetController;
 
-public function set_base(){
- $this->PAR['routes']['base']= 'manager/wroles';
- $this->PAR['routes']['worker']= 'manager/worker';
- $this->PAR['view']= 'manager.wroles';
- $this->PAR['crudview']= 'crudbase_3';    
- $this->PAR['cim']= 'Munkarendek';
-// $this->PAR['search']= false;
- $this->BASE['obname']= '\App\Wrole'; 
- $this->BASE['func']= ['set_ob','set_getT','set_task']; 
- $this->BASE['get']= ['unitid'=>null,'wroleid'=>null]; 
+protected $par= [    
+    'get_key'=>'wrole', //láncnál ezzel az előtaggal azonosítja a rávonatkozó get tagokat
+    'routes'=>['base'=>'manager/wroles','worker'=>'manager/worker'],//A _GET ben ['get_key']._ret ben érkező értéket fordítja le routra pl.: wrtime_ret=wru esetén a route  manager/wroleunit lesz
+    //'baseview'=>'workadmin.workerdays', //nem használt a view helyettesíti
+    'view'=>'manager.wroles', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
+    'crudview'=>'crudbase_3', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
+    'cim'=>'Munkarendek',       
+];
+protected $base= [
+    'search'=>false,
+    'with'=>'wroleunit',
+    'get'=>['wrole_id'=>null,'unit_id'=>null,'wrole_redir'=>null,'worker_id'=>null], //pl:'w_id'=>null a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be 
+    'obname'=>'\App\Wrole',   
+    'func'=>['set_ob','set_getT','set_redir','set_task'],  
+];
 
-}
+
  protected $val = [
         'name' => 'required|string|max:200',
         'note' => 'string|max:200|nullable',
         'start' => 'string|max:200|nullable',
         'pub' => 'integer'
  ];
-
+ public function edit_set()
+ {
+     $this->BASE['data']['wroleunits_all']=Wroleunit::get();
+ }
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\View\View
-     */
+    */
+    /*
     public function index_set()
     {
         $request=$this->BASE['request'];
@@ -57,43 +66,25 @@ public function set_base(){
         }
         $this->BASE['data']['list']=$wroles;
     }
-    public function edit_set()
-    {
-
-            $id=$this->BASE['id'];
-            $data = Wrole::with('wroleunit')->findOrFail($id);
-            //$data['wroleunits']=
-            $data['id']=$id ;
-            $this->BASE['data'] = $data;
-
-      //  $this->BASE['data']['wroleunits']=[];
-        $this->BASE['data']['wroleunits_all']=Wroleunit::get();
-    }
+ */
     public function addunit()
     {
-       // $this->BASE['getT']['unitid']; $this->BASE['getT']['wroleid'];
-       DB::table('wrole_wroleunit')->insert(
-        ['wrole_id' => $this->PAR['getT']['wroleid'], 'wroleunit_id' => $this->PAR['getT']['unitid']]);
-    //  return  redirect(\MoHandF::url('manager/wroles/'.$this->PAR['getT']['wroleid'].'/edit', $this->PAR['getT']));  
+         DB::table('wrole_wroleunit')->insert(
+        ['wrole_id' => $this->PAR['getT']['wrole_id'], 'wroleunit_id' => $this->PAR['getT']['unit_id']]);
+    //  return  redirect(\MoHandF::url('manager/wroles/'.$this->PAR['getT']['wrole_id'].'/edit', $this->PAR['getT']));  
    
-   $url=\MoHandF::url('manager/wroles/'.$this->PAR['getT']['wroleid'].'/edit', $this->PAR['getT']);
-   //echo $url;
-   header("Location:$url");
-    die();
-  
-    // return  redirect('http://localhost:8000/manager/wroles/4/edit');
-    //die();
-    // echo '--wroleid:'.$this->PAR['getT']['wroleid'].'--unitid:'.$this->PAR['getT']['unitid'].'-basetask:'.\Route::getCurrentRoute()->getActionMethod().'-task:'.\Route::getCurrentRoute()->getActionMethod();
- // echo \MoHandF::url('manager/wroles/'.$this->PAR['getT']['wroleid'].'/edit', $this->PAR['getT']);
-    }
+         $url=\MoHandF::url('manager/wroles/'.$this->PAR['getT']['wrole_id'].'/edit', $this->PAR['getT']);
+ 
+         header("Location:$url");
+         die();
+   }
     public function delunit()
     {
-       // $this->BASE['getT']['unitid']; $this->BASE['getT']['wroleid'];
-       DB::table('wrole_wroleunit')->where([
-           ['wrole_id', '=', $this->PAR['getT']['wroleid']],['wroleunit_id', '=', $this->PAR['getT']['unitid']]])
-           ->delete(); 
-           $url=\MoHandF::url('manager/wroles/'.$this->PAR['getT']['wroleid'].'/edit', $this->PAR['getT']);
-           header("Location:$url");
-           die();  
+        DB::table('wrole_wroleunit')->where([
+        ['wrole_id', '=', $this->PAR['getT']['wrole_id']],['wroleunit_id', '=', $this->PAR['getT']['unit_id']]])
+        ->delete(); 
+        $url=\MoHandF::url('manager/wroles/'.$this->PAR['getT']['wrole_id'].'/edit', $this->PAR['getT']);
+        header("Location:$url");
+        die();  
     }
 }

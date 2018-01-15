@@ -6,12 +6,11 @@
 @include('admin.sidebar')
     
 @endif   
+@php 
+$cancelurl=$param['routes']['redir'] ?? $param['routes']['base'];
+$cancelurl=$data['link_cancel'] ?? $cancelurl;
+@endphp
 
- @if(isset($data['link_cancel']))
-    @php $cancelurl='/'.$data['link_cancel']; @endphp
- @else
-    @php $cancelurl=MoHandF::url($param['routes']['base'],$param['getT']); @endphp   
- @endif
 <section id="main-content">  
     <section class="wrapper">
         <div class="row">   

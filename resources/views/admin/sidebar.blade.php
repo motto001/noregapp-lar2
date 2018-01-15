@@ -150,22 +150,30 @@
 
 @endif
 @if (Auth::user()->hasRole('workadmin')) 
-          
+       
     <li class="mt" style="margin:0px;"style="margin:0px 0px  5px 0px;">
                 <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/users' ? 'active' : '' }}" class="active" href="#">
                     <i class="fa fa-dashboard"></i>
                     <span style="color:red;font-size:18px;">Workadmin</span>
                 </a>
    </li>
-  
-           
+   <li class="mt" style="margin:0px;">
+    <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'workadmin/workerwroles ' ? 'active' : '' }}" class="active" href="{{ url('/workadmin/workerwroles ') }}">
+       Dolgozói munkarendek
+    </a>
+</li>
+    <li class="mt" style="margin:0px;">
+    <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'workadmin/workertimeframes ' ? 'active' : '' }}" class="active" href="{{ url('/workadmin/workertimeframes ') }}">
+       Dolgozói időkeretek
+    </a>
+</li>          
             <li class="mt" style="margin:0px;">
-                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/workerdays' ? 'active' : '' }}" href="{{ url('/workadmin/workerdays') }}">
+                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'workadmin/workerdays' ? 'active' : '' }}" href="{{ url('/workadmin/workerdays') }}">
                    Napok
                 </a>
             </li>
             <li class="mt" style="margin:0px;">
-                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/users' ? 'active' : '' }}" href="{{ url('/workadmin/workerdays') }}">
+                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'workadmin/users' ? 'active' : '' }}" href="{{ url('/workadmin/workerdays') }}">
                    Munkaidők
                 </a>
             </li>

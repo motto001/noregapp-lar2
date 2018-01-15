@@ -14,7 +14,7 @@
 <div class="col-md-7">    
    
 @foreach($data['wroleunits_all'] as $unit)
-    <a href=" {!! MoHandF::url($param['routes']['base'],$param['getT'],['wroleid'=>$data['id'],'unitid'=>$unit['id'],'task'=>'addunit']) !!}" 
+    <a href=" {!! MoHandF::url($param['routes']['base'],$param['getT'],['wrole_id'=>$data['id'],'unit_id'=>$unit['id'],'task'=>'addunit']) !!}" 
     title="" class="btn btn-warning btn-xs">
         {!!  $unit['name'] !!}
     </a>
@@ -23,7 +23,10 @@
 
 </div>
 </div>
-
+<a href="{!! MoHandF::url('manager/wroleunits/create',$param['getT'],['wrole_id'=>$data['id'],'wru_redir'=>'wrole']) !!} " 
+class="btn btn-success btn-sm" title="Add New Wru">
+    <i class="fa fa-plus" aria-hidden="true"></i> Új műszak 
+</a>
     <div class="table-responsive">
         <table class="table table-borderless">
             <thead>

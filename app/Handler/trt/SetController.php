@@ -21,12 +21,15 @@ Trait SetController
  */
 function set_getT($parkey='get'){
     //$request=$this->BASE['request'];
+    //print_r($this->BASE[$parkey] );
         foreach($this->BASE[$parkey] as $key=>$val){
             $val=Input::get($key) ?? $val;
+      //      echo $val.'---';
             if($val!=null){
                 $this->PAR['getT'][$key]= $val; 
             }  
         }
+  
     }
 /**
  * az url osszes get paraméterét bemásolja a PAR['getT']

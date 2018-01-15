@@ -26,10 +26,10 @@ protected $par= [
     'crudview'=>'crudbase_3', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
     'cim'=>'Műszakok',       
 ];
-protected $bas= [
+protected $base= [
     'search'=>false,
     'with'=>'wroletime',
-    'get'=>['wrole_id'=>null,'worker_redir'=>null,'worker_id'=>null], //pl:'w_id'=>null a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be 
+    'get'=>['worker_redir'=>null,'wrole_redir'=>null,'wrole_id'=>null,'worker_id'=>null], //pl:'w_id'=>null a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be 
     'obname'=>'\App\Wroleunit',   
 ];
 protected $val=[
@@ -40,17 +40,21 @@ protected $val=[
     'pub' => 'integer'
 ];
 
-
+protected $tbase= [
+     'edit'=> ['with'=>['daytype','wroletime','wroletime.timetype']],
+    ];
 
 public function create_set()
 {
-
     $this->BASE['data']['basedaytype']=Daytype::get();
     $this->BASE['data']['checked_daytype']=[5];
    
 }
 
+public function store_redirect(){
 
+    return  redirect(\MoHandF::url($this->PAR['routes']['base'].'/'. $this->BASE['ob_res']->id.'/edit', $this->PAR['getT']));  
+}
 
 
 
@@ -58,7 +62,7 @@ public function edit_set()
 {
     $id=$this->BASE['data']['id'];
     $checked_daytype=[];      
-    $this->BASE['data'] = Wroleunit::with(['daytype','wroletime','wroletime.timetype'])->findOrFail($id);
+  //  $this->BASE['data'] = Wroleunit::with(['daytype','wroletime','wroletime.timetype'])->findOrFail($id);
    $this->BASE['data']['basedaytype']=Daytype::get();
 
     foreach($this->BASE['data']->daytype as $role){
@@ -71,30 +75,14 @@ public function edit_set()
 }
 
 
-public function update($id, Request $request)
+public function update_set()
 {
-    $this->validate($request,$this->val);
-    $requestData = $request->all();
-    
-    $wroleunit = Wroleunit::findOrFail($id);
-    
-    $wroleunit->update($requestData);
-
-    $wroleunit->daytype()->sync($request->daytype_id);
-
-    Session::flash('flash_message', 'Wroleunit updated!');
-
-    return redirect(\MoHandF::url($this->PAR['baseroute'], $this->PAR['getT']));
+    $this->BASE['ob_res']->daytype()->sync($this->BASE['request']->daytype_id);  
 }
 
-public function destroy($id)
+public function destroy_set()
 {
-    Wroleunit::destroy($id);
-    //->timetype()->detach('timetype_id');
-    \DB::table('wroleunit_daytype')->where('wroleunit_id', '=', $id)->delete();
-    Session::flash('flash_message', 'Wroleunit deleted!');
-
-    return redirect(\MoHandF::url($this->PAR['baseroute'], $this->PAR['getT']));
+    \DB::table('wroleunit_daytype')->where('wroleunit_id', '=', $this->BASE['id'])->delete();
 }
  
 }

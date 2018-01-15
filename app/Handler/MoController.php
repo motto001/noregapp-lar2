@@ -77,11 +77,13 @@ protected $BASE= [
     'request',  //construktor másolja ide az aktuális requestet
     'data'=>[], // az aktuális viewnek átadott adatok
     'func'=>[ // a constructor által lefuttatni kívánt funkciók  
-    'set_base', //Az alap értékek beállítása ($PAR,$BASE stb)minden childnél definiállni kell   
+   // 'set_base',  //construktor mindenképpen meghívja, ha nem kell, felül kell definiálni!  
     'set_task', //\App\Handler\trt\SetController
     'set_getT', //\App\Handler\trt\SetController
-    'getT_honosit', //\App\Handler\trt\SetController, eltávolítja a 'getT' kulcsai elől 
-    'set_ob',   //$this, a fő objektumot állítja elő az 'ob'-ba az 'obname' alapján
+    'set_redir',
+    'set_routes',
+    //'getT_honosit', //\App\Handler\trt\SetController, eltávolítja a 'getT' kulcsai elől 
+    'set_ob',   //$this, a fő objektumot állítja elő az 'ob'-ba az 'obname' alapján 
 ],
 ];
 /**
@@ -89,12 +91,13 @@ protected $BASE= [
  */
 protected $TBASE= [
     'index'=> ['task_func'=>['index_base','index_set']], // az aktuális task (index) által lefuttatni kívánt funkciók 
-    'create'=> ['task_func'=>['create_set']],
+ 
+    /*  'create'=> ['task_func'=>['create_set']],
     'store'=> ['task_func'=>['store_set']],
     'edit'=> ['task_func'=>['edit_set']],
     'update'=> ['task_func'=>['update_set']],
     'destroy'=> ['task_func'=>['destroy_set']],
-    'show'=> ['task_func'=>['show_set']],
+    'show'=> ['task_func'=>['show_set']],*/
 ];
 /**
  * a create task validációs tömbje
@@ -107,12 +110,44 @@ protected $val_update= [];
 
 public function set_base()
 {
-$this->PAR= array_merge($this->PAR, $this->par);
-$this->BASE= array_merge($this->BASE, $this->bas);
+if(isset($this->par)){$this->PAR= array_merge($this->PAR, $this->par);}    
+if(isset($this->base)){$this->BASE= array_merge($this->BASE, $this->base);}
+if(isset($this->tbase)){$this->TBASE= array_merge($this->TBASE, $this->tbase);}
+if(isset($this->tpar)){$this->TPAR= array_merge($this->TPAR, $this->tpar);}
+$task=Input::get('task') ?? \Route::getCurrentRoute()->getActionMethod();
+
+if(isset($this->TPAR[$task])){$this->PAR= array_merge($this->PAR, $this->TPAR[$task]);} 
+if(isset($this->TBASE[$task])){$this->BASE= array_merge($this->BASE, $this->TBASE[$task]);} 
+$this->PAR['task']=$task;
+//if($task!= \Route::getCurrentRoute()->getActionMethod()) {return $this->$task();}
 }
+/**
+ * ha a controller azonosítójával redir érték érkezik (PAR['get_key']_redir)
+ * létrehozza  $this->PAR['routes']['redir'] értéket
+ */
 function set_redir(){
-    $obname=$this->BASE['obname'];
-    $this->BASE['ob']=new $obname();  
+    if(isset($this->PAR['getT'][$this->PAR['get_key'].'_redir']))
+    {
+        $this->PAR['routes']['redir']=$this->PAR['routes'][$this->PAR['getT'][$this->PAR['get_key'].'_redir']];
+    }
+}
+
+function set_routes(){
+   
+  foreach($this->PAR['routes'] as $key=>$rout){
+    $routvalT=[];    
+    preg_match_all("/\{(\w*)\}/", $rout, $routvalT);
+    if(isset($routvalT[1])){
+       foreach($routvalT[1] as $routval){ 
+            if(isset($this->PAR['getT'][$routval]))
+            {
+                str_replace('{'.$routval.'}',$this->PAR['getT'][$routval],$rout);
+            }
+        }   
+    }
+    $this->PAR['routes'][$key]=$rout;
+  }
+
 }
 function set_ob(){
     $obname=$this->BASE['obname'];
@@ -127,28 +162,16 @@ function call_func($funcT){
                 //$output = new \Symfony\Component\Console\Output\ConsoleOutput(2);
                 //$output->writeln('hello');
         }       
-}}
-/**
- * ha a controller azonosítójával redir érték érkezik (PAR['get_key']_redir)
- *  a $this->BASE['rutes']['base']-t felül írja vele
- */
-public function   set_baserout(){
-    if(isset($this->PAR['getT'][$this->PAR['get_key'].'_redir']))
-    {$this->PAR['routes']['base']=$this->PAR['routes'][$this->PAR['getT'][$this->BASE['get_key'].'_redir']];}
-    
- }
-
+}
+}
 
 /**
- * ha a controller azonosítójával redir érték érkezik (PAR['get_key']_redir)
+ * ha a $this->PAR['routes']['redir'] érték létezik
  * akkor a routes tömb annak megfelelő kulcsú routjára irányít 
  * ha nincs akkor a $this->BASE['redir']['base'] kulcs alatt lévő routra
  */
 public function   base_redirect(){
-    if(isset($this->PAR['getT'][$this->PAR['get_key'].'_redir']))
-    {$redir=$this->PAR['routes'][$this->PAR['getT'][$this->PAR['get_key'].'_redir']];}
-    else{$redir=$this->PAR['routes']['base'];}
-   // echo 'nnnnnnnnnnn'.$redir;
+   $redir=$this->PAR['routes']['redir'] ?? $this->PAR['routes']['base'];
    return  redirect(\MoHandF::url($redir, $this->PAR['getT']));  
  }
 /**
@@ -163,14 +186,14 @@ public function   base_redirect(){
     function __construct(Request $request){
 
         $this->BASE['request']=$request;
-        $this->set_base();  
+    
+        $this->set_base(); //taskok értékeivel felül írja a PAR és A BASE  tömböket.
+        // a BASE['func']-ot is. Ezért  kell még a call_func előtt meghívni 
         $this->call_func($this->BASE['func']);       
         $share_param_name=$this->PAR['varname'] ?? 'param';
-        View::share($share_param_name,$this->PAR); 
-    //ÁTKERÜLT AZ INDEXBE MERT AZ INDEX MINDENKÉPPEN LEFUT HA NEM ÉRVÉNYES AZ URL
-      //  $task=Input::get('task') ?? \Route::getCurrentRoute()->getActionMethod();
-       // echo $task;
-      //  if($task!= \Route::getCurrentRoute()->getActionMethod()) {return $this->$task();}
+        View::share($share_param_name,$this->PAR);
+        $task=$this->PAR['task'];
+        if($task!= \Route::getCurrentRoute()->getActionMethod()) {return $this->$task();}
        }
 
 }

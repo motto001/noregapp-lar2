@@ -4,12 +4,10 @@
 @section('content')
 @include('admin.sidebar')
            
-@endif   
- @if(isset($data['cancelurl']))
-    @php $cancelurl='/'.$data['cancelurl']; @endphp
- @else
-   @php $cancelurl=MoHandF::url($param['routes']['base'],$param['getT']); @endphp   
- @endif
+@php 
+$cancelurl=$param['routes']['redir'] ?? $param['routes']['base'];
+$cancelurl=$data['link_cancel'] ?? $cancelurl;
+@endphp
 <section id="main-content">  
     <section class="wrapper">
         <div class="row">   

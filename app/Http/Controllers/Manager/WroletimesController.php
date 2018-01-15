@@ -30,12 +30,12 @@ class WroletimesController extends MoController
         'view'=>'manager.wrunit_times', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
         'crudview'=>'crudbase_3', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
         'cim'=>'Műszak idők',
-        'getT'=>['wru_id'=>'0'],   
+       // 'getT'=>['wru_id'=>'0'],   
         'search'=>false,   
     ];
-    protected $bas= [
+    protected $base= [
         //'search_column'=>'daytype_id,datum,managernote,usernote',
-        'get'=>['wru_id'=>'0','wru_ret'=>null,'wrole_id'=>null,'wrole_ret'=>null,'worker_id'=>null], //Ha a wrolunitból hvjuk a wruvissza true lesz, a store az update és a delete visszaírányít az aktuális wroleunitra.mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be
+        'get'=>['worker_redir'=>null,'wrole_redir'=>null,'wru_redir'=>null,'wrtime_redir'=>null,'worker_id'=>null,'wrole_id'=>null,'wru_id'=>'0'], //Ha a wrolunitból hvjuk a wruvissza true lesz, a store az update és a delete visszaírányít az aktuális wroleunitra.mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be
         'get_post'=>[],//a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be ha van ilyen kulcs a postban azzal felülírja
         'obname'=>'\App\Wroletime',
         'ob'=>null,
@@ -53,7 +53,7 @@ class WroletimesController extends MoController
         'workernote' => 'string|max:200|nullable',
         'pub' => 'integer'
     ];
-    protected $val_edit= [];
+   // protected $val_edit= [];
 
 
     public function index_set()
@@ -77,36 +77,14 @@ class WroletimesController extends MoController
     public function create_set()
     {
        
-        $wroletime = Wroletime::get();
-        $wroletime['wroleunit']= Wroleunit::get();
-        $wroletime['timetype']= Timetype::pluck('name','id');
-        $wroletime['wroleunit_id']= 0;
-
-        $this->BASE['data'] = $wroletime;
+        $this->BASE['data']['wroleunit']= Wroleunit::get();
+        $this->BASE['data']['timetype']= Timetype::pluck('name','id');
+print_r($this->PAR['getT']);
     }
-/*
-    public function store_set(Request $request)
-    {
-        
-        $requestData =$this->store_set($request);
-        $this->BASE['ob']->create($requestData);
-        Session::flash('flash_message', trans('mo.itemadded'));
-        if($this->PAR['getT']['wruvissza']){
-            return redirect('/manager/wroleunits/'.$this->PAR['getT']['wru'].'/edit');
-        }else{
-            return redirect(\MoHandF::url($this->PAR['baseroute'].'/create', $this->PAR['getT']));
-        }
-        
-    }
-*/
 
     public function edit_set()
     {  
-        $id=$this->BASE['id'];
-        $data = Wroletime::findOrFail($id);
-        $data['timetype']= Timetype::pluck('name','id');
-        $data['id']=$id ;
-        $this->BASE['data'] = $data;
+        $this->BASE['data']['timetype']= Timetype::pluck('name','id');
     }
     
  /*    
