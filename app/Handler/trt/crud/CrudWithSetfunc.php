@@ -172,10 +172,10 @@ Trait CrudWithSetfunc
     { 
         $this->BASE['id']=$id;
         $this->BASE['ob_res']= $this->BASE['ob']->destroy($id);
-
+//echo 'destroy'.$id;
         $funcT=$this->TBASE['destroy']['task_func'] ?? ['destroy_set'];
         $this->call_func($funcT);
-
+//echo 'destroy'.$this->PAR['routes']['redir'];
         Session::flash('flash_message', trans('mo.deleted'));
         if(method_exists($this, 'destroy_redirect')) {return $this->destroy_redirect();}  
         else{return $this->base_redirect();}

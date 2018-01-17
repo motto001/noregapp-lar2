@@ -31,7 +31,7 @@
                         class="btn btn-primary btn-xs">
                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                         </a>
-                        <a href="{{ MoHandF::url('manager/wroletimes/',$param['getT'],['task'=>'del','wru_id'=>$data['id'],'wrtime_redir'=>'wru']) }} "
+                        <a href="{{ MoHandF::url('manager/wroletimes',$param['getT'],['task'=>'del','wrtime_id'=>$item->id,'wru_id'=>$data['id'],'wrtime_redir'=>'wru']) }} "
                             <i class="fa fa-trash-o" aria-hidden="true"></i>
                         </a>
   

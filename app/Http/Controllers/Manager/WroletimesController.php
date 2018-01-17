@@ -26,7 +26,7 @@ class WroletimesController extends MoController
     protected $par= [
        // 'baseroute'=>'manager/wroletimes', // a routes-be kerüt (base)
        'get_key'=>'wrtime', //láncnál ezzel az előtaggal azonosítja a rávonatkozó get tagokat
-       'routes'=>['base'=>'manager/wroletimes','wru'=>'manager/wroleunits'], //A _GET ben ['get_key']._ret ben érkező értéket fordítja le routra pl.: wrtime_ret=wru esetén a route  manager/wroleunit lesz
+       'routes'=>['base'=>'manager/wroletimes','wru'=>'manager/wroleunits/{wru_id}/edit'], //A _GET ben ['get_key']._ret ben érkező értéket fordítja le routra pl.: wrtime_ret=wru esetén a route  manager/wroleunit lesz
         'view'=>'manager.wrunit_times', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
         'crudview'=>'crudbase_3', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
         'cim'=>'Műszak idők',
@@ -79,23 +79,24 @@ class WroletimesController extends MoController
        
         $this->BASE['data']['wroleunit']= Wroleunit::get();
         $this->BASE['data']['timetype']= Timetype::pluck('name','id');
-print_r($this->PAR['getT']);
+//print_r($this->PAR['getT']);
     }
 
     public function edit_set()
     {  
         $this->BASE['data']['timetype']= Timetype::pluck('name','id');
     }
-    
- /*    
+
     public function del()
     { 
-        $id=Input::get('id');
-        $this->destroy_set($id);
-        Session::flash('flash_message', trans('mo.deleted'));
-        return redirect('/manager/wroleunits/'.$this->PAR['getT']['wru'].'/edit');
+        $id=Input::get('wrtime_id');
+       // echo '---------------'.$id;
+        $this->destroy($id);
+       // Session::flash('flash_message', trans('mo.deleted'));
+        //return redirect('/manager/wroleunits/'.$this->PAR['getT']['wru_id'].'/edit');
+       //return $this->base_redirect();
     }
-
+/*
    public function destroy($id)
     { 
         $this->destroy_set($id);

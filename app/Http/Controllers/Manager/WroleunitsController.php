@@ -84,5 +84,5 @@ public function destroy_set()
 {
     \DB::table('wroleunit_daytype')->where('wroleunit_id', '=', $this->BASE['id'])->delete();
 }
- 
+
 }

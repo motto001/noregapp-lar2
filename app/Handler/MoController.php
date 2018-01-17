@@ -126,10 +126,15 @@ $this->PAR['task']=$task;
  * létrehozza  $this->PAR['routes']['redir'] értéket
  */
 function set_redir(){
-    if(isset($this->PAR['getT'][$this->PAR['get_key'].'_redir']))
+     $redirkey=$this->PAR['get_key'].'_redir'; //wru_redir
+   //  echo 'redir----------'.$redirkey;
+    $redir=$this->PAR['getT'][$redirkey] ?? 'nincs';
+   
+    if($redir!='nincs')
     {
-        $this->PAR['routes']['redir']=$this->PAR['routes'][$this->PAR['getT'][$this->PAR['get_key'].'_redir']];
+        $this->PAR['routes']['redir']=$this->PAR['routes'][ $redir];
     }
+ //   echo 'redir----------'.$this->PAR['routes']['redir'].'---------------ZZZZ';
 }
 
 function set_routes(){
@@ -139,14 +144,17 @@ function set_routes(){
     preg_match_all("/\{(\w*)\}/", $rout, $routvalT);
     if(isset($routvalT[1])){
        foreach($routvalT[1] as $routval){ 
+           
             if(isset($this->PAR['getT'][$routval]))
             {
-                str_replace('{'.$routval.'}',$this->PAR['getT'][$routval],$rout);
+                $rout= str_replace('{'.$routval.'}',$this->PAR['getT'][$routval],$rout);
             }
         }   
     }
-    $this->PAR['routes'][$key]=$rout;
+  $this->PAR['routes'][$key]=$rout;
+
   }
+
 
 }
 function set_ob(){

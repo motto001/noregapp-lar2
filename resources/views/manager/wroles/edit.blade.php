@@ -14,7 +14,7 @@
 <div class="col-md-7">    
    
 @foreach($data['wroleunits_all'] as $unit)
-    <a href=" {!! MoHandF::url($param['routes']['base'],$param['getT'],['wrole_id'=>$data['id'],'unit_id'=>$unit['id'],'task'=>'addunit']) !!}" 
+    <a href=" {!! MoHandF::url($param['routes']['base'],$param['getT'],['wrole_id'=>$data['id'],'wrunit_id'=>$unit['id'],'task'=>'addunit']) !!}" 
     title="" class="btn btn-warning btn-xs">
         {!!  $unit['name'] !!}
     </a>
@@ -44,7 +44,7 @@ class="btn btn-success btn-sm" title="Add New Wru">
                     @endforeach
                     </td>
                     <td>
-                        <a href=" {!! MoHandF::url($param['routes']['base'],$param['getT'],['wroleid'=>$data['id'],'unitid'=>$unit['id'],'task'=>'delunit']) !!}" 
+                        <a href=" {!! MoHandF::url($param['routes']['base'],$param['getT'],['wrole_id'=>$data['id'],'wrunit_id'=>$item['id'],'task'=>'delunit']) !!}" 
                             title="" class="btn btn-danger btn-xs" ><i class="fa fa-trash-o" aria-hidden="true"></i>
                             
                         </a>
@@ -62,13 +62,16 @@ class="btn btn-success btn-sm" title="Add New Wru">
         {!! Form::text('note',  $data->note, ['class' => 'form-control']) !!}
         {!! $errors->first('note', '<p class="help-block">:message</p>') !!}
     </div>
-</div><div class="form-group {{ $errors->has('start') ? 'has-error' : ''}}">
+</div>
+<!--
+<div class="form-group {{ $errors->has('start') ? 'has-error' : ''}}">
     {!! Form::label('start', 'Start', ['class' => 'col-md-3 control-label']) !!}
     <div class="col-md-7">
         {!! Form::text('start', $data->start, ['class' => 'form-control datepicker']) !!}
         {!! $errors->first('start', '<p class="help-block">:message</p>') !!}
     </div>
 </div>
+-->
         {!! Form::hidden('pub', 0) !!}
 
 <div class="form-group">

@@ -18,7 +18,7 @@ use  \App\Handler\trt\SetController;
 
 protected $par= [    
     'get_key'=>'wrole', //láncnál ezzel az előtaggal azonosítja a rávonatkozó get tagokat
-    'routes'=>['base'=>'manager/wroles','worker'=>'manager/worker'],//A _GET ben ['get_key']._ret ben érkező értéket fordítja le routra pl.: wrtime_ret=wru esetén a route  manager/wroleunit lesz
+    'routes'=>['base'=>'manager/wroles','base_edit'=>'manager/wroles/{wrole_id}/edit','worker'=>'manager/worker'],//A _GET ben ['get_key']._ret ben érkező értéket fordítja le routra pl.: wrtime_ret=wru esetén a route  manager/wroleunit lesz
     //'baseview'=>'workadmin.workerdays', //nem használt a view helyettesíti
     'view'=>'manager.wroles', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
     'crudview'=>'crudbase_3', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
@@ -27,22 +27,33 @@ protected $par= [
 protected $base= [
     'search'=>false,
     'with'=>'wroleunit',
-    'get'=>['wrole_id'=>null,'unit_id'=>null,'wrole_redir'=>null,'worker_id'=>null], //pl:'w_id'=>null a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be 
+    'get'=>['wrole_id'=>null,'wrunit_id'=>null,'wrole_redir'=>null,'worker_id'=>null], //pl:'w_id'=>null a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be 
     'obname'=>'\App\Wrole',   
-    'func'=>['set_ob','set_getT','set_redir','set_task'],  
+   // 'func'=>['set_ob','set_getT','set_redir','set_task'],  
 ];
+protected $tpar= [
 
+   // 'store'=>['routes'=>['base'=>'manager/wroles/{wrole_id}/edit']], //pl:'w_id'=>null a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be 
+  
+   // 'func'=>['set_ob','set_getT','set_redir','set_task'],  
+];
 
  protected $val = [
         'name' => 'required|string|max:200',
         'note' => 'string|max:200|nullable',
-        'start' => 'string|max:200|nullable',
+      //  'start' => 'string|max:200|nullable',
         'pub' => 'integer'
  ];
  public function edit_set()
  {
      $this->BASE['data']['wroleunits_all']=Wroleunit::get();
  }
+
+ public function store_redirect(){
+   $id= $this->BASE['ob_res']->id;
+    return  redirect(\MoHandF::url($this->PAR['routes']['base'].'/'.$id.'/edit')); 
+ }
+
     /**
      * Display a listing of the resource.
      *
@@ -70,21 +81,22 @@ protected $base= [
     public function addunit()
     {
          DB::table('wrole_wroleunit')->insert(
-        ['wrole_id' => $this->PAR['getT']['wrole_id'], 'wroleunit_id' => $this->PAR['getT']['unit_id']]);
-    //  return  redirect(\MoHandF::url('manager/wroles/'.$this->PAR['getT']['wrole_id'].'/edit', $this->PAR['getT']));  
+        ['wrole_id' => $this->PAR['getT']['wrole_id'], 'wroleunit_id' => $this->PAR['getT']['wrunit_id']]);
+     //return  redirect(\MoHandF::url($this->PAR['routes']['base'].'/'.$this->PAR['getT']['wrole_id'].'/edit'));  
    
-         $url=\MoHandF::url('manager/wroles/'.$this->PAR['getT']['wrole_id'].'/edit', $this->PAR['getT']);
- 
-         header("Location:$url");
+     $url=\MoHandF::url($this->PAR['routes']['base'].'/'.$this->PAR['getT']['wrole_id'].'/edit');
+        header("Location:$url");
          die();
+       // return $this->base_redirect();
    }
     public function delunit()
     {
         DB::table('wrole_wroleunit')->where([
-        ['wrole_id', '=', $this->PAR['getT']['wrole_id']],['wroleunit_id', '=', $this->PAR['getT']['unit_id']]])
+        ['wrole_id', '=', $this->PAR['getT']['wrole_id']],['wroleunit_id', '=', $this->PAR['getT']['wrunit_id']]])
         ->delete(); 
-        $url=\MoHandF::url('manager/wroles/'.$this->PAR['getT']['wrole_id'].'/edit', $this->PAR['getT']);
+        $url=\MoHandF::url($this->PAR['routes']['base'].'/'.$this->PAR['getT']['wrole_id'].'/edit');
         header("Location:$url");
         die();  
+     // return  redirect(\MoHandF::url($this->PAR['routes']['base'].'/'.$this->PAR['getT']['wrole_id'].'/edit')); 
     }
 }

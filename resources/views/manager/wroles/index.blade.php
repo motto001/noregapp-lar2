@@ -4,14 +4,14 @@
                             <table class="table table-borderless">
                                 <thead>
                                     <tr>
-                                        <th>ID</th><th>Name</th><th>Note</th><th>Start</th><th>Actions</th>
+                                        <th>ID</th><th>Name</th><th>Note</th><th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($data['list'] as $item)
                                     <tr>
                                         <td>{{ $item->id }}</td>
-                                        <td>{{ $item->name }}</td><td>{{ $item->note }}</td><td>{{ $item->start }}</td>
+                                        <td>{{ $item->name }}</td><td>{{ $item->note }}</td>
                                         <td>
                                              {!! 
                                         MoHandF::linkButton([
