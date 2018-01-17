@@ -3,20 +3,20 @@
 namespace App\Http\Controllers\Manager;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Input;
-//use Illuminate\Support\Facades\DB;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Timetype;
-use App\Wroletime;
+
+use App\User;
 use Illuminate\Http\Request;
 use Session;
+use App\Facades\MoView;
 
-class WroletimesController extends Controller
+class NH_old_UsersController extends Controller
 {
-        protected $paramT= [
-            'baseroute'=>'manager/wroletimes',
-            'baseview'=>'manager.wroletimes', 
-            'cim'=>'Munkarendidők',
+    protected $paramT= [
+        'baseroute'=>'manager/users',
+        'baseview'=>'manager.users', 
+        'cim'=>'Felhasználók',
     ];
     
     function __construct(Request $request){
@@ -29,7 +29,9 @@ class WroletimesController extends Controller
             $this->paramT['route_param']='';}
 
         View::share('param',$this->paramT);
-           }
+       }
+    
+    //use SoftDeletes;  
     /**
      * Display a listing of the resource.
      *
@@ -41,19 +43,16 @@ class WroletimesController extends Controller
         $perPage = 25;
 
         if (!empty($keyword)) {
-            $wroletimes = Wroletime::where('wroleunit_id', 'LIKE', "%$keyword%")
-				->orWhere('timetype_id', 'LIKE', "%$keyword%")
-				->orWhere('start', 'LIKE', "%$keyword%")
-				->orWhere('end', 'LIKE', "%$keyword%")
-				->orWhere('hour', 'LIKE', "%$keyword%")
-				->orWhere('managernote', 'LIKE', "%$keyword%")
-				->orWhere('workernote', 'LIKE', "%$keyword%")
+            $users = User::where('name', 'LIKE', "%$keyword%")
+				->orWhere('email', 'LIKE', "%$keyword%")
+				->orWhere('password', 'LIKE', "%$keyword%")
 				->paginate($perPage);
         } else {
-            $wroletimes = Wroletime::with('timetype')->paginate($perPage);
+            $users = User::paginate($perPage);
         }
-        $data['list']=$wroletimes;
+        $data['list']= $users;
         return view('crudbase.index', compact('data'));
+
     }
 
     /**
@@ -63,18 +62,9 @@ class WroletimesController extends Controller
      */
     public function create()
     {
-        $wroletime = Wroletime::get();
-        $wroletime['timetype']= Timetype::pluck('name','id');
-        $wroletime['wroleunit_id']= 0;
-        return view('manager.wroletimes.create',compact('wroletime'));
+        return view('crudbase.create');
     }
-    public function create2($id)
-    {
-        $wroletime = Wroletime::get();
-        $wroletime['timetype']= Timetype::pluck('name','id');
-        $wroletime['wroleunit_id']= $id;
-        return view('manager.wroletimes.create',compact('wroletime'));
-    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -85,20 +75,15 @@ class WroletimesController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-			'wroleunit_id' => 'required|integer',
-			'timetype_id' => 'required|integer',
-			'start' => 'required|date_format:H:i',
-			'end' => 'date_format:H:i',
-			'hour' => 'required|integer|max:24',
-			'managernote' => 'string|max:200|nullable',
-			'workernote' => 'string|max:200|nullable',
-			'pub' => 'integer'
+			'name' => 'required|max:100',
+			'email' => 'required|email',
+			'password' => 'required|min:6'
 		]);
         $requestData = $request->all();
         
-        Wroletime::create($requestData);
+        User::create($requestData);
 
-        Session::flash('flash_message', 'Wroletime added!');
+        Session::flash('flash_message', 'User added!');
 
         return redirect($this->paramT['baseroute']);
     }
@@ -112,9 +97,10 @@ class WroletimesController extends Controller
      */
     public function show($id)
     {
-        $data = Wroletime::findOrFail($id);
+        $data = User::findOrFail($id);
 
-        return view($this->paramT['baseview'].'.show', compact('data'));
+ //return  MoView::view( 'manager.users.show',$user,'user');
+ return view($this->paramT['baseview'].'.show', compact('data'));
     }
 
     /**
@@ -126,19 +112,11 @@ class WroletimesController extends Controller
      */
     public function edit($id)
     {
-        $data = Wroletime::findOrFail($id);
-        $data['timetype']= Timetype::pluck('name','id');
+        $data = User::findOrFail($id);
         $data['id']=$id ;
         return view('crudbase.edit', compact('data'));
     }
-    /*
-    public function edit2($id,$wroleunit_id)
-    {
-        $wroletime = Wroletime::findOrFail($id);
-        $wroletime['timetype']= Timetype::pluck('name','id');
-        $wroletime['wroleunit_id']= $wroleunit_id;
-        return view('manager.wroletimes.edit', compact('wroletime'));
-    }*/
+
     /**
      * Update the specified resource in storage.
      *
@@ -150,21 +128,16 @@ class WroletimesController extends Controller
     public function update($id, Request $request)
     {
         $this->validate($request, [
-            'wroleunit_id' => 'required|integer',
-			'timetype_id' => 'required|integer',
-			'start' => 'required|date_format:H:i',
-			'end' => 'date_format:H:i',
-			'hour' => 'required|integer|max:24',
-			'managernote' => 'string|max:200|nullable',
-			'workernote' => 'string|max:200|nullable',
-			'pub' => 'integer'
+			'name' => 'required|max:100',
+			'email' => 'required|email',
+			'password' => 'required|min:6'
 		]);
         $requestData = $request->all();
         
-        $wroletime = Wroletime::findOrFail($id);
-        $wroletime->update($requestData);
+        $user = User::findOrFail($id);
+        $user->update($requestData);
 
-        Session::flash('flash_message', 'Wroletime updated!');
+        Session::flash('flash_message', 'User updated!');
 
         return redirect($this->paramT['baseroute']);
     }
@@ -178,9 +151,9 @@ class WroletimesController extends Controller
      */
     public function destroy($id)
     {
-        Wroletime::destroy($id);
+        User::destroy($id);
 
-        Session::flash('flash_message', 'Wroletime deleted!');
+        Session::flash('flash_message', 'User deleted!');
 
         return redirect($this->paramT['baseroute']);
     }

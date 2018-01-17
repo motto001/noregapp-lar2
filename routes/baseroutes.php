@@ -23,7 +23,7 @@ Route::group(['prefix' => '/manager','middleware' => ['auth', 'roles'], 'roles' 
 {
     Route::resource('/users', 'Manager\UsersController');
     //Route::resource('/workers', 'Manager\\WorkersController');
-    Route::resource('workersfull', 'Manager\\WorkersfullController');
+    Route::resource('workers', 'Manager\\WorkersController');
     Route::resource('/workerusers', 'Manager\\WorkerusersController');
     Route::resource('/workergroups', 'Manager\\WorkergroupsController');
     Route::resource('/workertypes', 'Manager\\WorkertypesController');

@@ -1,11 +1,11 @@
 @extends('layouts.backend')
 
 @section('content')
-    <div class="container">
-        <div class="row">
             @include('admin.sidebar')
-
-            <div class="col-md-9">
+            <section id="main-content">
+                <section class="wrapper">
+                     <div class="row">
+            <div class="col-lg-12 main-chart">
                 <div class="panel panel-default">
                     <div class="panel-heading">Roles</div>
                     <div class="panel-body">
@@ -66,5 +66,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 @endsection

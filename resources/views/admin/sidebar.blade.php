@@ -6,23 +6,12 @@
             <p class="centered"><a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/users' ? 'active' : '' }}" href="profile.html"><img src="/assets/img/ui-sam.jpg" class="img-circle" width="60"></a></p>
             <h5 class="centered">{{ Auth::user()->name }} </h5>
             
-            <li class="mt" style="margin:0px;">
-                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/users' ? 'active' : '' }}" class="active" href="index.html">
-                    <i class="fa fa-dashboard"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-
-            <li class="sub-menu">
-                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/users' ? 'active' : '' }}" href="javascript:;" >
-                    <i class="fa fa-desktop"></i>
-                    <span>UI Elements</span>
-                </a>
-                <ul class="sub">
+   
+          <!--      <ul class="sub">
                     <li><a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/users' ? 'active' : '' }}"  href="general.html">General</a></li>
                     <li><a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/users' ? 'active' : '' }}"  href="buttons.html">Buttons</a></li>
                     <li><a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/users' ? 'active' : '' }}"  href="panels.html">Panels</a></li>
-                </ul>
+                </ul> -->
             </li>
                         
  <!-- si**************************************************** -->
@@ -50,11 +39,7 @@
                     Jogok
                 </a>
             </li>
-            <li class="sub-menu">
-                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'admin/users' ? 'active' : '' }}" href="{{ url('/admin/users') }}">
-                   Felhasználók, Jogok
-                </a>
-            </li>    
+   
     
 @endif
 @if (Auth::user()->hasRole('manager'))  
@@ -74,7 +59,7 @@
         
        
             <li class="mt " style="margin:0px;" >
-                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/workersfull' ? 'active' : '' }}"  href="{{ url('/manager/workersfull') }}">
+                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/workers' ? 'active' : '' }}"  href="{{ url('/manager/workers') }}">
                    Dplgozók
                 </a>
             </li>
@@ -99,17 +84,19 @@
                     Munka tipusok
                 </a>
             </li>
-       
+     
             <li class="mt" style="margin:0px;">
                 <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/days' ? 'active' : '' }}" href="{{ url('/manager/days') }}">
                     Napok
                 </a>
             </li>  
+         <!--    
             <li class="mt" style="margin:0px;">
                 <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/userdays' ? 'active' : '' }}" href="{{ url('/manager/userdays') }}">
                    Dolgozói napok
                 </a>
             </li>
+         -->    
             <li class="mt" style="margin:0px;">
                 <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/daytypes' ? 'active' : '' }}" href="{{ url('/manager/daytypes') }}">
                     Naptipusok

@@ -1,91 +1,70 @@
 <?php
 
 namespace App\Http\Controllers\Manager;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Input;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
 
+use App\Http\Controllers\Controller;
+use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 use Session;
-use App\Facades\MoView;
 
 class UsersController extends Controller
 {
-    protected $paramT= [
-        'baseroute'=>'manager/users',
-        'baseview'=>'manager.users', 
-        'cim'=>'Felhasználók',
-    ];
-    
-    function __construct(Request $request){
-        $this->paramT['id']=$request->route('id') ;
-        $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
-
-        if($this->paramT['parrent_id']>0){
-            $this->paramT['route_param']='/?parrentid='.$this->paramT['parrent_id'];}
-        else{
-            $this->paramT['route_param']='';}
-
-        View::share('param',$this->paramT);
-       }
-    
-    //use SoftDeletes;  
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\View\View
+     * @return void
      */
     public function index(Request $request)
     {
         $keyword = $request->get('search');
-        $perPage = 25;
+        $perPage = 15;
 
         if (!empty($keyword)) {
-            $users = User::where('name', 'LIKE', "%$keyword%")
-				->orWhere('email', 'LIKE', "%$keyword%")
-				->orWhere('password', 'LIKE', "%$keyword%")
-				->paginate($perPage);
+            $users = User::where('name', 'LIKE', "%$keyword%")->orWhere('email', 'LIKE', "%$keyword%")
+                ->paginate($perPage);
         } else {
             $users = User::paginate($perPage);
         }
-        $data['list']= $users;
-        return view('crudbase.index', compact('data'));
 
+        return view('admin.users.index', compact('users'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\View\View
+     * @return void
      */
     public function create()
     {
-        return view('crudbase.create');
+        $roles = Role::select('id', 'name', 'label')->get();
+        $roles = $roles->pluck('label', 'name');
+
+        return view('admin.users.create', compact('roles'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request $request
      *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return void
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-			'name' => 'required|max:100',
-			'email' => 'required|email',
-			'password' => 'required|min:6'
-		]);
-        $requestData = $request->all();
-        
-        User::create($requestData);
+        $this->validate($request, ['name' => 'required', 'email' => 'required', 'password' => 'required', 'roles' => 'required']);
+
+        $data = $request->except('password');
+        $data['password'] = bcrypt($request->password);
+        $user = User::create($data);
+
+        foreach ($request->roles as $role) {
+            $user->assignRole($role);
+        }
 
         Session::flash('flash_message', 'User added!');
 
-        return redirect($this->paramT['baseroute']);
+        return redirect('admin/users');
     }
 
     /**
@@ -93,14 +72,13 @@ class UsersController extends Controller
      *
      * @param  int  $id
      *
-     * @return \Illuminate\View\View
+     * @return void
      */
     public function show($id)
     {
-        $data = User::findOrFail($id);
+        $user = User::findOrFail($id);
 
- //return  MoView::view( 'manager.users.show',$user,'user');
- return view($this->paramT['baseview'].'.show', compact('data'));
+        return view('admin.users.show', compact('user'));
     }
 
     /**
@@ -108,38 +86,50 @@ class UsersController extends Controller
      *
      * @param  int  $id
      *
-     * @return \Illuminate\View\View
+     * @return void
      */
     public function edit($id)
     {
-        $data = User::findOrFail($id);
-        $data['id']=$id ;
-        return view('crudbase.edit', compact('data'));
+        $roles = Role::select('id', 'name', 'label')->get();
+        $roles = $roles->pluck('label', 'name');
+
+        $user = User::with('roles')->select('id', 'name', 'email')->findOrFail($id);
+        $user_roles = [];
+        foreach ($user->roles as $role) {
+            $user_roles[] = $role->name;
+        }
+
+        return view('admin.users.edit', compact('user', 'roles', 'user_roles'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  int  $id
-     * @param \Illuminate\Http\Request $request
+     * @param  int      $id
+     * @param  \Illuminate\Http\Request  $request
      *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return void
      */
     public function update($id, Request $request)
     {
-        $this->validate($request, [
-			'name' => 'required|max:100',
-			'email' => 'required|email',
-			'password' => 'required|min:6'
-		]);
-        $requestData = $request->all();
-        
+        $this->validate($request, ['name' => 'required', 'email' => 'required', 'roles' => 'required']);
+
+        $data = $request->except('password');
+        if ($request->has('password')) {
+            $data['password'] = bcrypt($request->password);
+        }
+
         $user = User::findOrFail($id);
-        $user->update($requestData);
+        $user->update($data);
+
+        $user->roles()->detach();
+        foreach ($request->roles as $role) {
+            $user->assignRole($role);
+        }
 
         Session::flash('flash_message', 'User updated!');
 
-        return redirect($this->paramT['baseroute']);
+        return redirect('admin/users');
     }
 
     /**
@@ -147,7 +137,7 @@ class UsersController extends Controller
      *
      * @param  int  $id
      *
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return void
      */
     public function destroy($id)
     {
@@ -155,6 +145,6 @@ class UsersController extends Controller
 
         Session::flash('flash_message', 'User deleted!');
 
-        return redirect($this->paramT['baseroute']);
+        return redirect('admin/users');
     }
 }

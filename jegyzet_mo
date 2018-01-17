@@ -1,3 +1,5 @@
+kép kezelő:
+https://github.com/Intervention/image
 A controller minden viewwl megoszt egy param tömböt.
 ez tartalmazza :
     baseview: alap view mappa 

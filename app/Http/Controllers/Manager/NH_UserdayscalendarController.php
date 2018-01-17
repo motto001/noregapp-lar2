@@ -11,7 +11,7 @@ use App\Daytype;
 use Illuminate\Http\Request;
 use Session;
 
-class UserdaysController extends Controller
+class UserdayscalendarController extends Controller
 {
 
     protected $paramT= [

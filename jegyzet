@@ -1,3 +1,7 @@
+
+kép kezelő:
+https://github.com/Intervention/image
+
 !!!!migration figyelni!!!
 --------------------------------------------------------------
 a decimal(4.2) 4 jegyü szám két tizeds törtel (pl: daytype, timetype-> szorzo) 

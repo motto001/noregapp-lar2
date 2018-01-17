@@ -1,7 +1,8 @@
-<a href="{{ url('/'.$param['baseroute'].'/' . $item->id. $param['route_param']) }}" 
+<!-- 
+    <a href="{{ url('/'.$param['baseroute'].'/' . $item->id. $param['route_param']) }}" 
 title="View "><button class="btn btn-info btn-xs">
 <i class="fa fa-eye" aria-hidden="true"></i> </button></a>
-
+-->
 <a href="{{ url('/'.$param['baseroute'].'/' . $item->id . '/edit'.$param['route_param']) }}"
  title="Edit "><button class="btn btn-primary btn-xs">
  <i class="fa fa-pencil-square-o" aria-hidden="true"></i> </button></a>

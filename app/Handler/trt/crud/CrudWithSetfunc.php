@@ -4,9 +4,42 @@ namespace App\Handler\trt\crud;
 use Illuminate\Http\Request;
 use Session;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Image;
 Trait CrudWithSetfunc
 {
+    //kép kezelő:https://github.com/Intervention/image
+    public function image_upload(){ 
+        if(Input::file())
+        {
+        $imageinputmezo=$this->TBASE['imageinputmezo'] ?? 'image' ;
+        $image = Input::file($imageinputmezo);
+        $imagedatamezo=$this->TBASE['imagedatamezo'] ?? 'foto' ;
+        $filename=$this->TBASE['image']['name'] ?? time() . '.' . $image->getClientOriginalExtension();
+        $path= $this->TBASE['image']['savepath'] ?? 'images';
+        $widt=$this->TBASE['image']['widt'] ?? 600;
+        $height=$this->TBASE['image']['height'] ?? 600;
+        $thumb= $this->TBASE['image']['thumb'] ?? true;   
 
+    
+        $imagepath = public_path($path.'/' . $filename);
+        if(!is_dir ( public_path($path) )){
+            mkdir(public_path($path), 777);
+            mkdir(public_path($path.'/thumb'), 777);
+        }
+        \Image::make($image->getRealPath())->resize($widt, $height)->save($imagepath);
+        //thumb ----------------------------
+        if($thumb) {         
+        $th_path= $this->TBASE['image']['thumb_savepath'] ?? $path.'/thumb';
+        $thumb_widt=$this->TBASE['image']['thumb_widt'] ?? 100;
+        $thumb_height=$this->TBASE['image']['thumb_height'] ?? 100;
+        $thumb_path = public_path($th_path.'/' . $filename);
+            \Image::make($image->getRealPath())->resize($thumb_widt, $thumb_height)->save($thumb_path);
+        }   
+
+         $this->BASE['data'][$imagedatamezo]=  $th_path.'/' . $filename;
+        }
+           
+    }
     function get_searchT($keyword,$resmod='all'){
         $res=[];
         if(isset($this->BASE['search_column'])){
@@ -21,9 +54,15 @@ Trait CrudWithSetfunc
             if(empty($res)){$res[]=['id', '>', "0"];} 
     return $res;
     }
-    public function index_set(){ 
-      //  
-     }
+    public function index_set(){ }
+    public function search(){
+    /*return  $this->BASE['ob']
+    ->where('user_id', 'LIKE', "%$keyword%")
+    ->orWhere('wrole_id', 'LIKE', "%$keyword%")
+    ->orWhere('status_id', 'LIKE', "%$keyword%")
+    ->paginate($perPage);*/
+    return '';
+    }
     public function index_base(){
         $ob=$this->BASE['ob'];
         $perPage=$this->PAR['perpage'] ?? 50;
@@ -36,15 +75,15 @@ Trait CrudWithSetfunc
             $ob_base =$ob ;   
         } else {
             $ob_base = $ob->with($with);
+           
         } 
 
         if (empty($keyword)) {  
             $this->BASE['data']['list'] =$ob_base->paginate($perPage)->appends($getT) ;   
+          //  print_r($this->BASE['data']['list']);
         } else {
-            $this->BASE['data']['list'] = $ob_base->where($this->get_searchT($keyword,'first'))
-                            ->orWhere($this->get_searchT($keyword,'firstno'))
-                            //->orderBy('id', 'desc')
-                            ->paginate($perPage)->appends($getT) ;
+            $this->BASE['data']['list'] = $this->search();
+            if($this->BASE['data']['list']==''){ $this->BASE['data']['list'] =$ob_base->paginate($perPage)->appends($getT) ;  }
         }
         
     }
@@ -72,16 +111,17 @@ Trait CrudWithSetfunc
     }
 
     public function store_set(){ }
+
     public function store(Request $request)
     {
         
         $this->validate($request,$this->val );
         $this->BASE['data'] = $request->all();
-       
-        $this->BASE['ob_res']= $this->BASE['ob']->create($this->BASE['data']);
- 
-        $funcT=$this->TBASE['store']['task_func'] ?? ['store_set'];
+
+        $funcT=$this->TBASE['store']['task_func'] ?? ['store_set','image_upload'];
         $this->call_func($funcT);
+
+        $this->BASE['ob_res']= $this->BASE['ob']->create($this->BASE['data']);
 
         Session::flash('flash_message', trans('mo.itemadded'));
         if(method_exists($this, 'store_redirect')) {return $this->store_redirect();}  
@@ -94,13 +134,15 @@ Trait CrudWithSetfunc
         $this->BASE['id']=$id;
         $this->BASE['data'] =$this->BASE['ob']->findOrFail($id);
 
-        $funcT=$this->TBASE['edit']['task_func'] ?? ['edit_set'];
+        $funcT=$this->TBASE['edit']['task_func'] ?? ['edit_set','image_upload'];
+      
         $this->call_func($funcT);
         $data=$this->BASE['data'];
+      
         if(method_exists($this, 'edit_view')) {return $this->edit_view();}  
         else{return  $this->base_view('edit');}
     }
-
+    public function update_file(){}
     public function update_set(){}
     public function update($id, Request $request)
     {
@@ -113,10 +155,11 @@ Trait CrudWithSetfunc
         $this->BASE['data'] = $request->all();
 
         $this->BASE['ob_res']=$this->BASE['ob']->findOrFail($id);
-        $this->BASE['ob_res']->update($this->BASE['data']);
 
-        $funcT=$this->TBASE['update']['task_func'] ?? ['update_set'];
+        $funcT=$this->TBASE['update']['task_func'] ?? ['update_set','image_upload'];
         $this->call_func($funcT);
+
+        $this->BASE['ob_res']->update($this->BASE['data']);
 
         Session::flash('flash_message',  trans('mo.item_updated'));
         if(method_exists($this, 'update_redirect')) {return $this->update_redirect();}  

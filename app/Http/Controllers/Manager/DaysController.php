@@ -30,6 +30,7 @@ class DaysController extends Controller
         'note' => 'string|max:150',
        // 'usernote' => 'string|max:150'
     ];
+    
     function __construct(Request $request){
   
         $this->paramT['id']=$request->route('id') ;//day id

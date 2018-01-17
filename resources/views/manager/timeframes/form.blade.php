@@ -16,8 +16,8 @@
 <div class="form-group {{ $errors->has('timetype_id') ? 'has-error' : ''}}">
     {!! Form::label('daytype_id', 'Naptípusok ', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">     
-            @foreach ($timeframe['basedaytype'] as $time)  
-           {{ Form::checkbox('daytype_id[]', $time['id'],in_array($time['id'],$timeframe['checked_daytype']), ['multiple' => 'multiple']) }} {{ $time['name']}}   
+            @foreach ($data['basedaytype'] as $time)  
+           {{ Form::checkbox('daytype_id[]', $time['id'],in_array($time['id'],$data['checked_daytype']), ['multiple' => 'multiple']) }} {{ $time['name']}}   
             @endforeach            
          {!! $errors->first('daytype_id', '<p class="help-block">:message</p>') !!}
     </div>
@@ -28,13 +28,17 @@
         {!! Form::number('long', null, ['class' => 'form-control', 'required' => 'required']) !!}
         {!! $errors->first('long', '<p class="help-block">:message</p>') !!}
     </div>
-</div><div class="form-group {{ $errors->has('start') ? 'has-error' : ''}}">
+</div>
+<!--
+<div class="form-group {{ $errors->has('start') ? 'has-error' : ''}}">
     {!! Form::label('start', 'Start', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
         {!! Form::text('start', null, ['class' => 'form-control datepicker', 'required' => 'required']) !!}
         {!! $errors->first('start', '<p class="help-block">:message</p>') !!}
     </div>
-</div><div class="form-group {{ $errors->has('hourmax') ? 'has-error' : ''}}">
+</div>
+-->
+<div class="form-group {{ $errors->has('hourmax') ? 'has-error' : ''}}">
     {!! Form::label('hourmax', 'Hourmax', ['class' => 'col-md-4 control-label']) !!}
     <div class="col-md-6">
         {!! Form::number('hourmax', null, ['class' => 'form-control']) !!}

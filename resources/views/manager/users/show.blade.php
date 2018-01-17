@@ -1,20 +1,19 @@
 @extends('layouts.backend')
-
 @section('content')
-    <div class="container">
-        <div class="row">
-            @include('admin.sidebar')
-
-            <div class="col-md-9">
+@include('admin.sidebar')
+<section id="main-content">
+   <section class="wrapper">
+        <div class="row">   
+            <div class="col-lg-12 main-chart">
                 <div class="panel panel-default">
-                    <div class="panel-heading">User {{ $user->id }}</div>
+                    <div class="panel-heading">User</div>
                     <div class="panel-body">
 
-                        <a href="{{ url('/manager/users') }}" title="Back"><button class="btn btn-warning btn-xs"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button></a>
-                        <a href="{{ url('/manager/users/' . $user->id . '/edit') }}" title="Edit User"><button class="btn btn-primary btn-xs"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button></a>
+                        <a href="{{ url('/admin/users') }}" title="Back"><button class="btn btn-warning btn-xs"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button></a>
+                        <a href="{{ url('/admin/users/' . $user->id . '/edit') }}" title="Edit User"><button class="btn btn-primary btn-xs"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit</button></a>
                         {!! Form::open([
-                            'method'=>'DELETE',
-                            'url' => ['manager/users', $user->id],
+                            'method' => 'DELETE',
+                            'url' => ['/admin/users', $user->id],
                             'style' => 'display:inline'
                         ]) !!}
                             {!! Form::button('<i class="fa fa-trash-o" aria-hidden="true"></i> Delete', array(
@@ -29,11 +28,15 @@
 
                         <div class="table-responsive">
                             <table class="table table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th>ID.</th> <th>Name</th><th>Email</th>
+                                    </tr>
+                                </thead>
                                 <tbody>
                                     <tr>
-                                        <th>ID</th><td>{{ $user->id }}</td>
+                                        <td>{{ $user->id }}</td> <td> {{ $user->name }} </td><td> {{ $user->email }} </td>
                                     </tr>
-                                    <tr><th> Name </th><td> {{ $user->name }} </td></tr><tr><th> Email </th><td> {{ $user->email }} </td></tr><tr><th> Password </th><td> {{ $user->password }} </td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -42,5 +45,6 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+</section>  
 @endsection

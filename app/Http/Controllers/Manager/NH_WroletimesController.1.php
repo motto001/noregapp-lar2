@@ -3,23 +3,23 @@
 namespace App\Http\Controllers\Manager;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Input;
+//use Illuminate\Support\Facades\DB;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-use App\Daytype;
-use App\Timeframe;
+use App\Timetype;
+use App\Wroletime;
 use Illuminate\Http\Request;
 use Session;
 
-class TimeframesController extends Controller
+class NH_WroletimesController extends Controller
 {
-    protected $paramT= [
-        'baseroute'=>'manager/timeframes',
-        'baseview'=>'manager.timeframes', 
-        'cim'=>'Időkeretek',
+        protected $paramT= [
+            'baseroute'=>'manager/wroletimes',
+            'baseview'=>'manager.wroletimes', 
+            'cim'=>'Munkarendidők',
     ];
     
     function __construct(Request $request){
-    
         $this->paramT['id']=$request->route('id') ;
         $this->paramT['parrent_id']=Input::get('parrent_id') ?? 0;
 
@@ -29,7 +29,7 @@ class TimeframesController extends Controller
             $this->paramT['route_param']='';}
 
         View::share('param',$this->paramT);
-       }
+           }
     /**
      * Display a listing of the resource.
      *
@@ -41,21 +41,18 @@ class TimeframesController extends Controller
         $perPage = 25;
 
         if (!empty($keyword)) {
-            $timeframes = Timeframe::where('name', 'LIKE', "%$keyword%")
-				->orWhere('unit', 'LIKE', "%$keyword%")
-				->orWhere('long', 'LIKE', "%$keyword%")
+            $wroletimes = Wroletime::where('wroleunit_id', 'LIKE', "%$keyword%")
+				->orWhere('timetype_id', 'LIKE', "%$keyword%")
 				->orWhere('start', 'LIKE', "%$keyword%")
-				->orWhere('hourmax', 'LIKE', "%$keyword%")
-				->orWhere('hourmin', 'LIKE', "%$keyword%")
-				->orWhere('note', 'LIKE', "%$keyword%")
-				->orWhere('pub', 'LIKE', "%$keyword%")
+				->orWhere('end', 'LIKE', "%$keyword%")
+				->orWhere('hour', 'LIKE', "%$keyword%")
+				->orWhere('managernote', 'LIKE', "%$keyword%")
+				->orWhere('workernote', 'LIKE', "%$keyword%")
 				->paginate($perPage);
         } else {
-            $timeframes = Timeframe::paginate($perPage);
+            $wroletimes = Wroletime::with('timetype')->paginate($perPage);
         }
-
-       
-        $data['list']=$timeframes;
+        $data['list']=$wroletimes;
         return view('crudbase.index', compact('data'));
     }
 
@@ -66,11 +63,18 @@ class TimeframesController extends Controller
      */
     public function create()
     {
-        $data['basedaytype']=Daytype::get();
-        $data['checked_daytype']=[5];
-        return view('crudbase.create',compact('data'));
+        $wroletime = Wroletime::get();
+        $wroletime['timetype']= Timetype::pluck('name','id');
+        $wroletime['wroleunit_id']= 0;
+        return view('manager.wroletimes.create',compact('wroletime'));
     }
-
+    public function create2($id)
+    {
+        $wroletime = Wroletime::get();
+        $wroletime['timetype']= Timetype::pluck('name','id');
+        $wroletime['wroleunit_id']= $id;
+        return view('manager.wroletimes.create',compact('wroletime'));
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -81,18 +85,20 @@ class TimeframesController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-			'name' => 'required|max:200',
-			'unit' => 'required|max:50',
-			'long' => 'required',
-			'note' => 'max:200',
-			'pub' => 'max:4'
+			'wroleunit_id' => 'required|integer',
+			'timetype_id' => 'required|integer',
+			'start' => 'required|date_format:H:i',
+			'end' => 'date_format:H:i',
+			'hour' => 'required|integer|max:24',
+			'managernote' => 'string|max:200|nullable',
+			'workernote' => 'string|max:200|nullable',
+			'pub' => 'integer'
 		]);
         $requestData = $request->all();
         
-       // Timeframe::create($requestData);
-        Timeframe::create($requestData)->daytype()->sync($request->daytype_id);
+        Wroletime::create($requestData);
 
-        Session::flash('flash_message', 'Timeframe added!');
+        Session::flash('flash_message', 'Wroletime added!');
 
         return redirect($this->paramT['baseroute']);
     }
@@ -106,7 +112,7 @@ class TimeframesController extends Controller
      */
     public function show($id)
     {
-        $data = Timeframe::findOrFail($id);
+        $data = Wroletime::findOrFail($id);
 
         return view($this->paramT['baseview'].'.show', compact('data'));
     }
@@ -120,21 +126,19 @@ class TimeframesController extends Controller
      */
     public function edit($id)
     {
-
-        $data = Timeframe::with(['daytype'])->findOrFail($id);
-        $data['basedaytype']=Daytype::get();
-    
-        foreach($data->daytype as $role){
-            
-            $checked_daytype[] =  $role->id;
-        }
-        $data['checked_daytype']=$checked_daytype;
+        $data = Wroletime::findOrFail($id);
+        $data['timetype']= Timetype::pluck('name','id');
         $data['id']=$id ;
-       // $timeframe = Timeframe::findOrFail($id);
-
         return view('crudbase.edit', compact('data'));
     }
-
+    /*
+    public function edit2($id,$wroleunit_id)
+    {
+        $wroletime = Wroletime::findOrFail($id);
+        $wroletime['timetype']= Timetype::pluck('name','id');
+        $wroletime['wroleunit_id']= $wroleunit_id;
+        return view('manager.wroletimes.edit', compact('wroletime'));
+    }*/
     /**
      * Update the specified resource in storage.
      *
@@ -146,24 +150,21 @@ class TimeframesController extends Controller
     public function update($id, Request $request)
     {
         $this->validate($request, [
-			'name' => 'required|max:200',
-			'unit' => 'required|max:50',
-			'long' => 'required',
-			'note' => 'max:200',
-			'pub' => 'max:4'
+            'wroleunit_id' => 'required|integer',
+			'timetype_id' => 'required|integer',
+			'start' => 'required|date_format:H:i',
+			'end' => 'date_format:H:i',
+			'hour' => 'required|integer|max:24',
+			'managernote' => 'string|max:200|nullable',
+			'workernote' => 'string|max:200|nullable',
+			'pub' => 'integer'
 		]);
         $requestData = $request->all();
-      
-        $timeframe = Timeframe::findOrFail($id);
         
-        $timeframe->update($requestData);
+        $wroletime = Wroletime::findOrFail($id);
+        $wroletime->update($requestData);
 
-        $timeframe->daytype()->sync($request->daytype_id);
-
-        //$timeframe = Timeframe::findOrFail($id);
-       // $timeframe->update($requestData);
-
-        Session::flash('flash_message', 'Timeframe updated!');
+        Session::flash('flash_message', 'Wroletime updated!');
 
         return redirect($this->paramT['baseroute']);
     }
@@ -177,9 +178,9 @@ class TimeframesController extends Controller
      */
     public function destroy($id)
     {
-        Timeframe::destroy($id);
-        \DB::table('daytype_timeframe')->where('timeframe_id', '=', $id)->delete();
-        Session::flash('flash_message', 'Timeframe deleted!');
+        Wroletime::destroy($id);
+
+        Session::flash('flash_message', 'Wroletime deleted!');
 
         return redirect($this->paramT['baseroute']);
     }
