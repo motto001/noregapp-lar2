@@ -194,12 +194,18 @@
     
        
            <li class="mt" style="margin:0px;">
-                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/users' ? 'active' : '' }}" href="{{ url('/workadmin/workerdays') }}">
+                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'worker/users' ? 'active' : '' }}" href="{{ url('/worker/workerdays') }}">
                     Saját adatok
                 </a>
             </li>
+            <li class="mt" style="margin:0px;">
+                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'worker/workerdays' ? 'active' : '' }}" href="{{ url('/worker/workerdays') }}">
+                    Naptár
+                </a>
+            </li>
+
            <li class="mt" style="margin:0px;">
-                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/users' ? 'active' : '' }}" href="{{ url('/workadmin/workerdays') }}">
+                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'worker/users' ? 'active' : '' }}" href="{{ url('/worker/workerdays') }}">
                    Szabadság, betegállomány
                 </a>
             </li>

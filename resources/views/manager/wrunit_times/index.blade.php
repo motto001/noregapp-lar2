@@ -10,18 +10,18 @@
     Mind
     </button>
     </a>        
-                  @foreach($data['wroleunit'] as $unit)
-                                <a href=" {!! MoHandF::url($param['routes']['base'],$param['getT'],['wru_id'=>$unit['id']]) !!}" 
-                                title="Munkareng ciklus választás">
-                          @if ($param['getT']['wru_id']==$unit['id'])    
-                           <button class="btn btn-danger btn-xs">
-                          @else
-                          <button class="btn btn-warning btn-xs">
-                          @endif
-                                    {!!    $unit['name'] !!}
-                                </button>
-                                </a>
-                   @endforeach 
+@foreach($data['wroleunit'] as $unit)
+    <a href=" {!! MoHandF::url($param['routes']['base'],$param['getT'],['wru_id'=>$unit['id']]) !!}" 
+    title="Munkareng ciklus választás">
+@if ($param['getT']['wru_id']==$unit['id'])    
+<button class="btn btn-danger btn-xs">
+@else
+<button class="btn btn-warning btn-xs">
+@endif
+        {!!    $unit['name'] !!}
+    </button>
+    </a>
+@endforeach 
              
 
       <div class="table-responsive">
@@ -32,11 +32,11 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                @foreach($data['list'] as $item)
+                                    @foreach($data['list'] as $item)
                                     <tr>
-                                        <td>{{ $item->wroleunit->name }}</td>
-                                        <td>{{ $item->timetype->name }}</td>
-                                        <td>{{ $item->start }}</td><td>{{ $item->end }}</td><td>{{ $item->hour }}</td><td>{{ $item->timetype->szorzo }}</td><td>{{ $item->timetype->fixplusz }}</td>
+                                        <td>{{ $item['wroleunit']['name'] }}</td>
+                                        <td>{{ $item['timetype']['name'] }}</td>
+                                        <td>{{ $item->start }}</td><td>{{ $item->end }}</td><td>{{ $item->hour }}</td><td>{{ $item['timetype']['szorzo'] }}</td><td>{{ $item['timetype']['fixplusz ']}}</td>
                                         <td>
                                           {{ str_limit($item->managernote, 20,  '...') }}
                                         </td>  

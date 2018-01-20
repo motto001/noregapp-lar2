@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\View;
 //use pp\facades\MoHand;
 use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
+use App\Handler\MoController;
 
 use App\Workerday;
 use App\Worker;
@@ -14,33 +14,34 @@ use App\Day;
 use Illuminate\Http\Request;
 use Session;
 
-class WorkerdaysController extends Controller
+class WorkerdaysController extends MoController
 {
     use \App\Handler\trt\crud\CrudWithSetfunc;
     use  \App\Handler\trt\SetController;
-    protected $PAR= [
+    protected $par= [
         //'baseroute'=>'workadmin/workerdays',
-        'redirect'=>['base'=>'workadmin/workerdays','worker'=>'manager/worker'],
+        'routes'=>['base'=>'workadmin/workerdays','worker'=>'manager/worker'],
         //'baseview'=>'workadmin.workerdays', //nem használt a view helyettesíti
         'view'=>'workadmin.workerdays', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
-        'crudview'=>'crudbase_2', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
+        'crudview'=>'crudbase_3', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
         'cim'=>'Dolgozói napok',
-        'getT'=>[],       
+        'getT'=>['w_id'=>0],       
     ];
    
-    protected $TPAR= [];
-    protected $BASE= [
+    protected $base= [
         'search_column'=>'daytype_id,datum,managernote,usernote',
-        'get'=>['w_id'=>null], //a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be
-        'get_post'=>['ev'=>null,'ho'=>null],//a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be ha van ilyen kulcs a postban azzal felülírja
+        'get'=>['w_id'=>null,'ev'=>null,'ho'=>null], //a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be
+       // 'get_post'=>[],//a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be ha van ilyen kulcs a postban azzal felülírja
         'obname'=>'\App\Workerday',
         'ob'=>null,
-        
+        'func'=>[  'set_task', 'set_getT','set_date', 'set_redir','set_routes','set_ob'],
+        'with'=>['worker','daytype'],
     ];
-    protected $TBASE= [];
+  
     protected $val= [
         'worker_id' => 'required|integer',
         'daytype_id' => 'integer',
+        'wish_id' => 'integer',
         'day' => 'integer|max:31',
         'datum' => 'date',
         'managernote' => 'string|max:150'
@@ -48,67 +49,70 @@ class WorkerdaysController extends Controller
     ];
     protected $val_edit= [];
 
-    function __construct(Request $request){
+    function set_date(){
 
-            $t = \Carbon::now();
-            $this->BASE['get_post']['ev']= $t->year; 
-            $this->BASE['get_post']['ho']=$t->month; 
-            if(strlen($this->BASE['get_post']['ho'])<2){
-                $this->BASE['get_post']['ho']='0'.$this->BASE['get_post']['ho'];
-            }
-           // $this->$PAR['view']=  $this->$PAR['baseview']; //a setTask() felülírja ha a $TPAR['task']['view'] meg van adva
-            $this->setTask();
-            $this->set_getT($request);
-            $obname=$this->BASE['obname'];
-            $this->BASE['ob']=new $obname();
-            View::share('param',$this->PAR);
-           }
-    public function index_set($ob,$keyword,$getT,$perPage)
-    {
-          
-        if($this->PAR['getT']['w_id']>0){$where[]= ['worker_id', '=', $this->PAR['getT']['w_id']];}
-        else{$where[]= ['id', '<>','0']; }//hogx mindenképpen legyen where
-    
-        if (empty($keyword)) {  
-            $list =$ob->with('worker','daytype')
-                    ->where($where )
-                    ->orderBy('id', 'desc')
-                    ->paginate($perPage)->appends($getT) ;   
-        } else {
-            $list = $ob->where($this->get_searchT($keyword,'first'))
-                        ->orWhere($this->get_searchT($keyword,'firstno'))
-                        ->orderBy('id', 'desc')
-			            ->paginate($perPage)->appends($getT) ;
-        }  
- 
-        $data['years']=['2017','2018'];
-        $data['list']=$list;
-        $calendar=new \App\Handler\Calendar;
-        $data['workers']=Worker::with('user')->get();
-        $data['workers'][]=['name'=>'osszes worker','id'=>0,'user'=>['name'=>'összes']];
-        $data['userid']=0;
-        return $data;
-    }
-    public function getWorkerday($worker_id,$ev,$ho)
-    {
-        $res=[];
-        $dayT= Day::where('datum',  'LIKE', $ev."-".$ho."%")
-            ->orwhere('datum',  'LIKE', "0000-".$ho."%")
-            ->get();
+        $t = \Carbon::now();
+       $this->BASE['data']['ev']=$this->PAR['getT']['ev'] ?? $t->year;
+       $this->BASE['data']['ho']=$this->PAR['getT']['ho'] ?? $t->month;
+        if(strlen($this->BASE['data']['ho'])<2){
+            $this->BASE['data']['ho']='0'.$this->BASE['data']['ho'];
+        }
+       }
 
-        foreach($dayT as $day) 
-        {$res[$day->datum]=['datum'=>$day->datum,'id'=>$day->id,'daytype_id'=>$day->daytype_id,];}  
+ public function index_set()
+ {
+     
+   // $user_id=\Auth::user()->id;
+    $worker_id=$this->PAR['getT']['w_id'] ?? 0;
+    if($worker_id>0){$where[]= ['worker_id', '=',$worker_id]; }
+    else{$where[]= ['id', '>',0]; }
+    $ob=$this->BASE['ob'];
+    $perPage=$this->PAR['perpage'] ?? 50;
+    $getT=$this->PAR['getT'] ?? ['a'=>'a'];
+      
+     $list =$ob->with('worker','daytype')
+                 ->where($where )
+                 ->orderBy('id', 'desc')
+                 ->paginate($perPage)->appends($getT) ;   
+     
+    // $workerdayT=$this->getWorkerday($worker_id,$this->BASE['data']['ev'],$this->BASE['data']['ho']);
+   //  $calendar=new \App\Handler\Calendar;
+ //    $calT=$calendar->getMonthDays($this->BASE['data']['ev'],$this->BASE['data']['ho']);
+  //   $data['calendar']=\MoHandF::mergeAssoc($calT,$workerdayT);
+     $data['years']=['2017','2018'];
+     $data['list']=$list;
+    $data['daytype']=Daytype::get()->pluck('name','id');   
+  //   $calendar=new \App\Handler\Calendar;
+     $data['workers']=Worker::with('user')->get();
+     $data['workers'][]=['name'=>'osszes worker','id'=>0,'user'=>['name'=>'összes']];
+   //  $data['userid']=$user_id;
+     $this->BASE['data']= array_merge($this->BASE['data'],$data); 
+    // print_r($this->BASE['data']['list']);
+ }
+  
+ public function getWorkerday($worker_id,$ev,$ho)
+ {
+     $res=[];
+     //-----------------------
+     $dayT= Day::where('datum',  'LIKE', $ev."-".$ho."%")
+         ->orwhere('datum',  'LIKE', "0000-".$ho."%")
+         ->get();
 
-        $workerdayT= Workerday::where([
-            ['worker_id', '=', $worker_id],
-            ['datum',  'LIKE', $ev."-".$ho."%"],
-            ])->get(); 
-            foreach($workerdayT as $day) 
-            {$res[$day->datum]=['datum'=>$day->datum,'id'=>$day->id,'daytype_id'=>$day->daytype_id,];}  
+     foreach($dayT as $day) 
+     {$res[$day->datum]=['datatype'=>'day','datum'=>$day->datum,'id'=>$day->id,'daytype_id'=>$day->daytype_id,'wish_id'=>1];}  
+     //------------------------
+     $workerdayT= Workerday::where([
+         ['worker_id', '=', $worker_id],
+         ['datum',  'LIKE', $ev."-".$ho."%"],
+         ])->get(); 
+         foreach($workerdayT as $day) 
+         {$res[$day->datum]=['datatype'=>'workerday','datum'=>$day->datum,'id'=>$day->id,'daytype_id'=>$day->daytype_id,'wish_id'=>$day->wish_id];
          
-     return $res;    
+         }  
+//   print_r($worker_id);   
+  return $res;    
 
-    }
+ }
 
     public function create_set()
     {
@@ -153,7 +157,16 @@ class WorkerdaysController extends Controller
 
         return $data;
     }
+    public function pub()
+    {  
+        $id=Input::get('id');
 
+        $this->BASE['ob']=$this->BASE['ob']->findOrFail($id);
+        $wish_id=$this->BASE['ob']->wish_id;
+        $this->BASE['ob']->update(['daytype_id'=>$wish_id]);
+
+        return $this->base_redirect();
+    }
 
     public function edit_set($id)
     {  

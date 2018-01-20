@@ -49,9 +49,9 @@ $months=['Január','Február','Március','Április','Jájus','Június','Július'
 @endphp
  <br><br>        
     @foreach($years  as $year)
-    <a href=" {!! MoHandF::url($param['routes']['base'].'/create',$param['getT'],['ev'=>$year]) !!}" 
+    <a href=" {!! MoHandF::url($param['baseroute'].'/create',$param['getT'],['ev'=>$year]) !!}" 
       title="worker választás"
-                          @if ($data['ev']==$year)    
+                          @if ($param['getT']['ev']==$year)    
                            class="btn btn-danger btn-xs">
                           @else
                            class="btn btn-warning btn-xs">
@@ -62,9 +62,9 @@ $months=['Január','Február','Március','Április','Jájus','Június','Július'
              @endforeach  
 <br><br>
              @foreach($months  as $key=>$month)
-                                <a href=" {!! MoHandF::url($param['routes']['base'].'/create',$param['getT'],['ho'=>$key+1]) !!}" 
+                                <a href=" {!! MoHandF::url($param['baseroute'].'/create',$param['getT'],['ho'=>$key+1]) !!}" 
                                 title="worker választás"
-                   @if ($data['ho']==$key+1)    
+                   @if ($param['getT']['ho']==$key+1)    
                            class="btn btn-danger btn-xs">
                           @else
                            class="btn btn-warning btn-xs">
@@ -102,7 +102,7 @@ $months=['Január','Február','Március','Április','Jájus','Június','Július'
          {!! Form::open([
                             'method' => 'POST',
                             //'url' =>  MoHandF::url($param['baseroute'], $param['getT'],['w_id'=>$param['getT']['w_id'],'date'=>$dt['datum']]),
-                            'url' =>  MoHandF::url($param['routes']['base'], $param['getT']),
+                            'url' =>  MoHandF::url($param['baseroute'], $param['getT']),
                             'class' => 'form-horizontal',
                             'files' => true
                         ]) !!}

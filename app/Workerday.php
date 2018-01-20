@@ -25,7 +25,7 @@ class Workerday extends Model
      *
      * @var array
      */
-    protected $fillable = ['worker_id', 'daytype_id', 'datum', 'managernote', 'usernote'];
+    protected $fillable = ['worker_id', 'daytype_id', 'wish_id', 'datum', 'managernote', 'usernote'];
     
     public function workertime()
     {

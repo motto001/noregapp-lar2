@@ -87,15 +87,17 @@ public function getMonthDays($year='0',$month='0')
                 //$datum=$year.'-'.$month.'-'.$date->day;
                 $datum= \MoCalF::datumTwoChar($year.'-'.$month.'-'.$date->day);
                 $ujdays= [
+                    'datatype'=>'base',
                     'name'=>$this->days[$date->dayOfWeek],
                     'day'=>$date->day,
-                    'weeknum'=>$date->dayOfWeek,
+                    'dayOfWeek'=>$date->dayOfWeek,
                     'datum'=>$datum,
                     'daytype_id'=>0,
+                    'wish_id'=>1,
                     'type'=>'Munkanap',
                 ]; 
-                if( $date->dayOfWeek==0){$ujdays['color']='red';$ujdays['type']='Szabadnap';$ujdays['daytype_id']=2;}
-                if($date->dayOfWeek==6 ){$ujdays['color']='red';$ujdays['type']='Pihenőnap';$ujdays['daytype_id']=3;}
+                if( $date->dayOfWeek==0){$ujdays['daytype_id']=2;$ujdays['wish_id']=2;}
+               if($date->dayOfWeek==6 ){$ujdays['daytype_id']=3;$ujdays['wish_id']=3;}
                 $days[$datum]= $ujdays;
                 $date->addDay();
             }  
