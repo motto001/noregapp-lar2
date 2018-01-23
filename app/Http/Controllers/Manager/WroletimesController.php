@@ -53,9 +53,7 @@ class WroletimesController extends MoController
         'workernote' => 'string|max:200|nullable',
         'pub' => 'integer'
     ];
-   // protected $val_edit= [];
-
-
+  
     public function index_set()
     {
 

@@ -56,44 +56,70 @@ Trait CrudWithSetfunc
     }
     public function index_set(){ }
     public function search(){
-    /*return  $this->BASE['ob']
-    ->where('user_id', 'LIKE', "%$keyword%")
-    ->orWhere('wrole_id', 'LIKE', "%$keyword%")
-    ->orWhere('status_id', 'LIKE', "%$keyword%")
-    ->paginate($perPage);*/
-    return '';
+        /* $this->BASE['ob_base']= $this->BASE['ob_base']
+        ->where('user_id', 'LIKE', "%$keyword%")
+        ->orWhere('wrole_id', 'LIKE', "%$keyword%")
+        ->orWhere('status_id', 'LIKE', "%$keyword%")
+        ->paginate($perPage);*/
+        return '';
+        }
+    public function where_or_search(){
+        if (!empty($this->BASE['keyword'] )) {
+            $this->search();
+        } else {
+            $this->where();
+            $this->orWhere();
+        } 
     }
+
+    public function where(){
+        $where=$this->BASE['where'] ?? '';
+        if ($where!='') {  
+         $this->BASE['ob_base'] = $this->BASE['ob_base'] ->where($where);
+        } 
+     }
+     public function orWhere(){
+        $orwhere=$this->BASE['orwhere'] ?? '';
+        if ($orwhere!='') {  
+         $this->BASE['ob_base'] = $this->BASE['ob_base'] ->orWhere($orwhere);
+        } 
+     }
+     public function with(){
+        $with=$this->BASE['with'] ?? '';
+        if ($with!='') {  
+          $this->BASE['ob_base'] =$this->BASE['ob_base']->with($with);   
+        }
+     //   echo $with;
+     }    
+      public function order_by(){
+        $order_by=$this->BASE['order_by'] ?? [];  
+        foreach ($order_by as $column => $direction) {
+            $this->BASE['ob_base'] =  $this->BASE['ob_base'] ->orderBy($column, $direction);
+        }
+     }
+
     public function index_base(){
-        $ob=$this->BASE['ob'];
         $perPage=$this->PAR['perpage'] ?? 50;
         $getT=$this->PAR['getT'] ?? ['a'=>'a'];
+        $search_input_name=$this->PAR['search_input_name'] ?? 'search';
 
-        if(is_callable([$this->BASE['request'], 'get'])) {$keyword = $this->BASE['request']->get('search') ?? '';} 
-        else{$keyword = '';}
-        $with=$this->BASE['with'] ?? '';
-        if ($with=='') {  
-            $ob_base =$ob ;   
-        } else {
-            $ob_base = $ob->with($with);
-           
-        } 
+      //  $this->BASE['ob_base']=$this->BASE['ob']; //index-
+        if(is_callable([$this->BASE['request'], 'get'])) {$this->BASE['keyword']  = $this->BASE['request']->get($search_input_name) ?? '';} 
+        else{$this->BASE['keyword'] = '';}
+        
+        $funcT=$this->TBASE['index']['base_func'] ?? ['with','where_or_search','order_by'];
+        $this->call_func($funcT);
 
-        if (empty($keyword)) {  
-            $this->BASE['data']['list'] =$ob_base->paginate($perPage)->appends($getT) ;   
-          //  print_r($this->BASE['data']['list']);
-        } else {
-            $this->BASE['data']['list'] = $this->search();
-            if($this->BASE['data']['list']==''){ $this->BASE['data']['list'] =$ob_base->paginate($perPage)->appends($getT) ;  }
-        }
+        
+        $this->BASE['data']['list'] = $this->BASE['ob_base']->paginate($perPage)->appends($getT) ;  
         
     }
     public function index(Request $request)
     {
-    
+            $this->BASE['ob_base'] =$this->BASE['ob'] ;
             $funcT=$this->TBASE['index']['task_func'] ?? ['index_set','index_base'];
             $this->call_func($funcT);
-          //  $data= $this->BASE['data'];
-
+//print_R($this->BASE['data']);
            if(method_exists($this, 'index_view')) {return  $this->index_view();}  
             else{return $this->base_view('index');}
        // return  \MoViewF::view( $this->PAR['view'].'.index',$data);
@@ -120,11 +146,11 @@ Trait CrudWithSetfunc
 
         $funcT=$this->TBASE['store']['task_func'] ?? ['store_set','image_upload'];
         $this->call_func($funcT);
-
+//print_R($this->BASE['data']);
         $this->BASE['ob_res']= $this->BASE['ob']->create($this->BASE['data']);
 
         Session::flash('flash_message', trans('mo.itemadded'));
-        if(method_exists($this, 'store_redirect')) {return $this->store_redirect();}  
+       if(method_exists($this, 'store_redirect')) {return $this->store_redirect();}  
         else{return $this->base_redirect();}
     }
 

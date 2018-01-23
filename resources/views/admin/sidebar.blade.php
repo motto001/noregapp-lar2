@@ -25,17 +25,17 @@
                 </a>
    </li>
             <li class="sub-menu">
-                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'admin/proba' ? 'active' : '' }}" href="{{ url('/admin/proba') }}">
+                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'root/proba' ? 'active' : '' }}" href="{{ url('/root/proba') }}">
                   <span> proba</span>
                 </a>
             </li>
             <li class="sub-menu">
-                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'admin/conf' ? 'active' : '' }}" href="{{ url('/admin/conf') }}">
+                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'root/conf' ? 'active' : '' }}" href="{{ url('/root/conf') }}">
                   <span> Config</span>
                 </a>
             </li>
             <li class="sub-menu">
-                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'admin/roles' ? 'active' : '' }}" href="{{ url('/admin/roles') }}">
+                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'root/roles' ? 'active' : '' }}" href="{{ url('/root/roles') }}">
                     Jogok
                 </a>
             </li>
@@ -153,14 +153,21 @@
     <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'workadmin/workertimeframes ' ? 'active' : '' }}" class="active" href="{{ url('/workadmin/workertimeframes ') }}">
        Dolgozói időkeretek
     </a>
-</li>          
+</li>     
+
+            <li class="mt" style="margin:0px;">
+                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'workadmin//workerwroleunit' ? 'active' : '' }}" href="{{ url('/workadmin/workerwroleunit') }}">
+                  Dolgpzói műszakok
+                </a>
+            </li>
+
             <li class="mt" style="margin:0px;">
                 <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'workadmin/workerdays' ? 'active' : '' }}" href="{{ url('/workadmin/workerdays') }}">
                    Napok
                 </a>
             </li>
             <li class="mt" style="margin:0px;">
-                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'workadmin/users' ? 'active' : '' }}" href="{{ url('/workadmin/workerdays') }}">
+                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'workadmin/workertimes' ? 'active' : '' }}" href="{{ url('/workadmin/workertimes') }}">
                    Munkaidők
                 </a>
             </li>
@@ -191,8 +198,16 @@
                     <span style="color:red;font-size:18px;">Dolgozó</span>
                 </a>
    </li>
-    
-       
+   <li class="mt" style="margin:0px;">
+    <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'worker/workertimes' ? 'active' : '' }}" href="{{ url('/worker/workertimes') }}">
+       Munkaidők
+    </a>
+</li>
+<li class="mt" style="margin:0px;">
+    <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'worker/workerwroleunits' ? 'active' : '' }}" href="{{ url('/worker/workerwroleunits') }}">
+       Műszakcsere
+    </a>
+</li>      
            <li class="mt" style="margin:0px;">
                 <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'worker/users' ? 'active' : '' }}" href="{{ url('/worker/workerdays') }}">
                     Saját adatok

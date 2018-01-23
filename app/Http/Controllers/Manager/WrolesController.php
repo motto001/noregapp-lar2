@@ -41,7 +41,7 @@ protected $tpar= [
  protected $val = [
         'name' => 'required|string|max:200',
         'note' => 'string|max:200|nullable',
-      //  'start' => 'string|max:200|nullable',
+         'start' => 'required|date',
         'pub' => 'integer'
  ];
  public function edit_set()
@@ -89,14 +89,31 @@ protected $tpar= [
          die();
        // return $this->base_redirect();
    }
+  
     public function delunit()
     {
-        DB::table('wrole_wroleunit')->where([
+      
+           DB::table('wrole_wroleunit')->where([
         ['wrole_id', '=', $this->PAR['getT']['wrole_id']],['wroleunit_id', '=', $this->PAR['getT']['wrunit_id']]])
         ->delete(); 
         $url=\MoHandF::url($this->PAR['routes']['base'].'/'.$this->PAR['getT']['wrole_id'].'/edit');
         header("Location:$url");
         die();  
+       
+         
      // return  redirect(\MoHandF::url($this->PAR['routes']['base'].'/'.$this->PAR['getT']['wrole_id'].'/edit')); 
     }
+    public function destroy($id)
+    { 
+        if($id!=2){//hogy az egyedit ne lehessen törölni
+        $this->BASE['id']=$id;
+        $this->BASE['ob_res']= $this->BASE['ob']->destroy($id);
+        Session::flash('flash_message', trans('mo.deleted'));
+        }
+        return $this->base_redirect();
+    }
+
+
+
+
 }

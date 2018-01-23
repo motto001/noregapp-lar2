@@ -77,7 +77,7 @@ protected $BASE= [
     'request',  //construktor másolja ide az aktuális requestet
     'data'=>[], // az aktuális viewnek átadott adatok
     'func'=>[ // a constructor által lefuttatni kívánt funkciók  
-   // 'set_base',  //construktor mindenképpen meghívja, ha nem kell, felül kell definiálni!  
+    'set_baseparam',  //hogy ne kelljen  a set base felülírnii
     'set_task', //\App\Handler\trt\SetController
     'set_getT', //\App\Handler\trt\SetController
     'set_redir',
@@ -90,9 +90,12 @@ protected $BASE= [
  * taskok base értékei, a Handler\trt\SetController->set_task() az aktuális task kulcsa alatt szereplő értékekkel felül írja a $BASE értékeit
  */
 protected $TBASE= [
-    'index'=> ['task_func'=>['index_base','index_set']], // az aktuális task (index) által lefuttatni kívánt funkciók 
+/* 'index'=> [  
+    'task_func'=>['index_base','index_set']//az aktuális task (index) által lefuttatni kívánt funkciók 
+    'base_func' =>['with',' where_or_search','order_by'],//index_base hívja meg
+    ], 
  
-    /*  'create'=> ['task_func'=>['create_set']],
+    'create'=> ['task_func'=>['create_set']],
     'store'=> ['task_func'=>['store_set']],
     'edit'=> ['task_func'=>['edit_set']],
     'update'=> ['task_func'=>['update_set']],
@@ -107,7 +110,8 @@ protected $val= [];//pl.:['wroleunit_id' => 'required|integer','end' => 'date_fo
  *  az update task validációs tömbje ha üres az update is a $val-t használja 
  */
 protected $val_update= [];
-
+public function set_baseparam()
+{}
 public function set_base()
 {
 if(isset($this->par)){$this->PAR= array_merge($this->PAR, $this->par);}    

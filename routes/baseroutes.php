@@ -1,13 +1,19 @@
 <?php
-
+/*
 Route::get('admin','Admin\AdminController@index',function(){
 
 })->middleware('checklogin');
+*/
 
-//root-----------------------------------------------------------
-Route::group(['prefix' => '/admin','middleware' => ['auth', 'roles'], 'roles' => 'admin'],function()
+Route::group(['prefix' => '/admin','middleware' => ['auth', 'roles'], 'roles' => 'worker'],function()
 {
-     Route::resource('/proba', 'Admin\ProbaController');
+    Route::resource('/', 'Admin\AdminController'); 
+});   
+//root-----------------------------------------------------------
+Route::group(['prefix' => '/root','middleware' => ['auth', 'roles'], 'roles' => 'admin'],function()
+{
+   
+    Route::resource('/proba', 'Admin\ProbaController');
    
     Route::resource('/users', 'Admin\UsersController');
     
@@ -58,15 +64,18 @@ Route::group(['prefix' => '/workadmin','middleware' => ['auth', 'roles'], 'roles
     Route::resource('/workertimes', 'Workadmin\\WorkertimesController');
     Route::resource('/workerwroles', 'Workadmin\\WorkerwrolesController');
      Route::resource('/workertimeframes', 'Workadmin\\WorkertimeframesController');
-    
+     Route::resource('/workertimes', 'Workadmin\\WorkertimesController');
+      Route::resource('/workerwroleunit', 'Workadmin\\WorkerwroleunitsController');
 });
 Route::group(['prefix' => '/worker','middleware' => ['auth', 'roles'], 'roles' => 'worker'],function()
-{  
+{ 
+    Route::resource('/workerwroleunits', 'Worker\\WorkerwroleunitsController');
+    Route::resource('/workertimes', 'Worker\\WorkertimesController');
     Route::resource('/workerdays', 'Worker\\workerdaysController');
     Route::resource('/personal', 'Worker\\WorkersController');
-    Route::resource('/worktime', 'Worker\\WorktimesController');
-    Route::get('/worktimes/{year}/{month}/{day}/{user}', 'Worker\\WorktimesController@index2');
-    Route::get('/worktimes/create/{year}/{month}/{day}/{user}', 'Worker\\WorktimesController@create');
+    
+  //  Route::get('/worktimes/{year}/{month}/{day}/{user}', 'Worker\\WorktimesController@index2');
+  //  Route::get('/worktimes/create/{year}/{month}/{day}/{user}', 'Worker\\WorktimesController@create');
 });
 //----------------------------------------------------------------
 Route::group(['prefix' => '/user','middleware' => ['auth', 'roles'], 'roles' => 'admin'],function()

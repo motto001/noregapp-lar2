@@ -1,46 +1,6 @@
 @extends($param['crudview'].'.index')
 @section('table')
-              
-<style>
-    .weekness{
-    color:red;
-    border: 1px solid red; 
-    }
-    .workday{
-    color:silver;
-    border: 1px solid silver; 
-    }
-    .flex-container {
-        padding: 0;
-        margin: 0;
-        list-style: none;
-        justify-content:flex-end;
-        -ms-box-orient: horizontal;
-        display: -webkit-box;
-        display: -moz-box;
-        display: -ms-flexbox;
-        display: -moz-flex;
-        display: -webkit-flex;
-        display: flex;
-      }
-      .nowrap  { 
-        -webkit-flex-wrap: nowrap;
-        flex-wrap: nowrap;
-      }
-    
-      .flex-item { 
-        background: white;
-        padding: 5px;
-        width: 13.7%;
-       /* height: 100px;*/
-        margin: 0.3%;
-        text-align: center;
-        overflow:hidden;
-      }
-    .wishcolor{color:red;}
-    .acceptcolor{color:green;}
-    .wishbase{color:grey;}
-    </style>
+@include($param['view'].'.style')
     @php
     $yearnow[]=\Carbon::now()->year-2;
     $yearnow[]=\Carbon::now()->year-1;
@@ -111,7 +71,7 @@
 
             $wish_id=$dt['wish_id'] ?? $daytype_id ;
             
-if( $dt['datatype']!='base'){if($dt['daytype_id']>0 ){$color =  'green';}}
+            if( $dt['datatype']!='base'){if($dt['daytype_id']>0 ){$color =  'green';}}
           
             if( $daytype_id!=$wish_id){$wishcolor = 'wishcolor';}
                 
@@ -121,29 +81,7 @@ if( $dt['datatype']!='base'){if($dt['daytype_id']>0 ){$color =  'green';}}
            <li class="flex-item" style="border: 1px solid silver;">
             <div style="color:{{ $color }}">{{ $dt['day'] }}., {{ $data['daytype'][$daytype_id] }}</div>
             <div style="display: flex;width:100%;justify-content:flex-end;border: 1px solid silver; ">            
-             {!! Form::open([
-                                'method' => 'POST',
-                                //'url' =>  MoHandF::url($param['baseroute'], $param['getT'],['w_id'=>$param['getT']['w_id'],'date'=>$dt['datum']]),
-                                'url' =>  MoHandF::url($param['routes']['base'], $param['getT']),
-                                'class' => 'form-horizontal',
-                                'files' => true
-                            ]) !!}
-                {!! Form::hidden('datum',$dt['datum']) !!}    
-                <div style="color:{{ $wishcolor }}">
-                {!! Form::select('wish_id',$data['daytype'],
-               $dt['wish_id'], ['class' => 'form-control '. $wishcolor,'required' => 'required']) !!}
-                </div>  
-            </div>  
-            <div> 
-               <button type="submit" class="btn btn-info btn-xs">
-                    <i class="fa fa-save" aria-hidden="true"></i>Kérelem 
-                </button>
-                    @if($daytype_id!=$wish_id)
-                    <a  class="btn btn-danger btn-xs" href="{{ MoHandF::url($param['routes']['base'],$param['getT'],['task'=>'del','id'=>$dt['id']]) }} ">
-                        <i class="fa fa-trash-o" aria-hidden="true"></i>
-                    </a>
-                    @endif
-               {!! Form::close() !!}   
+                    wrole_id:     {{ $dt['wrole_id']  }}     wrunit_id:     {{ $dt['wrunit_id']  }}
             </div> 
                         
             </li>

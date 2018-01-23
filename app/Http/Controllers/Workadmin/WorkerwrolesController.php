@@ -46,6 +46,7 @@ protected $val= [
 ];
 public function index_set()
 {
+   
     $this->BASE['data']['wroles']=Wrole::get()->toarray();
     $this->BASE['data']['workers']=Worker::with('user')->get()->toarray();
     $this->BASE['data']['workers'][]=['id'=>0,'user'=>['name'=>'Mind']];

@@ -63,7 +63,7 @@ class="btn btn-success btn-sm" title="Add New Wru">
         {!! $errors->first('note', '<p class="help-block">:message</p>') !!}
     </div>
 </div>
-<!--
+
 <div class="form-group {{ $errors->has('start') ? 'has-error' : ''}}">
     {!! Form::label('start', 'Start', ['class' => 'col-md-3 control-label']) !!}
     <div class="col-md-7">
@@ -71,7 +71,7 @@ class="btn btn-success btn-sm" title="Add New Wru">
         {!! $errors->first('start', '<p class="help-block">:message</p>') !!}
     </div>
 </div>
--->
+
         {!! Form::hidden('pub', 0) !!}
 
 <div class="form-group">

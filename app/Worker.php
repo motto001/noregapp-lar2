@@ -31,7 +31,10 @@ class Worker extends Model
     {
         return $this->hasMany('App\Workertimeframe');
     }
-
+ public function workerwroleunit()
+    {
+        return $this->hasMany('App\Workerwroleunit');
+    }
     public function user()
     {
         return $this->belongsTo('App\User');

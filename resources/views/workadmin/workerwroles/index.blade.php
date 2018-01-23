@@ -51,7 +51,9 @@ class="btn btn-warning btn-xs">
                                 @foreach($data['list'] as $item)
                                     <tr>
                                         <td>{{ $item->id }}</td>
-                                        <td>{{ $item->worker->user->name }}</td> <td>{{ $item->wrole->name }}</td><td>{{ $item->start }}</td> <td>{{ $item->end }}</td><td>{{ $item->note }}</td>
+                                        <td>
+                                          @if(isset($item->worker->user->name))  {{ $item->worker->user->name }} @endif
+                                        </td> <td>{{ $item->wrole->name }}</td><td>{{ $item->start }}</td> <td>{{ $item->end }}</td><td>{{ $item->note }}</td>
                                         <td>
                                              {!! 
                                         MoHandF::linkButton([

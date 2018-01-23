@@ -38,4 +38,8 @@ class Wroleunit extends Model
     {
         return $this->hasMany('App\Wroletime');
     }
+    public function workerwroleunit()
+    {
+        return $this->hasMany('App\Workerwroleunit');
+    }
 }

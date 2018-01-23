@@ -8,12 +8,16 @@ use App\Http\Requests;
 use App\Handler\MoController;
 
 use App\Workerday;
+use App\Workerwrole;
+use App\Workertime;
 use App\Worker;
+use App\Wrole;
+use App\Wroleunit;
 use App\Daytype;
 use App\Day;
 use Illuminate\Http\Request;
 use Session;
-
+//use Carbon\Carbon;
 class WorkerdaysController extends MoController
 {
     use \App\Handler\trt\crud\CrudWithSetfunc;
@@ -62,30 +66,44 @@ class WorkerdaysController extends MoController
            }
     public function index_set()
     {
-       $user_id=\Auth::user()->id;
-       $worker_id=Worker::select('id')->where('user_id','=',$user_id)->first()->id;
-       $where[]= ['id', '=',1]; 
-       $ob=$this->BASE['ob'];
-       $perPage=$this->PAR['perpage'] ?? 50;
-       $getT=$this->PAR['getT'] ?? ['a'=>'a'];
-         
-        $list =$ob->with('worker','daytype')
-                    ->where($where )
-                    ->orderBy('id', 'desc')
-                    ->paginate($perPage)->appends($getT) ;   
-        
-        $workerdayT=$this->getWorkerday($worker_id,$this->BASE['data']['ev'],$this->BASE['data']['ho']);
-        $calendar=new \App\Handler\Calendar;
-        $calT=$calendar->getMonthDays($this->BASE['data']['ev'],$this->BASE['data']['ho']);
-        $data['calendar']=\MoHandF::mergeAssoc($calT,$workerdayT);
-        $data['years']=['2017','2018'];
-        $data['list']=$list;
-        $data['daytype']=Daytype::get()->pluck('name','id');   
-        $calendar=new \App\Handler\Calendar;
-        $data['workers']=Worker::with('user')->get();
-        $data['workers'][]=['name'=>'osszes worker','id'=>0,'user'=>['name'=>'összes']];
-        $data['userid']=$user_id;
-        $this->BASE['data']= array_merge($this->BASE['data'],$data); 
+        //$dt = Carbon::create($year, $month , 1, 0);
+        $user_id=\Auth::user()->id;
+        $worker_id=Worker::select('id')->where('user_id','=',$user_id)->first()->id;
+       
+        $where[]= ['id', '=', $worker_id]; 
+        $ob=$this->BASE['ob'];
+        $perPage=$this->PAR['perpage'] ?? 50;
+        $getT=$this->PAR['getT'] ?? ['a'=>'a'];
+        $data['daytype']=Daytype::get()->pluck('name','id');
+         $workerdayT=$this->getWorkerday($worker_id,$this->BASE['data']['ev'],$this->BASE['data']['ho']);
+         $calendar=new \App\Handler\Calendar;
+         $calT=$calendar->getMonthDays($this->BASE['data']['ev'],$this->BASE['data']['ho']);
+         $data['calendar']=\MoHandF::mergeAssoc($calT,$workerdayT);
+         $data['years']=['2017','2018','2019'];
+
+        $wrole_id=$this->getWrole_id('2018-11-21',$worker_id);
+        //echo $wrole_id;
+        $wroleunit_id= $this->getWroleunit_id('2018-11-21',$wrole_id); 
+        //echo $wroleunit_id;
+
+        // $data['list']=$list;
+        /*
+         foreach( $data['calendar'] as $datum=>$dataT)
+         {
+            $wrtimes=[];
+           $wrole_id=$this->getWrole_id($datum,$worker_id) ?? 2 ;
+         $wroleunit_id= $this->getWroleunit_id($datum,$wrole_id); 
+            $wrtimes= Workertime::where('worker_id','=',$worker_id)
+            ->where('datum','=',$datum)
+            ->where('pub','=',0)->get(); 
+         //   echo $wrole_id.'-----'.$wrole_id;
+      $data['calendar'][$datum]['wrole_id']=$wrole_id;
+      $data['calendar'][$datum]['wrunit_id']=1;      
+        // $data['calendar'][$datum]['wrtimes']=$wrtimes;
+         }*/
+ 
+         $this->BASE['data']= array_merge($this->BASE['data'],$data);    
+ 
     }
     public function getWorkerday($worker_id,$ev,$ho)
     {
@@ -110,6 +128,90 @@ class WorkerdaysController extends MoController
      return $res;    
 
     }
+
+ public function getWrole_id($datum,$worker_id){
+    
+   $wrole= Workerwrole::where('worker_id','=',$worker_id)
+   ->where('start','<',$datum)
+   ->where('end','>',$datum)
+   ->orWhere('end','=',null)
+   ->orderBy('id','desc')
+   ->first(); 
+   $wrole_id = $wrole->wrole_id ?? 0;
+   return  $wrole_id;
+ }
+ public function getWroleunit_id($datum,$wrole_id){
+    $wroleunit_id=0;  
+    //if($wrole_id!=2){
+    $wrole= Wrole::with('wroleunit')->find($wrole_id);
+    $wroleunits=$wrole->wroleunit;
+    $longT=['hét'=>7,'nap'=>1];
+    $long=0;
+echo '----'.$datum.'----';
+//print_r($wrole);
+   $start=$wrole->start;
+   //$actualstart=\Carbon::createFromFormat('Y-m-d',$start)->toDateString();
+   $actualstart=\Carbon::createFromFormat('Y-m-d',$start);
+  //echo $start.'----'.$datum.'----'; 
+  
+  //if($actualstart<$datum){echo $start;}
+$oszlong=0;
+print_r($wroleunits);
+  foreach($wroleunits as $wroleunit){
+   
+       $longvalue=$longT[$wroleunit->unit];
+       echo $longvalue.'----'.$wroleunit->unit;          
+       $long=$longvalue*$wroleunit->long;
+       $oszlong+=$long;
+    }
+  echo $oszlong;
+  while($actualstart<=$datum)
+   {
+     
+    $actualstart->addDays(10);
+  
+    }
+    //echo $actualstart; 
+  
+  // return $wroleunit_id;
+} 
+public function getWroleTimes($wroleunit_id){
+  
+
+}
+
+public function edit_set()
+{
+
+    $user_id=\Auth::user()->id;
+    $worker_id=Worker::select('id')->where('user_id','=',$user_id)->first()->id;
+   
+    $where[]= ['id', '=', $worker_id]; 
+    $ob=$this->BASE['ob'];
+    $perPage=$this->PAR['perpage'] ?? 50;
+    $getT=$this->PAR['getT'] ?? ['a'=>'a'];
+      
+     $list =$ob->with('worker','daytype')
+                 ->where($where )
+                 ->orderBy('id', 'desc')
+                 ->paginate($perPage)->appends($getT) ;   
+     
+     $workerdayT=$this->getWorkerday($worker_id,$this->BASE['data']['ev'],$this->BASE['data']['ho']);
+     $calendar=new \App\Handler\Calendar;
+     $calT=$calendar->getMonthDays($this->BASE['data']['ev'],$this->BASE['data']['ho']);
+     $data['calendar']=\MoHandF::mergeAssoc($calT,$workerdayT);
+     $data['years']=['2017','2018'];
+     $data['list']=$list;
+     $data['daytype']=Daytype::get()->pluck('name','id');   
+     $calendar=new \App\Handler\Calendar;
+     $data['workers']=Worker::with('user')->get();
+     $data['workers'][]=['name'=>'osszes worker','id'=>0,'user'=>['name'=>'összes']];
+     $data['userid']=$user_id;
+     $this->BASE['data']= array_merge($this->BASE['data'],$data); 
+
+
+}
+
 /*
     public function create_set()
     {
