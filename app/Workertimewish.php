@@ -4,14 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Workertime extends Model
+class Workertimewish extends Model
 {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'workertimes';
+    protected $table = 'workertimeswish';
 
     /**
     * The database primary key value.
@@ -25,7 +25,7 @@ class Workertime extends Model
      *
      * @var array
      */
-    protected $fillable = ['worker_id', 'timetype_id','wish_id','datum', 'start', 'end', 'hour','pub'];
+    protected $fillable = ['worker_id', 'timetype_id','datum', 'start', 'end', 'hour', 'managernote', 'workernote','pub'];
    
     public function worker()
     {

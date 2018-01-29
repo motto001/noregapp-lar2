@@ -2,7 +2,7 @@
 @section('content')
 @include('admin.sidebar')
 @php
- $baseurl = '/admin/users/';
+ $baseurl = '/manager/users/';
 @endphp
 <section id="main-content">
    <section class="wrapper">

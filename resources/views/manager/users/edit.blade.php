@@ -8,7 +8,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">Edit User</div>
                     <div class="panel-body">
-                        <a href="{{ url('/admin/users') }}" title="Back"><button class="btn btn-warning btn-xs"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button></a>
+                        <a href="{{ url('/manager/users') }}" title="Back"><button class="btn btn-warning btn-xs"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button></a>
                         <br />
                         <br />
 
@@ -22,11 +22,11 @@
 
                         {!! Form::model($user, [
                             'method' => 'PATCH',
-                            'url' => ['/admin/users', $user->id],
+                            'url' => ['/manager/users', $user->id],
                             'class' => 'form-horizontal'
                         ]) !!}
 
-                        @include ('admin.users.form', ['submitButtonText' => 'Update'])
+                        @include ('manager.users.form', ['submitButtonText' => 'Update'])
 
                         {!! Form::close() !!}
 

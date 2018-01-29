@@ -106,7 +106,7 @@ Trait CrudWithSetfunc
       //  $this->BASE['ob_base']=$this->BASE['ob']; //index-
         if(is_callable([$this->BASE['request'], 'get'])) {$this->BASE['keyword']  = $this->BASE['request']->get($search_input_name) ?? '';} 
         else{$this->BASE['keyword'] = '';}
-        
+        $this->index_set();
         $funcT=$this->TBASE['index']['base_func'] ?? ['with','where_or_search','order_by'];
         $this->call_func($funcT);
 
@@ -117,7 +117,7 @@ Trait CrudWithSetfunc
     public function index(Request $request)
     {
             $this->BASE['ob_base'] =$this->BASE['ob'] ;
-            $funcT=$this->TBASE['index']['task_func'] ?? ['index_set','index_base'];
+            $funcT=$this->TBASE['index']['task_func'] ?? ['index_base'];
             $this->call_func($funcT);
 //print_R($this->BASE['data']);
            if(method_exists($this, 'index_view')) {return  $this->index_view();}  

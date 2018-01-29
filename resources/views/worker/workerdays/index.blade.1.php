@@ -39,14 +39,7 @@
                                     
                                     </a>
                  @endforeach 
-  @php
-$create=true;
-@endphp
-@if($create)
-    @include('worker.workerdays.form')   
-@else
-    @include('worker.workerdays.form') 
-@endif
+  
     <ul class="flex-container nowrap">
         <li class="flex-item "  style="height:40px;color:red;">Vasárnap</li>
         <li class="flex-item "  style="height:40px">Hétfő</li>
@@ -56,7 +49,14 @@ $create=true;
         <li class="flex-item "  style="height:40px">Péntek</li>
         <li class="flex-item "  style="height:40px; color:red;">Szombat</li>       
     </ul>
-
+@php
+$create=true;
+@endphp
+@if($create)
+    @include('worker.workerdays.form')   
+@else
+    @include('worker.workerdays.form') 
+@endif
         @foreach($data['calendar'] as $dt) 
          @if($dt['dayOfWeek']==0 or $dt['day']==1) 
               <ul class="flex-container nowrap" style="justify-content:flex-start"> 
@@ -80,41 +80,27 @@ $create=true;
             if( $dt['datatype']!='base'){if($dt['daytype_id']>0 ){$color =  'green';}}
           
             if( $daytype_id!=$wish_id){$wishcolor = 'wishcolor';}
-
+                
             @endphp
   
 
            <li class="flex-item" style="border: 1px solid silver;">
-            <div style="color:{{ $color }}">{{ $dt['day'] }}., {{ $data['daytype'][$daytype_id] }}
-                <a href="{!! MoHandF::url($param['routes']['base'],$param['getT'],['datum'=>$dt['datum']]) !!}" class="btn btn-success btn-xs"><i class="fa fa-plus" aria-hidden="true"></i>
-                </a>
-
-            </div>
-          
+            <div style="color:{{ $color }}">{{ $dt['day'] }}., {{ $data['daytype'][$daytype_id] }}</div>
+            @if($dt['wrole_id']!=0) 
+            <div style="display: flex;width:100%;justify-content:flex-end;border: 1px solid silver; ">            
+                    <span>     wrole_id:     {{ $dt['wrole_id']  }}</span>  
+            </div> 
+            @endif 
+            @if($dt['wrunit_id']!=0) 
+            <div style="display: flex;width:100%;justify-content:flex-end;border: 1px solid silver; ">            
+                      <span>    wrunit_id:     {{ $dt['wrunit_id']  }}</span> <br> 
+            </div> 
+            @endif      
                 @foreach($dt['wrtimes'] as $time)  
                <div style="display: flex;width:100%;justify-content:flex-end;border: 1px solid silver; ">        
-               <span style="color:blue">            {{ str_limit($time['start'], 5,'' ).'-'.str_limit($time['end'], 5,'' )  }}    
+               <span style="color:blue">            {{  $time['start'].'-'.$time['end']   }}    
                </div> 
-                @endforeach 
-
-                @foreach($dt['wishes'] as $wish)  
-                @if($wish['pub']==1) 
-                <div style="display: flex;width:100%;justify-content:flex-end;border: 1px solid silver; ">        
-                <span style="color:grey; ">  {{  str_limit($wish['start'], 5,'' ).'-'.str_limit($wish['end'], 5,'' )  }} </span>   
-                <a href="{!! MoHandF::url($param['routes']['base'],$param['getT'],['task'=>'edittime','id'=>$wish['id']]) !!}"
-                  class="btn btn-primary btn-xs"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </a>
-                <a href="{!! MoHandF::url($param['routes']['base'],$param['getT'],['task'=>'deltime','id'=>$wish['id']]) !!}" 
-                  class="btn btn-danger btn-xs"><i class="fa fa-trash-o" aria-hidden="true"></i>
-                </a>
-            </div> 
-                @endif 
-                @if($wish['pub']==2) 
-                <div style="display: flex;width:100%;justify-content:flex-end;border: 1px solid silver; ">        
-                <span style="color: red; ">  {{  str_limit($wish['start'], 5,'' ).'-'.str_limit($wish['end'], 5,'' )  }}   </span>    
-                </div> 
-                @endif 
-                @endforeach          
+                @endforeach               
             </li>
      
         @if($dt['dayOfWeek']==6) 

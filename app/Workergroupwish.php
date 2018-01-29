@@ -4,14 +4,15 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Workertime extends Model
+class Workerwroleunit extends Model
 {
+    public $timestamps = false;
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'workertimes';
+    protected $table = 'workerwroleunit';
 
     /**
     * The database primary key value.
@@ -24,15 +25,23 @@ class Workertime extends Model
      * Attributes that should be mass-assignable.
      *
      * @var array
+     * 
      */
-    protected $fillable = ['worker_id', 'timetype_id','wish_id','datum', 'start', 'end', 'hour','pub'];
+    protected $fillable = ['worker_id', 'wish_id', 'start', 'managernote','workernote', 'end',  'pub'];
+    //protected $guarded = [];
+    public function worker_with_user()
+    {
+        return $this->belongsTo('App\Worker')->with('user');;
+    }
    
     public function worker()
     {
         return $this->belongsTo('App\Worker');
     }
-    public function timetype()
+    public function workergroup()
     {
-        return $this->belongsTo('App\Timetype');
+        return $this->belongsTo('App\Workergroup');
     }
+  
+    
 }

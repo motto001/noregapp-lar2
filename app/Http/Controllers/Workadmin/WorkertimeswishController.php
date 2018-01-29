@@ -6,28 +6,29 @@ use Illuminate\Support\Facades\Input;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Handler\MoController;
-use App\Workertimewish;
+
 use App\Workertime;
+use App\Workertimewish;
 use App\Worker;
 use App\Daytype;
 use App\Timetype;
 use Illuminate\Http\Request;
 use Session;
 
-class WorkertimesController extends MoController
+class WorkertimeswishController extends MoController
 {
     use \App\Handler\trt\crud\CrudWithSetfunc;
     use  \App\Handler\trt\SetController;
 
     protected $par= [
          'get_key'=>'worktime',
-        'routes'=>['base'=>'workadmin/workertimes','worker'=>'manager/worker'],
+        'routes'=>['base'=>'workadmin/workertimeswish','worker'=>'manager/worker'],
         //'baseview'=>'workadmin.workerdays', //nem használt a view helyettesíti
-        'view'=>'workadmin.workertimes', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
+        'view'=>'workadmin.workertimeswish', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
         'crudview'=>'crudbase_3', //A view ek keret twemplétjei. Ha tudnak majd formot és táblát generálni ez lesz a view
-        'cim'=>'Munkaidők',
+        'cim'=>'Munkaidőkérelmek',
         'getT'=>[],  
-        
+        'create_button'=>false,
 
     ];
   
@@ -35,7 +36,7 @@ class WorkertimesController extends MoController
        // 'search_column'=>'daytype_id,datum,managernote,usernote',
         'get'=>['ev'=>null,'ho'=>null], //a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be
        // 'get_post'=>['ev'=>null,'ho'=>null],//a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be ha van ilyen kulcs a postban azzal felülírja
-        'obname'=>'\App\Workertime',
+        'obname'=>'\App\Workertimewish',
         'ob'=>null,
        // 'func'=>[  'set_task', 'set_getT','set_date', 'set_redir','set_routes','set_ob'],
         'with'=>['worker','timetype'],
@@ -80,33 +81,39 @@ public function search(){
      }
    
  
-     public function create_set()
-     {
-        $user_id = \Auth::id();
-        $this->BASE['data']['worker_id']=Worker::select('id')->where('user_id','=',$user_id)->first()->id;
-         $this->BASE['data']['timetype']= Timetype::pluck('name','id');
- //print_r($this->PAR['getT']);
-     }
- 
-     public function edit_set()
-     {  
-         $this->BASE['data']['timetype']= Timetype::pluck('name','id');
-     }
+    public function create(){}
+    public function store(){}    
+    public function edit($id){}
+    public function update($id,Request $request){}   
+    public function show($id){} 
+    public function destroy($id){}            
  
      public function pub()
      { 
-         $id=Input::get('id');
-
-         $this->BASE['ob_res']=$this->BASE['ob']->findOrFail($id);
- 
+         //workertimewish publikálás----------
+        $id=Input::get('id');
+        $this->BASE['ob_res']=$this->BASE['ob']->findOrFail($id);
         $this->BASE['ob_res']->update(['pub'=>0]);
-        $wish_id=$this->BASE['ob_res']->wish_id;
-        if($wish_id>0)
+        
+        $data=$this->BASE['ob']->findOrFail($id)->toarray();//workertimewish adatok
+       $workertimeob= Workertime::where('wish_id','=',$id);
+       $workertime= Workertime::where('wish_id','=',$id)->first();
+    $workertimeid=$workertime->id ?? 0;
+        if($workertimeid>0)
         {
-            $wishtime=Workertimewish::findOrFail($wish_id); 
-            $wishtime->update(['pub'=>0]);
+           
+            $workertimeob->update(['pub'=>0]);
+           
+        
         }
- 
+        else
+        {  
+            $data['wish_id']=$id;
+            $data['pub']=0;
+            if(isset($data['managernote'])){unset($data['managernote']);}
+            if(isset($data['workernote'])){unset($data['workernote']);} 
+            $workertimeob->create($data);
+        }
          Session::flash('flash_message',  trans('mo.item_pub'));
           return $this->base_redirect();
      }
@@ -115,31 +122,19 @@ public function search(){
         $id=Input::get('id');
 
         $this->BASE['ob_res']=$this->BASE['ob']->findOrFail($id);
-
-        $this->BASE['ob_res']->update(['pub'=>1]);
-
-        $wish_id=$this->BASE['ob_res']->wish_id;
-        if($wish_id>0)
-        {
-            $wishtime=Workertimewish::findOrFail($wish_id); 
-            $wishtime->update(['pub'=>2]);
-        }
+        $this->BASE['ob_res']->update(['pub'=>2]);
+        
+        $workertime= Workertime::where('wish_id','=',$id)->first();
+     $workertimeid=$workertime->id ?? 0;
+         if($workertimeid>0)
+         {
+             $workertimeob= Workertime::where('wish_id','=',$id);
+            $workertimeob->update(['pub'=>1]);
+         }
+      
         Session::flash('flash_message',  trans('mo.item_pub'));
          return $this->base_redirect();
      }
 
-     public function destroy($id)
-     { 
-         $this->BASE['id']=$id;
-         $wish_id=$this->BASE['ob']->wish_id;
-         $this->BASE['ob_res']= $this->BASE['ob']->destroy($id);
-         
-         if($wish_id>0)
-         {
-             $wishtime=Workertimewish::findOrFail($wish_id); 
-             $wishtime->update(['pub'=>2]);
-         }
-         Session::flash('flash_message', trans('mo.deleted'));
-        return $this->base_redirect();
-     }
+ 
 }

@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Workerwroleunit extends Model
+class Groupwroleunit extends Model
 {
     public $timestamps = false;
     /**
@@ -12,7 +12,7 @@ class Workerwroleunit extends Model
      *
      * @var string
      */
-    protected $table = 'workerwroleunit';
+    protected $table = 'grouproleunit';
 
     /**
     * The database primary key value.
@@ -33,7 +33,10 @@ class Workerwroleunit extends Model
     {
         return $this->belongsTo('App\Worker')->with('user');;
     }
-   
+    public function workergroup()
+    {
+        return $this->belongsTo('App\Worker');
+    }
     public function worker()
     {
         return $this->belongsTo('App\Worker');

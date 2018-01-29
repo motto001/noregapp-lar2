@@ -27,9 +27,9 @@ Route::group(['prefix' => '/root','middleware' => ['auth', 'roles'], 'roles' => 
 //manageer---------------------------------------------------------------
 Route::group(['prefix' => '/manager','middleware' => ['auth', 'roles'], 'roles' => 'manager'],function()
 {
-    Route::resource('/users', 'Manager\UsersController');
+    Route::resource('/users', 'Manager\\UsersController');
     //Route::resource('/workers', 'Manager\\WorkersController');
-    Route::resource('workers', 'Manager\\WorkersController');
+    Route::resource('/workers', 'Manager\\WorkersController');
     Route::resource('/workerusers', 'Manager\\WorkerusersController');
     Route::resource('/workergroups', 'Manager\\WorkergroupsController');
     Route::resource('/workertypes', 'Manager\\WorkertypesController');
@@ -58,19 +58,19 @@ Route::group(['prefix' => '/manager','middleware' => ['auth', 'roles'], 'roles' 
 //workadmin---------------------------------------------------------------
 Route::group(['prefix' => '/workadmin','middleware' => ['auth', 'roles'], 'roles' => 'workadmin'],function()
 {
-    Route::resource('/chworkerday', 'Workadmin\\ChworkerdayController');
-    Route::resource('/chworkertimes', 'Workadmin\\ChworkertimesController');
+
     Route::resource('/workerdays', 'Workadmin\\WorkerdaysController');
+    Route::resource('/workertimeswish', 'Workadmin\\WorkertimeswishController');
     Route::resource('/workertimes', 'Workadmin\\WorkertimesController');
     Route::resource('/workerwroles', 'Workadmin\\WorkerwrolesController');
-     Route::resource('/workertimeframes', 'Workadmin\\WorkertimeframesController');
-     Route::resource('/workertimes', 'Workadmin\\WorkertimesController');
-      Route::resource('/workerwroleunit', 'Workadmin\\WorkerwroleunitsController');
+    Route::resource('/workertimeframes', 'Workadmin\\WorkertimeframesController');
+    Route::resource('/workertimes', 'Workadmin\\WorkertimesController');
+    Route::resource('/workerwroleunit', 'Workadmin\\WorkerwroleunitsController');
 });
 Route::group(['prefix' => '/worker','middleware' => ['auth', 'roles'], 'roles' => 'worker'],function()
 { 
     Route::resource('/workerwroleunits', 'Worker\\WorkerwroleunitsController');
-    Route::resource('/workertimes', 'Worker\\WorkertimesController');
+    Route::resource('/workertimeswish', 'Worker\\WorkertimeswishController');
     Route::resource('/workerdays', 'Worker\\workerdaysController');
     Route::resource('/personal', 'Worker\\WorkersController');
     

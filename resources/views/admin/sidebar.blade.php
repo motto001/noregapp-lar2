@@ -119,12 +119,12 @@
             </li>  
             <li class="mt" style="margin:0px;">
                 <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/wroleunits' ? 'active' : '' }}" href="{{ url('/manager/wroleunits') }}">
-                    Munkarend ciklusok
+                    Műszakok
                 </a>
             </li>  
             <li class="mt" style="margin:0px;">
                 <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/wroletimes' ? 'active' : '' }}" href="{{ url('/manager/wroletimes') }}">
-                    Munkarend ciklusidők
+                    Műszak idők
                 </a>
             </li>
            <li class="mt" style="margin:0px;">
@@ -172,6 +172,11 @@
                 </a>
             </li>
             <li class="mt" style="margin:0px;">
+                <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'workadmin/workertimeswish' ? 'active' : '' }}" href="{{ url('/workadmin/workertimeswish') }}">
+                   Munkaidő kérelmek
+                </a>
+            </li>
+            <li class="mt" style="margin:0px;">
                 <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'manager/users' ? 'active' : '' }}" href="{{ url('/workadmin/') }}">
                     Szabadság, betegállomány
                 </a>
@@ -199,7 +204,7 @@
                 </a>
    </li>
    <li class="mt" style="margin:0px;">
-    <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'worker/workertimes' ? 'active' : '' }}" href="{{ url('/worker/workertimes') }}">
+    <a style="padding:10px;font-size:16px;" class="{{ Request::path() == 'worker/workertimeswish' ? 'active' : '' }}" href="{{ url('/worker/workertimeswish') }}">
        Munkaidők
     </a>
 </li>

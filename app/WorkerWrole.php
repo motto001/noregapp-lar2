@@ -40,9 +40,10 @@ class Workerwrole extends Model
     {
         return $this->belongsTo('App\Wrole');
     }
-    public function wroleFull()
+    public function wrole_with_unit()
     {
-        return $this->belongsTo('App\Wrole')->with('wroletime','daytype');
+        return $this->belongsTo('App\Wrole');
     }
+ 
     
 }

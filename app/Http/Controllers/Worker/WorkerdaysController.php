@@ -8,7 +8,11 @@ use App\Http\Requests;
 use App\Handler\MoController;
 
 use App\Workerday;
+use App\Timetype;
 use App\Workerwrole;
+use App\Workerwroleunit;
+use App\Wroletime;
+use App\Workertimewish;
 use App\Workertime;
 use App\Worker;
 use App\Wrole;
@@ -23,7 +27,7 @@ class WorkerdaysController extends MoController
     use \App\Handler\trt\crud\CrudWithSetfunc;
     use  \App\Handler\trt\SetController;
     protected $par= [
-        //'baseroute'=>'workadmin/workerdays',
+        'create_button'=>false,
         'routes'=>['base'=>'worker/workerdays','worker'=>'manager/worker'],
         //'baseview'=>'workadmin.workerdays', //nem használt a view helyettesíti
         'view'=>'worker.workerdays', //innen csatolják be a taskok a vieweket lényegében form és tabla. A crudview-et egészítik ki
@@ -51,7 +55,67 @@ class WorkerdaysController extends MoController
         'managernote' => 'string|max:150'
       //  'usernote' => 'string|max:150'
     ];
+    protected $addtimeval= [
+      //  'worker_id' => 'required|integer',
+        'timetype_id' => 'required|integer',
+        'datum' => 'required|date',
+        'start' => 'required|date_format:H:i',
+        'end' => 'date_format:H:i',
+        'hour' => 'required|integer|max:24',
+      //  'managernote' => 'string|max:200|nullable',
+      //  'workernote' => 'string|max:200|nullable',
+        'pub' => 'integer'
+      ];
+
     protected $val_edit= [];
+    /*
+    function getuserid(){
+      //return \Auth::id();
+      auth()->check();
+      dd(\auth()->user());
+    }*/
+
+    function addtime(){
+
+      //  $datestart=Input::get('datestart');
+       // $dateend=Input::get('dateend');
+        $this->validate($this->BASE['request'],$this->addtimeval );
+        $data = $this->BASE['request']->all();
+        $user_id=\Auth::id();
+        //echo '-------'.$user_id;
+        $worker_id=Worker::select('id')->where('user_id','=',$user_id)->first()->id;
+        $data['worker_id']=$worker_id;
+ 
+        Workertimewish::create($data);
+       }  
+
+       function edittime(){
+
+       // $datestart=Input::get('datestart');
+      //  $dateend=Input::get('dateend');
+        $id=Input::get('id');
+        $this->validate($this->BASE['request'],$this->addtimeval );
+        $data = $this->BASE['request']->all();
+        $user_id=\Auth::id();
+        $worker_id=Worker::select('id')->where('user_id','=',$user_id)->first()->id;
+        $data['worker_id']=$worker_id;
+      
+   $Workertimewish = Workertimewish::findOrFail($id);
+   if($Workertimewish->worker_id==$worker_id){
+     $Workertimewish->update($data);  
+   }
+   
+  }    
+       
+    function deltime(){
+        $id=Input::get('id');
+        $Workertimewish = Workertimewish::findOrFail($id);
+        $user_id=\Auth::id();
+        $worker_id=Worker::select('id')->where('user_id','=',$user_id)->first()->id;
+        if($Workertimewish->worker_id==$worker_id){
+            Workertimewish::destroy($id);  
+        }
+     }  
 
     function set_date(){
 
@@ -63,46 +127,71 @@ class WorkerdaysController extends MoController
             if(strlen($this->BASE['data']['ho'])<2){
                 $this->BASE['data']['ho']='0'.$this->BASE['data']['ho'];
             }
-           }
+    }
     public function index_set()
     {
-        //$dt = Carbon::create($year, $month , 1, 0);
+        //worker-id-------------------
         $user_id=\Auth::user()->id;
+
         $worker_id=Worker::select('id')->where('user_id','=',$user_id)->first()->id;
        
-        $where[]= ['id', '=', $worker_id]; 
-        $ob=$this->BASE['ob'];
-        $perPage=$this->PAR['perpage'] ?? 50;
-        $getT=$this->PAR['getT'] ?? ['a'=>'a'];
+        $this->BASE['where'][]= ['id', '=', $worker_id]; 
+       // $ob=$this->BASE['ob'];
+        //$perPage=$this->PAR['perpage'] ?? 50;
+       // $getT=$this->PAR['getT'] ?? ['a'=>'a'];
+//echo $worker_id;
+        $data['timetype']=Timetype::get()->pluck('name','id');
         $data['daytype']=Daytype::get()->pluck('name','id');
-         $workerdayT=$this->getWorkerday($worker_id,$this->BASE['data']['ev'],$this->BASE['data']['ho']);
-         $calendar=new \App\Handler\Calendar;
-         $calT=$calendar->getMonthDays($this->BASE['data']['ev'],$this->BASE['data']['ho']);
-         $data['calendar']=\MoHandF::mergeAssoc($calT,$workerdayT);
-         $data['years']=['2017','2018','2019'];
+        $data['years']=['2017','2018','2019'];
+        $dt = \Carbon::now();
+        $data['datum']= $id=Input::get('datum') ?? $dt->year.'-'.$dt->month.'-'.$dt->day ;
+        //clendar tömb--------------------------------------
+        $workerdayT=$this->getWorkerday($worker_id,$this->BASE['data']['ev'],$this->BASE['data']['ho']);
+        $calendar=new \App\Handler\Calendar;
+        $calT=$calendar->getMonthDays($this->BASE['data']['ev'],$this->BASE['data']['ho']);
+        $data['calendar']=\MoHandF::mergeAssoc($calT,$workerdayT);
 
-        $wrole_id=$this->getWrole_id('2018-11-21',$worker_id);
-        //echo $wrole_id;
-        $wroleunit_id= $this->getWroleunit_id('2018-11-21',$wrole_id); 
-        //echo $wroleunit_id;
-
-        // $data['list']=$list;
-        /*
-         foreach( $data['calendar'] as $datum=>$dataT)
-         {
+        //cache-ek---------------------------------
+        $wrole_wrunit=[]; 
+        $wrunit_wrtime=Wroletime::get()->toarray() ?? []; 
+        $wrunit_wrtime=\MoHandF::setIndexFromKey($wrunit_wrtime,'wroleunit_id');
+       // $wrtime=
+        foreach( $data['calendar'] as $datum=>$dataT)
+        {
             $wrtimes=[];
-           $wrole_id=$this->getWrole_id($datum,$worker_id) ?? 2 ;
-         $wroleunit_id= $this->getWroleunit_id($datum,$wrole_id); 
+            //wrole_id-------------------------------
+            $wrole_id =$data['calendar'][$datum]['wrole_id']=$this->setWrole($datum,$worker_id) ?? 2 ;
+            //$wrunit_id----------------------------------
+            if(isset($wrole_wrunit[$wrole_id]))
+            {$wrunit_id=$wrole_wrunit[$wrole_id];}
+            else
+            {
+                $wrunit_id=$this->setWroleunit($datum);
+                $wrole_wrunit[$wrole_id]=$wrunit_id;
+            }
+          /*  $Workerwroleunit=Workerwroleunit::where('worker_id','=',$worker_id)
+            ->where('datum','=',$datum)
+            ->where('pub','=',0)->first();
+            $wrunit_id= $Workerwroleunit->id ?? $wrunit_id; */
+            $data['calendar'][$datum]['wrunit_id']= $wrunit_id;
+            //wrtimes-------------------------
+            $wrtimes= [];
             $wrtimes= Workertime::where('worker_id','=',$worker_id)
             ->where('datum','=',$datum)
-            ->where('pub','=',0)->get(); 
-         //   echo $wrole_id.'-----'.$wrole_id;
-      $data['calendar'][$datum]['wrole_id']=$wrole_id;
-      $data['calendar'][$datum]['wrunit_id']=1;      
-        // $data['calendar'][$datum]['wrtimes']=$wrtimes;
-         }*/
+            ->where('pub','=',0)->get()->toarray() ?? $wrtimes ; 
+           // print_r($wrtimes);
+             $data['calendar'][$datum]['wrtimes']=$wrtimes;
+            $wish=[];
+            $wish= Workertimewish::where('worker_id','=',$worker_id)
+            ->where('datum','=',$datum)
+            ->where('pub','>',0)->get()->toarray() ?? $wish ; 
+           //print_r($wish);
+            $data['calendar'][$datum]['wishes']=$wish;
+
+
+        }
  
-         $this->BASE['data']= array_merge($this->BASE['data'],$data);    
+        $this->BASE['data']= array_merge($this->BASE['data'],$data);    
  
     }
     public function getWorkerday($worker_id,$ev,$ho)
@@ -129,56 +218,50 @@ class WorkerdaysController extends MoController
 
     }
 
- public function getWrole_id($datum,$worker_id){
+ public function setWrole($datum,$worker_id){
     
-   $wrole= Workerwrole::where('worker_id','=',$worker_id)
+    $this->BASE['wrole'] = Workerwrole::with('wrole','wrole.wroleunit')
+   ->where('worker_id','=',$worker_id)
    ->where('start','<',$datum)
    ->where('end','>',$datum)
    ->orWhere('end','=',null)
    ->orderBy('id','desc')
-   ->first(); 
-   $wrole_id = $wrole->wrole_id ?? 0;
-   return  $wrole_id;
+   ->first()->toarray(); 
+   $this->BASE['wrole_id'] = $this->BASE['wrole']['wrole_id'] ?? 0;
+   return  $this->BASE['wrole_id'];
  }
- public function getWroleunit_id($datum,$wrole_id){
+ public function setWroleunit($datum){
     $wroleunit_id=0;  
-    //if($wrole_id!=2){
-    $wrole= Wrole::with('wroleunit')->find($wrole_id);
-    $wroleunits=$wrole->wroleunit;
     $longT=['hét'=>7,'nap'=>1];
     $long=0;
-echo '----'.$datum.'----';
-//print_r($wrole);
-   $start=$wrole->start;
+    $wrole=$this->BASE['wrole'] ;
+    $start=$wrole['wrole']['start'];
    //$actualstart=\Carbon::createFromFormat('Y-m-d',$start)->toDateString();
    $actualstart=\Carbon::createFromFormat('Y-m-d',$start);
-  //echo $start.'----'.$datum.'----'; 
-  
-  //if($actualstart<$datum){echo $start;}
-$oszlong=0;
-print_r($wroleunits);
-  foreach($wroleunits as $wroleunit){
-   
-       $longvalue=$longT[$wroleunit->unit];
-       echo $longvalue.'----'.$wroleunit->unit;          
-       $long=$longvalue*$wroleunit->long;
-       $oszlong+=$long;
-    }
-  echo $oszlong;
-  while($actualstart<=$datum)
+$wroleunitT=$wrole['wrole']['wroleunit'] ?? [];
+  while($actualstart<$datum)
    {
-     
-    $actualstart->addDays(10);
-  
+     if(!empty($wroleunitT)){//$wrole->wroleunit-al (objekt) nem  működik!
+        foreach($wroleunitT as $wroleunit){
+        if($actualstart<$datum){
+        $longvalue=$longT[$wroleunit['unit']];
+        // echo $longvalue.'----'.$wroleunit->unit;          
+        $long=$longvalue*$wroleunit['long'];
+        // $oszlong+=$long;
+        $actualstart->addDays($long);
+        $actualstart=$datum;
+            }
+        else{
+            $wroleunit_id=$wroleunit['id'];
+            $actualstart=$datum;
+            }
+        }
+      
+    }else{$actualstart=$datum;}
     }
-    //echo $actualstart; 
-  
-  // return $wroleunit_id;
+ return $wroleunit_id;
 } 
-public function getWroleTimes($wroleunit_id){
-  
 
-}
 
 public function edit_set()
 {

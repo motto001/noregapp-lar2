@@ -8,13 +8,14 @@ use App\Http\Controllers\Controller;
 use App\Handler\MoController;
 
 use App\Workertime;
+use App\Workertimewish;
 use App\Worker;
 use App\Daytype;
 use App\Timetype;
 use Illuminate\Http\Request;
 use Session;
 
-class WorkertimesController extends MoController
+class WorkertimeswishController extends MoController
 {
     use \App\Handler\trt\crud\CrudWithSetfunc;
     use  \App\Handler\trt\SetController;
@@ -35,11 +36,11 @@ class WorkertimesController extends MoController
        // 'search_column'=>'daytype_id,datum,managernote,usernote',
         'get'=>['ev'=>null,'ho'=>null], //a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be
        // 'get_post'=>['ev'=>null,'ho'=>null],//a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be ha van ilyen kulcs a postban azzal felülírja
-        'obname'=>'\App\Workertime',
+        'obname'=>'\App\Workertimewish',
         'ob'=>null,
        // 'func'=>[  'set_task', 'set_getT','set_date', 'set_redir','set_routes','set_ob'],
         'with'=>['worker','timetype'],
-
+        'order_by'=>['datum'=>'desc'],
     ];
 
 

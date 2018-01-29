@@ -26,15 +26,31 @@ class Worker extends Model
      * @var array
      */
     protected $fillable = ['user_id', 'status_id', 'workertype_id', 'workergroup_id', 'salary', 'salary_type', 'position', 'foto', 'fullname', 'cim', 'tel', 'birth', 'ado', 'tb', 'start', 'end', 'note', 'pub'];
-
+    public function workerworkergroup()
+    {
+        return $this->hasMany('App\Workerworkergroup');
+    }
+    public function workergroupwish()
+    {
+        return $this->hasMany('App\Workergroupwish');
+    }
     public function workertimeframe()
     {
         return $this->hasMany('App\Workertimeframe');
+    }
+    public function workertimewish()
+    {
+        return $this->hasMany('App\Workertimewish');
     }
  public function workerwroleunit()
     {
         return $this->hasMany('App\Workerwroleunit');
     }
+ public function wishwroleunit()
+    {
+        return $this->hasMany('App\Wishwroleunit');
+    }
+
     public function user()
     {
         return $this->belongsTo('App\User');

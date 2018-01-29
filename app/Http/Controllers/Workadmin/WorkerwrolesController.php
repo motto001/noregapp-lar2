@@ -30,7 +30,7 @@ protected $par= [
 ];
 protected $base= [
     'search'=>false,
-    'with'=>['worker_with_user','wrole'],
+  'with'=>['worker_with_user','wrole'],
     'get'=>['wrole_id'=>null,'wwrole_redir'=>null,'worker_id'=>null], //pl:'w_id'=>null a mocontroller automatikusan feltölti a getből a $this->PAR['getT']-be 
     'obname'=>'\App\Workerwrole',   
 ];
@@ -56,7 +56,7 @@ public function index_base(){
     $ob=$this->BASE['ob'];
     $perPage=$this->PAR['perpage'] ?? 50;
    
-
+    $this->index_set();
     if(is_callable([$this->BASE['request'], 'get'])) {$keyword = $this->BASE['request']->get('search') ?? '';} 
     else{$keyword = '';}
     $with=$this->BASE['with'] ?? '';
