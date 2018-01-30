@@ -1,5 +1,5 @@
 {!! Form::open([
-    'url' => MoHandF::url($param['routes']['base'],$param['getT'],['task'=>'addtime']), 
+    'url' => MoHandF::url($param['routes']['base'],$param['getT']), 
 'class' => 'form-horizontal', 'files' => true]) !!}
 </br></br></br>
 <div class="form-group {{ $errors->has('start') ? 'has-error' : ''}} {{ $errors->has('end') ? 'has-error' : ''}} {{ $errors->has('hour') ? 'has-error' : ''}}">

@@ -39,13 +39,11 @@
                                     
                                     </a>
                  @endforeach 
-  @php
-$create=true;
-@endphp
-@if($create)
+
+@if($data['form']=='create')
     @include('worker.workerdays.form')   
 @else
-    @include('worker.workerdays.form') 
+    @include('worker.workerdays.editform') 
 @endif
     <ul class="flex-container nowrap">
         <li class="flex-item "  style="height:40px;color:red;">Vasárnap</li>
@@ -101,7 +99,7 @@ $create=true;
                 @if($wish['pub']==1) 
                 <div style="display: flex;width:100%;justify-content:flex-end;border: 1px solid silver; ">        
                 <span style="color:grey; ">  {{  str_limit($wish['start'], 5,'' ).'-'.str_limit($wish['end'], 5,'' )  }} </span>   
-                <a href="{!! MoHandF::url($param['routes']['base'],$param['getT'],['task'=>'edittime','id'=>$wish['id']]) !!}"
+                <a href="{!! MoHandF::url($param['routes']['base'],$param['getT'],['form'=>'editform','id'=>$wish['id']]) !!}"
                   class="btn btn-primary btn-xs"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                 </a>
                 <a href="{!! MoHandF::url($param['routes']['base'],$param['getT'],['task'=>'deltime','id'=>$wish['id']]) !!}" 

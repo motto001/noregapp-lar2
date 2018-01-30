@@ -58,7 +58,7 @@ class WorkerdaysController extends MoController
     protected $addtimeval= [
       //  'worker_id' => 'required|integer',
         'timetype_id' => 'required|integer',
-        'datum' => 'required|date',
+       // 'datum' => 'required|date',
         'start' => 'required|date_format:H:i',
         'end' => 'date_format:H:i',
         'hour' => 'required|integer|max:24',
@@ -75,39 +75,48 @@ class WorkerdaysController extends MoController
       dd(\auth()->user());
     }*/
 
-    function addtime(){
+    function store(){
 
       //  $datestart=Input::get('datestart');
        // $dateend=Input::get('dateend');
         $this->validate($this->BASE['request'],$this->addtimeval );
         $data = $this->BASE['request']->all();
         $user_id=\Auth::id();
-        //echo '-------'.$user_id;
+  
         $worker_id=Worker::select('id')->where('user_id','=',$user_id)->first()->id;
         $data['worker_id']=$worker_id;
  
         Workertimewish::create($data);
+        return $this->base_redirect();
        }  
-
-       function edittime(){
-
-       // $datestart=Input::get('datestart');
-      //  $dateend=Input::get('dateend');
-        $id=Input::get('id');
-        $this->validate($this->BASE['request'],$this->addtimeval );
-        $data = $this->BASE['request']->all();
-        $user_id=\Auth::id();
-        $worker_id=Worker::select('id')->where('user_id','=',$user_id)->first()->id;
-        $data['worker_id']=$worker_id;
+       public function edit()
+       {
+       
+       echo 'edit';
+       
+       }
+   public function update($id, Request $request)
+       { //echo '--------'.$Workertimewish->worker_id;
+         //  $id=Input::get('formid');
+         $this->validate($this->BASE['request'],$this->addtimeval );
+           $data = $this->BASE['request']->all();
+          // print_r($data);
+          // echo '-------'.$us54645r_id;   
+           $user_id=\Auth::id();
+           $worker_id=Worker::select('id')->where('user_id','=',$user_id)->first()->id;
+           $data['worker_id']=$worker_id;
+         
+      $Workertimewish = Workertimewish::findOrFail($id);
       
-   $Workertimewish = Workertimewish::findOrFail($id);
-   if($Workertimewish->worker_id==$worker_id){
-     $Workertimewish->update($data);  
+     
+      $Workertimewish->update($data); 
+      
+       return $this->base_redirect();
    }
    
-  }    
+   
        
-    function deltime(){
+  public  function deltime(){
         $id=Input::get('id');
         $Workertimewish = Workertimewish::findOrFail($id);
         $user_id=\Auth::id();
@@ -115,9 +124,10 @@ class WorkerdaysController extends MoController
         if($Workertimewish->worker_id==$worker_id){
             Workertimewish::destroy($id);  
         }
+        return $this->base_redirect();
      }  
 
-    function set_date(){
+     public function set_date(){
 
             $t = \Carbon::now();
            // $this->BASE['get_post']['ev']= $t->year; 
@@ -132,8 +142,10 @@ class WorkerdaysController extends MoController
     {
         //worker-id-------------------
         $user_id=\Auth::user()->id;
-
         $worker_id=Worker::select('id')->where('user_id','=',$user_id)->first()->id;
+        $data['form']=Input::get('form') ?? 'create' ;
+        $formid=Input::get('id') ?? 0 ;
+        $data['formdata']=Workertimewish::find($formid);
        
         $this->BASE['where'][]= ['id', '=', $worker_id]; 
        // $ob=$this->BASE['ob'];
@@ -263,37 +275,7 @@ $wroleunitT=$wrole['wrole']['wroleunit'] ?? [];
 } 
 
 
-public function edit_set()
-{
 
-    $user_id=\Auth::user()->id;
-    $worker_id=Worker::select('id')->where('user_id','=',$user_id)->first()->id;
-   
-    $where[]= ['id', '=', $worker_id]; 
-    $ob=$this->BASE['ob'];
-    $perPage=$this->PAR['perpage'] ?? 50;
-    $getT=$this->PAR['getT'] ?? ['a'=>'a'];
-      
-     $list =$ob->with('worker','daytype')
-                 ->where($where )
-                 ->orderBy('id', 'desc')
-                 ->paginate($perPage)->appends($getT) ;   
-     
-     $workerdayT=$this->getWorkerday($worker_id,$this->BASE['data']['ev'],$this->BASE['data']['ho']);
-     $calendar=new \App\Handler\Calendar;
-     $calT=$calendar->getMonthDays($this->BASE['data']['ev'],$this->BASE['data']['ho']);
-     $data['calendar']=\MoHandF::mergeAssoc($calT,$workerdayT);
-     $data['years']=['2017','2018'];
-     $data['list']=$list;
-     $data['daytype']=Daytype::get()->pluck('name','id');   
-     $calendar=new \App\Handler\Calendar;
-     $data['workers']=Worker::with('user')->get();
-     $data['workers'][]=['name'=>'osszes worker','id'=>0,'user'=>['name'=>'összes']];
-     $data['userid']=$user_id;
-     $this->BASE['data']= array_merge($this->BASE['data'],$data); 
-
-
-}
 
 /*
     public function create_set()
@@ -316,6 +298,7 @@ public function edit_set()
     }
     */
 //az egész store-t felül kell írni 
+/*
     public function store(Request $request)
     {
         $this->validate($request,$this->val );
@@ -345,7 +328,7 @@ public function edit_set()
 
 
   
-    }
+    }*/
     public function del()
     { 
         $id=Input::get('id');
